@@ -13,13 +13,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- name: Playbook for pre-role testing 1of2
-  hosts: localhost
+- name: Playbook for pre-role testing 1of3
+  hosts: 127.0.0.1
   connection: local
+  become: false
   pre_tasks:
-    - name: Ensure root ssh key
+    - name: Create ssh key pair for root
       user:
-        name: "{{ ansible_env.USER | default('root') }}"
+        name: "{{ ansible_ssh_user }}"
         generate_ssh_key: "yes"
         ssh_key_bits: 2048
         ssh_key_file: ".ssh/id_rsa"
@@ -28,10 +29,22 @@
       register: key_get
     - set_fact:
         lxc_container_ssh_key: "{{ key_get.stdout }}"
+
+- name: Playbook for pre-role testing 2of3
+  hosts: localhost
+  connection: local
+  pre_tasks:
+    - name: Ensure root's new public ssh key is in authorized_keys
+      authorized_key:
+        user: root
+        key: "{{ hostvars['127.0.0.1']['lxc_container_ssh_key'] }}"
+        manage_dir: no
+    - set_fact:
+        lxc_container_ssh_key: "{{ hostvars['127.0.0.1']['lxc_container_ssh_key'] }}"
   roles:
     - role: "lxc_hosts"
       lxc_net_address: 10.100.100.1
-      lxc_net_dhcp_range: 10.100.100.2,10.100.100.253
+      lxc_net_dhcp_range: 10.100.100.2,10.100.100.100
       lxc_net_bridge: lxcbr0
       lxc_kernel_options:
         - { key: 'fs.inotify.max_user_instances', value: 1024 }
@@ -71,7 +84,7 @@
             address: "{{ item.address }}"
             bridge: "lxcbr0"
             interface: "eth1"
-            netmask: "255.255.252.0"
+            netmask: "255.255.255.0"
             type: "veth"
         physical_host: localhost
         container_name: "{{ item.name }}"
@@ -79,6 +92,13 @@
         - { name: "container1", service: "service1", address: "10.100.100.101" }
         - { name: "container2", service: "service2", address: "10.100.100.102" }
         - { name: "container3", service: "service3", address: "10.100.100.103" }
+
+- name: Playbook for pre-role testing 2of2
+  hosts: localhost
+  connection: local
+  gather_facts: true
+  roles:
+    - role: "openstack_hosts"
 
 - name: Playbook for pre-role testing 2of2
   hosts: all_containers
@@ -90,17 +110,41 @@
       lxc_container_backing_store: dir
       global_environment_variables:
         PATH: "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+  post_tasks:
+    - name: Wait for ssh to be available
+      local_action:
+        module: wait_for
+        port: "{{ ansible_ssh_port | default('22') }}"
+        host: "{{ ansible_ssh_host | default(inventory_hostname) }}"
+        search_regex: OpenSSH
+        delay: 1
 
 - name: Playbook for role testing
   hosts: galera_all
+  serial: 1
+  user: root
   gather_facts: true
   vars:
     galera_root_password: secrete
     galera_root_user: root
+    galera_innodb_buffer_pool_size: 512M
+    galera_innodb_log_buffer_size: 32M
+    galera_server_id: "{{ inventory_hostname | string_2_int }}"
+    galera_wsrep_node_name: "{{ inventory_hostname }}"
+    galera_wsrep_provider_options:
+      - { option: "gcache.size", value: "32M" }
   roles:
     - role: "{{ rolename | basename }}"
       galera_server_id: "{{ inventory_hostname | string_2_int }}"
-  post_tasks:
+
+- name: Playbook for testing
+  hosts: galera_all
+  user: root
+  gather_facts: true
+  vars:
+    galera_root_password: secrete
+    galera_root_user: root
+  tasks:
     - name: Create DB for service on 10.100.100.101
       mysql_db:
         login_user: "{{ galera_root_user }}"
