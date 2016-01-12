@@ -22,6 +22,8 @@
     MYSQLD_STARTUP_TIMEOUT: 180
   when: not galera_running_and_bootstrapped | bool
   register: galera_restart
+  # notifies are only fired when status is "changed"
+  changed_when: galera_restart | failed
   failed_when: false
   notify:
     - "remove stale .sst"
