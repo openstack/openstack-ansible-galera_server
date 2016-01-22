@@ -15,6 +15,7 @@
 
 galera_server_bootstrap_node: "{{ groups['galera_all'][0] }}"
 galera_ignore_cluster_state: false
+galera_upgrade: false
 
 galera_wsrep_node_name: "{{ inventory_hostname }}"
 galera_cluster_name: openstack_galera_cluster
