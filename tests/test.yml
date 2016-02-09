@@ -53,11 +53,6 @@
           name: "trusty.tgz"
           sha256sum: "56c6a6e132ea7d10be2f3e8104f47136ccf408b30e362133f0dc4a0a9adb4d0c"
           chroot_path: trusty/rootfs-amd64
-      # The $HOME directory is mocked to work with tox
-      #  by defining the 'ansible_env' hash. This should
-      #  NEVER be done outside of testing.
-      ansible_env:  ## NEVER DO THIS OUTSIDE OF TESTING
-        HOME: "/tmp"
     - role: "py_from_git"
       git_repo: "https://github.com/lxc/python2-lxc"
       git_dest: "/opt/lxc_python2"
