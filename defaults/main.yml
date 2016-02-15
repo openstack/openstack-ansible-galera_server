@@ -13,6 +13,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+## APT Cache Options
+cache_timeout: 600
+
 galera_server_bootstrap_node: "{{ groups['galera_all'][0] }}"
 galera_ignore_cluster_state: false
 
