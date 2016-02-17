@@ -13,6 +13,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+- name: Fail if the galera root password is not provided
+  fail:
+    msg: |
+      Please set the galera_root_password variable prior to applying the
+      galera role.
+  when: (galera_root_password is undefined) or (galera_root_password is none)
+
 - name: Preseed galera password(s)
   debconf:
     name: "{{ item.name }}"
