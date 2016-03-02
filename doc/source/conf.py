@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-# openstack-ansible-TEMPLATE documentation build configuration file, created by
+# openstack-ansible-galera_server documentation build configuration file, created by
 # sphinx-quickstart on Mon Apr 13 20:42:26 2015.
 #
 # This file is execfile()d with the current directory set to its
@@ -32,7 +32,7 @@ extensions = [
 ]
 
 # The link to the browsable source code (for the left hand menu)
-oslosphinx_cgit_link = 'http://git.openstack.org/cgit/openstack/openstack-ansible-TEMPLATE'
+oslosphinx_cgit_link = 'http://git.openstack.org/cgit/openstack/openstack-ansible-galera_server'
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -49,9 +49,9 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = 'openstack-ansible-TEMPLATE'
-copyright = '2015, openstack-ansible-TEMPLATE contributors'
-author = 'openstack-ansible-TEMPLATE contributors'
+project = 'openstack-ansible-galera_server'
+copyright = '2015, openstack-ansible-galera_server contributors'
+author = 'openstack-ansible-galera_server contributors'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -203,7 +203,7 @@ html_static_path = ['_static']
 # html_search_scorer = 'scorer.js'
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'openstack-ansible-TEMPLATEdoc'
+htmlhelp_basename = 'openstack-ansible-galera_serverdoc'
 
 # -- Options for LaTeX output ---------------------------------------------
 
@@ -225,9 +225,9 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'openstack-ansible-TEMPLATE.tex',
-     'openstack-ansible-TEMPLATE Documentation',
-     'openstack-ansible-TEMPLATE contributors', 'manual'),
+    (master_doc, 'openstack-ansible-galera_server.tex',
+     'openstack-ansible-galera_server Documentation',
+     'openstack-ansible-galera_server contributors', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -256,8 +256,8 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'openstack-ansible-TEMPLATE',
-     'openstack-ansible-TEMPLATE Documentation',
+    (master_doc, 'openstack-ansible-galera_server',
+     'openstack-ansible-galera_server Documentation',
      [author], 1)
 ]
 
@@ -271,9 +271,9 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'openstack-ansible-TEMPLATE',
-     'openstack-ansible-TEMPLATE Documentation',
-     author, 'openstack-ansible-TEMPLATE', 'One line description of project.',
+    (master_doc, 'openstack-ansible-galera_server',
+     'openstack-ansible-galera_server Documentation',
+     author, 'openstack-ansible-galera_server', 'One line description of project.',
      'Miscellaneous'),
 ]
 
