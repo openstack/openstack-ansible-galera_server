@@ -57,11 +57,9 @@
 
 - name: Drop mariadb config(s)
   template:
-    src: "{{ item.src }}"
-    dest: "{{ item.dest }}"
-    mode: "{{ item.mode|default('0644') }}"
-  with_items:
-    - { src: mysql_defaults.j2, dest: /etc/default/mysql }
+    src: "mysql_defaults.j2"
+    dest: "/etc/default/mysql"
+    mode: "0644"
   notify: Restart mysql
   tags:
     - galera-config
