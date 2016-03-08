@@ -34,6 +34,9 @@
   hosts: localhost
   connection: local
   pre_tasks:
+    - name: First ensure apt cache is always refreshed
+      apt:
+        update_cache: yes
     - name: Ensure root's new public ssh key is in authorized_keys
       authorized_key:
         user: root
