@@ -16,7 +16,8 @@
 ## APT Cache Options
 cache_timeout: 600
 
-galera_server_bootstrap_node: "{{ groups['galera_all'][0] }}"
+galera_cluster_members: "{{ groups['galera_all'] }}"
+galera_server_bootstrap_node: "{{ galera_cluster_members[0] }}"
 galera_ignore_cluster_state: false
 galera_upgrade: false
 
@@ -53,7 +54,7 @@ galera_innodb_log_buffer_size: 128M
 
 ## wsrep configuration
 galera_wsrep_address: "{{ ansible_ssh_host }}"
-galera_wsrep_cluster_address: "{% for host in groups['galera_all'] %}{{ hostvars[host]['ansible_ssh_host'] }}{% if not loop.last %},{% endif %}{% endfor %}"
+galera_wsrep_cluster_address: "{% for host in galera_cluster_members %}{{ hostvars[host]['ansible_ssh_host'] }}{% if not loop.last %},{% endif %}{% endfor %}"
 galera_wsrep_node_incoming_address: "{{ galera_wsrep_address }}"
 galera_wsrep_slave_threads: "{{ ansible_processor_vcpus | default(2) }}"
 galera_wsrep_retry_autocommit: 3
