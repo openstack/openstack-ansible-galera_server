@@ -98,6 +98,7 @@ galera_pip_packages:
   - pycrypto
 
 galera_pre_apt_packages:
+  - apt-transport-https
   - debconf-utils
   - libaio1
   - libc6
