@@ -103,6 +103,7 @@
     dest: "{{ galera_package_path }}"
     mode: "0644"
     sha256sum: "{{ galera_package_sha256 }}"
+    validate_certs: "{{ galera_package_download_validate_certs }}"
   register: package_download
   retries: 3
   delay: 10
