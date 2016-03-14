@@ -93,6 +93,10 @@ galera_package_url: "https://www.percona.com/downloads/XtraBackup/Percona-XtraBa
 galera_package_sha256: "2f58eedefa905583f0650f77bb2b149139c4066c7fb690202124fe5c7ac83e9e"
 galera_package_path: "/opt/{{ galera_package_url | basename }}"
 
+# Validate SSL certificates when downloading the galera deb above
+# May be set to "no" when proxy server is intercepting the certificates.
+galera_package_download_validate_certs: "yes"
+
 galera_pip_packages:
   - MySQL-python
   - pycrypto
