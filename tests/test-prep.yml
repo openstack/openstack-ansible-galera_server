@@ -44,6 +44,24 @@
         manage_dir: no
     - set_fact:
         lxc_container_ssh_key: "{{ hostvars['127.0.0.1']['lxc_container_ssh_key'] }}"
+    - name: Check if this is an OpenStack-CI nodepool instance
+      stat:
+        path: /etc/nodepool/provider
+      register: nodepool
+    - name: Set the files to copy into the container cache for OpenStack-CI instances
+      set_fact:
+        lxc_container_cache_files:
+          - { src: '/etc/pip.conf', dest: '/etc/pip.conf' }
+          - { src: '/etc/apt/apt.conf.d/99unauthenticated', dest: '/etc/apt/apt.conf.d/99unauthenticated' }
+      when: nodepool.stat.exists | bool
+    - name: Determine the existing Ubuntu repo configuration
+      shell: 'awk "/^deb .*ubuntu\/? {{ ansible_distribution_release }} main/ {print \$2; exit}" /etc/apt/sources.list'
+      register: ubuntu_repo
+      changed_when: false
+    - name: Set apt repo facts based on discovered information
+      set_fact:
+        lxc_container_template_main_apt_repo: "{{ ubuntu_repo.stdout }}"
+        lxc_container_template_security_apt_rep: "{{ ubuntu_repo.stdout }}"
   roles:
     - role: "lxc_hosts"
       lxc_net_address: 10.100.100.1
