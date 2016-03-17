@@ -14,7 +14,7 @@
 # limitations under the License.
 
 - name: Playbook for testing
-  hosts: galera_all
+  hosts: galera_test_hosts
   user: root
   gather_facts: true
   vars:

@@ -88,7 +88,7 @@
     #  done for functional testing.
     - name: Create container hosts
       add_host:
-        groups: "all,all_containers,galera_all"
+        groups: "all,all_containers,galera_test_hosts"
         hostname: "{{ item.name }}"
         inventory_hostname: "{{ item.name }}"
         ansible_ssh_host: "{{ item.address }}"

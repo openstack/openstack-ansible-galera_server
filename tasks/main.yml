@@ -13,6 +13,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+- fail:
+    msg: "The host {{ inventory_hostname }} must be in galera_cluster_members."
+  when: inventory_hostname not in galera_cluster_members
+
 - name: Fail if the galera root password is not provided
   fail:
     msg: |
