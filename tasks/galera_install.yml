@@ -13,71 +13,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- name: Preseed galera password(s)
-  debconf:
-    name: "{{ item.name }}"
-    question: "{{ item.question }}"
-    value: "{{ item.value }}"
-    vtype: "{{ item.vtype }}"
-  with_items: galera_debconf_items
+- include: galera_install_apt.yml
+  when:
+    - ansible_pkg_mgr == 'apt'
   tags:
-    - galera-debconf
-
-#TODO(evrardjp): Replace the next 2 tasks by a standard apt with cache
-#when https://github.com/ansible/ansible-modules-core/pull/1517 is merged
-#in 1.9.x or we move to 2.0 (if tested working)
-- name: Check apt last update file
-  stat:
-    path: /var/cache/apt
-  register: apt_cache_stat
-  tags:
-    - galera-apt-packages
-
-- name: Update apt if needed
-  apt:
-    update_cache: yes
-  when: >
-    "ansible_date_time.epoch|float - apt_cache_stat.stat.mtime > {{cache_timeout}}" or
-    add_repos | changed
-  tags:
-    - galera-apt-packages
-
-- name: Install galera packages
-  apt:
-    pkg: "{{ item }}"
-    state: latest
-  register: install_packages
-  until: install_packages|success
-  retries: 5
-  delay: 2
-  with_items: galera_apt_packages
-  notify: Restart mysql
-  tags:
-    - galera-apt-packages
-
-# TODO(cloudnull) -- Remove this after the Mitaka release
-#  This task simply removes the system version of
-#  percona-xtrabackup and xtrabackup if found the
-#  purpose is to ensure that "if" the system version
-#  of the binary is installed its first removed in
-#  favor of the actual upstream package being used in
-#  the next task.
-- name: UnInstall system xtrabackup packages
-  apt:
-    pkg: "{{ item }}"
-    state: absent
-  with_items:
-    - percona-xtrabackup
-    - xtrabackup
-  tags:
-    - galera-apt-packages
-
-- name: Install galera package
-  apt:
-    deb: "{{ galera_package_path }}"
-    force: yes
-  tags:
-    - galera-apt-packages
+    - install-apt
 
 - name: Install pip packages
   pip:

@@ -30,6 +30,8 @@ galaxy_info:
     - development
     - openstack
 dependencies:
-  - apt_package_pinning
+  - role: apt_package_pinning
+    when:
+      - ansible_pkg_mgr == 'apt'
   - role: galera_client
     galera_client_drop_config_file: true
