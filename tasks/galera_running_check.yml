@@ -15,7 +15,6 @@
 
 - name: Confirm service connectivity
   command: "/usr/bin/mysqladmin --defaults-file=/etc/mysql/debian.cnf ping"
-  changed_when: _mysql_running.rc != 0
   register: _mysql_running
   until: _mysql_running.rc == 0
   retries: "{{ num_retries }}"
