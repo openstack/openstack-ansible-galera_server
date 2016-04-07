@@ -6,10 +6,6 @@
   src: https://git.openstack.org/openstack/openstack-ansible-pip_install
   scm: git
   version: master
-- name: py_from_git
-  src: https://git.openstack.org/openstack/openstack-ansible-py_from_git
-  scm: git
-  version: master
 - name: lxc_hosts
   src: https://git.openstack.org/openstack/openstack-ansible-lxc_hosts
   scm: git
