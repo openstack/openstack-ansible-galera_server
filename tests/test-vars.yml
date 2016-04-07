@@ -1,0 +1,10 @@
+galera_cluster_members: "{{ groups['galera_test_hosts'] }}"
+galera_root_password: secrete
+galera_root_user: root
+galera_innodb_buffer_pool_size: 512M
+galera_innodb_log_buffer_size: 32M
+galera_server_id: "{{ inventory_hostname | string_2_int }}"
+galera_wsrep_node_name: "{{ inventory_hostname }}"
+galera_wsrep_provider_options:
+  - { option: "gcache.size", value: "32M" }
+galera_server_id: "{{ inventory_hostname | string_2_int }}"

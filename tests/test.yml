@@ -13,92 +13,44 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Run basic prep
-- include: test-prep.yml
+# Prepare the user ssh keys
+- include: test-prepare-keys.yml
+
+# Prepare the host
+- include: test-prepare-host.yml
 
 # Run container clean up and build
-- include: test-container-create.yml
+- include: test-prepare-containers.yml
 
-# Deploy the environment
-- name: Playbook for role testing
-  hosts: galera_test_hosts
-  serial: 1
-  user: root
-  gather_facts: true
+# Install Galera server
+- include: test-install-galera-server.yml
   vars:
-    galera_cluster_members: "{{ groups['galera_test_hosts'] }}"
-    galera_root_password: secrete
-    galera_root_user: root
-    galera_innodb_buffer_pool_size: 512M
-    galera_innodb_log_buffer_size: 32M
-    galera_server_id: "{{ inventory_hostname | string_2_int }}"
-    galera_wsrep_node_name: "{{ inventory_hostname }}"
-    galera_wsrep_provider_options:
-      - { option: "gcache.size", value: "32M" }
-  roles:
-    - role: "{{ rolename | basename }}"
-      galera_server_id: "{{ inventory_hostname | string_2_int }}"
+    message: "===== Running Current MariaDB Deployment ====="
 
-# Run playbook test
-- include: test-functional.yml
+# Run functional tests
+- include: test-galera-server-functional.yml
 
 ############################# UPGRADE TESTING #############################
 
 # Run container clean up and build
-- include: test-container-create.yml
+- include: test-prepare-containers.yml
 
-# Deploy the environment running a 5.5 to 10.0 upgrade
-- name: Playbook for role upgrade testing
-  hosts: galera_test_hosts
-  serial: 1
-  user: root
-  gather_facts: true
+# Install previous version of Galera server
+- include: test-install-galera-server.yml
   vars:
-    galera_cluster_members: "{{ groups['galera_test_hosts'] }}"
-    galera_root_password: secrete
-    galera_root_user: root
-    galera_innodb_buffer_pool_size: 512M
-    galera_innodb_log_buffer_size: 32M
-    galera_server_id: "{{ inventory_hostname | string_2_int }}"
-    galera_wsrep_node_name: "{{ inventory_hostname }}"
-    galera_wsrep_provider_options:
-      - { option: "gcache.size", value: "32M" }
-  pre_tasks:
-    - debug:
-        msg: "===== Running MariaDB 5.5 Deployment for Upgrade ====="
-  roles:
-    - role: "{{ rolename | basename }}"
-      galera_mariadb_server_package: "mariadb-galera-server-5.5"
-      galera_apt_repo_url: "https://mirror.rackspace.com/mariadb/repo/5.5/ubuntu"
-      galera_server_id: "{{ inventory_hostname | string_2_int }}"
+    message: "===== Running MariaDB 5.5 Deployment for Upgrade ====="
+    galera_mariadb_server_package: "mariadb-galera-server-5.5"
+    galera_apt_repo_url: "https://mirror.rackspace.com/mariadb/repo/5.5/ubuntu"
 
-# Run initial playbook test
-- include: test-functional.yml
+# Run initial functional tests
+- include: test-galera-server-functional.yml
 
-# Deploy the environment running a 5.5 to 10.0 upgrade
-- name: Playbook for role upgrade testing
-  hosts: galera_test_hosts
-  serial: 1
-  user: root
-  gather_facts: true
+# Perform upgrade of Galera server
+- include: test-install-galera-server.yml
   vars:
-    galera_cluster_members: "{{ groups['galera_test_hosts'] }}"
-    galera_root_password: secrete
-    galera_root_user: root
-    galera_innodb_buffer_pool_size: 512M
-    galera_innodb_log_buffer_size: 32M
-    galera_server_id: "{{ inventory_hostname | string_2_int }}"
-    galera_wsrep_node_name: "{{ inventory_hostname }}"
-    galera_wsrep_provider_options:
-      - { option: "gcache.size", value: "32M" }
-  pre_tasks:
-    - debug:
-        msg: "===== Running MariaDB 5.5 to current Upgrade ====="
-  roles:
-    - role: "{{ rolename | basename }}"
-      galera_server_id: "{{ inventory_hostname | string_2_int }}"
-      galera_ignore_cluster_state: true
-      galera_upgrade: true
+    message: "===== Running MariaDB 5.5 to Current Upgrade ====="
+    galera_ignore_cluster_state: true
+    galera_upgrade: true
 
-# Run final playbook test
-- include: test-functional.yml
+# Run final functional tests
+- include: test-galera-server-functional.yml

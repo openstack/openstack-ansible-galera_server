@@ -13,37 +13,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- name: Playbook for pre-role testing 1of3
-  hosts: 127.0.0.1
-  connection: local
-  become: false
-  pre_tasks:
-    - name: Create ssh key pair for root
-      user:
-        name: "{{ ansible_ssh_user }}"
-        generate_ssh_key: "yes"
-        ssh_key_bits: 2048
-        ssh_key_file: ".ssh/id_rsa"
-    - name: get the calling users key
-      command: cat ~/.ssh/id_rsa.pub
-      register: key_get
-    - set_fact:
-        lxc_container_ssh_key: "{{ key_get.stdout }}"
-
-- name: Playbook for pre-role testing 2of3
+- name: Perform basic LXC host setup
   hosts: localhost
-  connection: local
   pre_tasks:
-    - name: First ensure apt cache is always refreshed
+    - name: Ensure apt cache is always refreshed
       apt:
         update_cache: yes
     - name: Ensure root's new public ssh key is in authorized_keys
       authorized_key:
         user: root
-        key: "{{ hostvars['127.0.0.1']['lxc_container_ssh_key'] }}"
+        key: "{{ hostvars['localhost']['lxc_container_ssh_key'] }}"
         manage_dir: no
     - set_fact:
-        lxc_container_ssh_key: "{{ hostvars['127.0.0.1']['lxc_container_ssh_key'] }}"
+        lxc_container_ssh_key: "{{ hostvars['localhost']['lxc_container_ssh_key'] }}"
     - name: Check if this is an OpenStack-CI nodepool instance
       stat:
         path: /etc/nodepool/provider
@@ -74,29 +56,3 @@
           name: "trusty.tgz"
           sha256sum: "56c6a6e132ea7d10be2f3e8104f47136ccf408b30e362133f0dc4a0a9adb4d0c"
           chroot_path: trusty/rootfs-amd64
-  post_tasks:
-    # Inventory is being pre-loaded using a post tasks instead of through a dynamic
-    #  inventory system. While this is not a usual method for deployment it's being
-    #  done for functional testing.
-    - name: Create container hosts
-      add_host:
-        groups: "all,all_containers,galera_test_hosts"
-        hostname: "{{ item.name }}"
-        inventory_hostname: "{{ item.name }}"
-        ansible_ssh_host: "{{ item.address }}"
-        ansible_become: true
-        properties:
-          service_name: "{{ item.service }}"
-        container_networks:
-          management_address:
-            address: "{{ item.address }}"
-            bridge: "lxcbr0"
-            interface: "eth1"
-            netmask: "255.255.255.0"
-            type: "veth"
-        physical_host: localhost
-        container_name: "{{ item.name }}"
-      with_items:
-        - { name: "container1", service: "service1", address: "10.100.100.101" }
-        - { name: "container2", service: "service2", address: "10.100.100.102" }
-        - { name: "container3", service: "service3", address: "10.100.100.103" }
