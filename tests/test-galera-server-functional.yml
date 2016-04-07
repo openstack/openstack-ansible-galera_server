@@ -13,44 +13,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- name: Playbook for testing
+- name: Run functional tests
   hosts: galera_test_hosts
   user: root
   gather_facts: true
-  vars:
-    galera_root_password: secrete
-    galera_root_user: root
-  pre_tasks:
-    - debug:
-        msg: "===== Running Function Tests ====="
   tasks:
-    - name: Create DB for service on 10.100.100.101
-      mysql_db:
-        login_user: "{{ galera_root_user }}"
-        login_password: "{{ galera_root_password }}"
-        login_host: "10.100.100.101"
-        name: "OSA-test"
-        state: "present"
-      tags:
-        - neutron-db-setup
-      when: ansible_ssh_host == '10.100.100.101'
-    - name: Grant access to the DB on 10.100.100.102
-      mysql_user:
-        login_user: "{{ galera_root_user }}"
-        login_password: "{{ galera_root_password }}"
-        login_host: "10.100.100.102"
-        name: "osa-tester"
-        password: "tester-secrete"
-        host: "{{ item }}"
-        state: "present"
-        priv: "OSA-test.*:ALL"
-      with_items:
-        - "localhost"
-        - "%"
-      tags:
-        - neutron-db-setup
-      when: ansible_ssh_host == '10.100.100.102'
-    - name: check cluster state incoming addresses
+    - name: Check cluster incoming addresses
       command: |
         mysql -h {{ ansible_ssh_host }} \
               -p"{{ galera_root_password }}" \
@@ -58,7 +26,7 @@
               --silent \
               --skip-column-names
       register: wsrep_incoming_addresses
-    - name: check cluster state
+    - name: Check cluster local state
       command: |
         mysql -h {{ ansible_ssh_host }} \
               -p"{{ galera_root_password }}" \
@@ -66,7 +34,7 @@
               --silent \
               --skip-column-names
       register: wsrep_local_state_comment
-    - name: check cluster state
+    - name: Check cluster evs state
       command: |
         mysql -h {{ ansible_ssh_host }} \
               -p"{{ galera_root_password }}" \
@@ -82,3 +50,27 @@
           - "'10.100.100.101' in wsrep_incoming_addresses.stdout"
           - "'10.100.100.102' in wsrep_incoming_addresses.stdout"
           - "'10.100.100.103' in wsrep_incoming_addresses.stdout"
+    - name: Create DB for service on 10.100.100.101
+      mysql_db:
+        login_user: "{{ galera_root_user }}"
+        login_password: "{{ galera_root_password }}"
+        login_host: "10.100.100.101"
+        name: "OSA-test"
+        state: "present"
+      when: ansible_ssh_host == '10.100.100.101'
+    - name: Grant access to the DB on 10.100.100.102
+      mysql_user:
+        login_user: "{{ galera_root_user }}"
+        login_password: "{{ galera_root_password }}"
+        login_host: "10.100.100.102"
+        name: "osa-tester"
+        password: "tester-secrete"
+        host: "{{ item }}"
+        state: "present"
+        priv: "OSA-test.*:ALL"
+      with_items:
+        - "localhost"
+        - "%"
+      when: ansible_ssh_host == '10.100.100.102'
+  vars_files:
+    - test-vars.yml
