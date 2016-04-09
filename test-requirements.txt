@@ -9,3 +9,4 @@ oslosphinx>=2.5.0 # Apache-2.0
 
 # required by Ansible uri module
 httplib2
+reno>=0.1.1 # Apache-2.0

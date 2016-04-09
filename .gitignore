@@ -60,3 +60,6 @@ releasenotes/build
 
 # Test temp files
 tests/plugins
+
+# Files created by releasenotes build
+releasenotes/build
