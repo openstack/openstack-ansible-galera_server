@@ -18,7 +18,7 @@ galaxy_info:
   description: Installation galera server
   company: Rackspace
   license: Apache2
-  min_ansible_version: 1.6.6
+  min_ansible_version: 1.9
   platforms:
     - name: Ubuntu
       versions:
