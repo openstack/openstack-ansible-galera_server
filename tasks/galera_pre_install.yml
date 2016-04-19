@@ -38,7 +38,7 @@
   until: install_packages|success
   retries: 5
   delay: 2
-  with_items: galera_pre_apt_packages
+  with_items: "{{ galera_pre_apt_packages }}"
   tags:
     - galera-pre-apt-packages
 
@@ -54,7 +54,7 @@
   ignore_errors: True
   retries: 5
   delay: 2
-  with_items: galera_gpg_keys
+  with_items: "{{ galera_gpg_keys }}"
   tags:
     - galera-apt-keys
 
@@ -68,7 +68,7 @@
   until: add_keys_fallback|success
   retries: 5
   delay: 2
-  with_items: galera_gpg_keys
+  with_items: "{{ galera_gpg_keys }}"
   when: add_keys|failed and (item.fallback_keyserver is defined or item.fallback_url is defined)
   tags:
     - galera-apt-keys

@@ -56,7 +56,7 @@
       wsrep_incoming_addresses does not match across the cluster. Please fix before
       re-running the playbooks or override with
       'openstack-ansible -e galera_ignore_cluster_state=true galera-install.yml'.
-  with_items: play_hosts
+  with_items: "{{ play_hosts }}"
   when:
     - not galera_ignore_cluster_state | bool
     - mysql_running.rc == 0
