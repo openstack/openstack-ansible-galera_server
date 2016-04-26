@@ -48,7 +48,7 @@
   file:
     path: "{{ item }}"
     state: absent
-  with_items: old_sources.stdout_lines
+  with_items: "{{ old_sources.stdout_lines | default([]) }}"
   when:
     - galera_upgrade | bool
   tags:
