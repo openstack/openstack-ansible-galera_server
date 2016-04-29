@@ -31,6 +31,8 @@ galaxy_info:
     - openstack
 dependencies:
   - role: apt_package_pinning
+    apt_pinned_packages: "{{ galera_apt_pinned_packages }}"
+    apt_package_pinning_file_name: "galera_pin.pref"
     when:
       - ansible_pkg_mgr == 'apt'
   - role: galera_client
