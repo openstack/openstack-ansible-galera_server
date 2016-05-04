@@ -70,11 +70,11 @@
     - percona-xtrabackup
     - xtrabackup
   tags:
-    - galera-apt-packages
+    - percona-apt-packages
 
-- name: Install galera package
+- name: Install percona packages upstream
   apt:
-    deb: "{{ galera_package_path }}"
+    deb: "{{ percona_package_path }}"
     force: yes
   tags:
     - galera-apt-packages

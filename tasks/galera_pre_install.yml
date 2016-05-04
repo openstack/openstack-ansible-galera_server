@@ -73,7 +73,7 @@
   tags:
     - galera-apt-keys
 
-- name: Add galera repo(s)
+- name: Add galera repo
   apt_repository:
     repo: "{{ item.repo }}"
     state: "{{ item.state }}"
@@ -83,23 +83,35 @@
   delay: 2
   with_items:
     - "{{ galera_apt_repo }}"
-    - "{{ galera_apt_percona_xtrabackup_repo }}"
   tags:
     - galera-repos
 
-- name: Download the galera package
+- name: Add percona repo
+  apt_repository:
+    repo: "{{ item.repo }}"
+    state: "{{ item.state }}"
+  register: add_repos
+  until: add_repos|success
+  retries: 5
+  delay: 2
+  with_items:
+    - "{{ galera_apt_percona_xtrabackup_repo }}"
+  tags:
+    - percona-repos
+
+- name: Download the percona package
   get_url:
-    url: "{{ galera_package_url }}"
-    dest: "{{ galera_package_path }}"
+    url: "{{ percona_package_url }}"
+    dest: "{{ percona_package_path }}"
     mode: "0644"
-    sha256sum: "{{ galera_package_sha256 }}"
-    validate_certs: "{{ galera_package_download_validate_certs }}"
+    sha256sum: "{{ percona_package_sha256 }}"
+    validate_certs: "{{ percona_package_download_validate_certs }}"
   register: package_download
   retries: 3
   delay: 10
   until: package_download|success
   tags:
-    - galera-apt-packages
+    - percona-apt-packages
 
 - name: Prevent galera from starting on install
   copy:

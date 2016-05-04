@@ -1,3 +1,2 @@
-#!/bin/sh
-echo "All runlevel operations denied by policy" >&2
+#!/bin/bash
 exit 101

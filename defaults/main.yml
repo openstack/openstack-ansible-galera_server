@@ -68,17 +68,6 @@ galera_wsrep_sst_auth_password: "{{ galera_root_password  }}"
 # xtrabackup parallel/compression/sync threads
 galera_xtrabackup_threads: 4
 
-# Galera GPG Keys
-galera_gpg_keys:
-  - key_name: 'mariadb'
-    keyserver: 'hkp://keyserver.ubuntu.com:80'
-    fallback_keyserver: 'hkp://p80.pool.sks-keyservers.net:80'
-    hash_id: '0xcbcb082a1bb943db'
-  - key_name: 'percona-xtrabackup'
-    keyserver: 'hkp://keyserver.ubuntu.com:80'
-    fallback_keyserver: 'hkp://p80.pool.sks-keyservers.net:80'
-    hash_id: '0x1c4cbdcdcd2efd2a'
-
 # Repositories
 galera_apt_repo_url: "https://mirror.rackspace.com/mariadb/repo/10.0/ubuntu"
 galera_apt_repo:
@@ -90,15 +79,20 @@ galera_apt_percona_xtrabackup_repo:
   repo: "deb {{ galera_apt_percona_xtrabackup_url }} {{ ansible_distribution_release }} main"
   state: "present"
 
-galera_package_url: "https://www.percona.com/downloads/XtraBackup/Percona-XtraBackup-2.2.13/binary/debian/trusty/x86_64/percona-xtrabackup-22_2.2.13-1.trusty_amd64.deb"
-galera_package_sha256: "2f58eedefa905583f0650f77bb2b149139c4066c7fb690202124fe5c7ac83e9e"
-galera_package_path: "/opt/{{ galera_package_url | basename }}"
+percona_package_path: "/opt/{{ percona_package_url | basename }}"
 
 galera_apt_pinned_packages: [{ package: "*", release: MariaDB, priority: "1001" }]
 
-# Validate SSL certificates when downloading the galera deb above
+# Validate SSL certificates when downloading the percona deb above
 # May be set to "no" when proxy server is intercepting the certificates.
-galera_package_download_validate_certs: "yes"
+percona_package_download_validate_certs: "yes"
+
+#There is no package currently provided for Xenial, but vivid uses the
+#same libraries and installs without issue.
+qpress_deb_url: https://repo.percona.com/apt/pool/main/q/qpress/qpress_11-1.vivid_amd64.deb
+qpress_package_download_validate_certs: yes
+qpress_package_sha256: "54c02ae825b5c08bfae0792b23390b1577d7a26cadfb321384377bde31465959"
+qpress_package_path: "/opt/{{ qpress_deb_url | basename }}"
 
 galera_pip_packages:
   - MySQL-python

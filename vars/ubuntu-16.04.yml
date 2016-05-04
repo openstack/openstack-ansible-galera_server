@@ -18,7 +18,7 @@ galera_gpg_keys:
   - key_name: 'mariadb'
     keyserver: 'hkp://keyserver.ubuntu.com:80'
     fallback_keyserver: 'hkp://p80.pool.sks-keyservers.net:80'
-    hash_id: '0xcbcb082a1bb943db'
+    hash_id: '0xF1656F24C74CD1D8'
   - key_name: 'percona-xtrabackup'
     keyserver: 'hkp://keyserver.ubuntu.com:80'
     fallback_keyserver: 'hkp://p80.pool.sks-keyservers.net:80'
@@ -31,7 +31,7 @@ galera_pre_apt_packages:
   - libc6
   - libdbd-mysql-perl
   - libgcc1
-  - libgcrypt11
+  - libgcrypt20
   - libstdc++6
   - python-software-properties
   - software-properties-common
@@ -48,9 +48,9 @@ galera_apt_packages:
   - mariadb-client
   - "{{ galera_mariadb_server_package }}"
   - galera-3
-  - qpress
   - rsync
   - socat
+  - qpress
 
 galera_debconf_items:
   - question: "mysql-server/root_password"
@@ -62,7 +62,12 @@ galera_debconf_items:
     value: "{{ galera_root_password }}"
     vtype: "string"
 
-using_mysql_init: no
+using_mysql_init: yes
 
-percona_package_url: "https://www.percona.com/downloads/XtraBackup/Percona-XtraBackup-2.2.13/binary/debian/trusty/x86_64/percona-xtrabackup-22_2.2.13-1.trusty_amd64.deb"
-percona_package_sha256: "2f58eedefa905583f0650f77bb2b149139c4066c7fb690202124fe5c7ac83e9e"
+percona_package_url: "https://www.percona.com/downloads/XtraBackup/Percona-XtraBackup-2.2.13/binary/debian/vivid/x86_64/percona-xtrabackup-22_2.2.13-1.vivid_amd64.deb"
+percona_package_sha256: "3e3b15b2b261da004f7c4419ae427af9ec5707b40be1effe22a0142311c51856"
+
+# TODO: update this to xenial if the repo ever gets created.
+galera_apt_percona_xtrabackup_repo:
+  repo: "deb {{ galera_apt_percona_xtrabackup_url }} vivid main"
+  state: "present"

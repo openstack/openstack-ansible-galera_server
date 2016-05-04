@@ -24,8 +24,18 @@
     state: restarted
     args: "--wsrep-new-cluster"
   when:
+    - not using_mysql_init | bool
     - inventory_hostname == galera_server_bootstrap_node
     - mysql_running.rc != 0
+  tags:
+    - galera-bootstrap
+
+- name: Start cluster with wsrep init
+  shell: "/etc/init.d/mysql bootstrap"
+  when:
+    - inventory_hostname == galera_server_bootstrap_node
+    - mysql_running.rc != 0
+    - using_mysql_init | bool
   tags:
     - galera-bootstrap
 

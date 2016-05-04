@@ -22,7 +22,8 @@
     args: "{{ (not galera_existing_cluster | bool and inventory_hostname == galera_server_bootstrap_node) or (galera_cluster_members | length == 1) | ternary('--wsrep-new-cluster', '') }}"
   environment:
     MYSQLD_STARTUP_TIMEOUT: 180
-  when: not galera_running_and_bootstrapped | bool
+  when:
+     - not galera_running_and_bootstrapped | bool
   register: galera_restart
   until: galera_restart | success
   retries: 3
