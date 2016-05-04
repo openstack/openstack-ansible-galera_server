@@ -1,28 +1,24 @@
 - name: apt_package_pinning
   src: https://git.openstack.org/openstack/openstack-ansible-apt_package_pinning
   scm: git
-  version: master
+  version: origin/stable/mitaka
 - name: pip_install
   src: https://git.openstack.org/openstack/openstack-ansible-pip_install
   scm: git
-  version: master
-- name: py_from_git
-  src: https://git.openstack.org/openstack/openstack-ansible-py_from_git
-  scm: git
-  version: master
+  version: origin/stable/mitaka
 - name: lxc_hosts
   src: https://git.openstack.org/openstack/openstack-ansible-lxc_hosts
   scm: git
-  version: master
+  version: origin/stable/mitaka
 - name: lxc_container_create
   src: https://git.openstack.org/openstack/openstack-ansible-lxc_container_create
   scm: git
-  version: master
+  version: origin/stable/mitaka
 - name: openstack_hosts
   src: https://git.openstack.org/openstack/openstack-ansible-openstack_hosts
   scm: git
-  version: master
+  version: origin/stable/mitaka
 - name: galera_client
   src: https://git.openstack.org/openstack/openstack-ansible-galera_client
   scm: git
-  version: master
+  version: origin/stable/mitaka
