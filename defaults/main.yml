@@ -13,9 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-## APT Cache Options
-cache_timeout: 600
-
 galera_cluster_members: "{{ groups['galera_all'] }}"
 galera_server_bootstrap_node: "{{ galera_cluster_members[0] }}"
 galera_ignore_cluster_state: false
@@ -30,6 +27,14 @@ galera_cluster_name: openstack_galera_cluster
 #   set; we will force server id to 2, but this MySQL server will not act
 #   as a slave." is no longer present.
 # galera_server_id: 0
+
+# These are here to stub out the internal ROLE API.
+#  if these are used they should be set within the
+#  distro specific variable files found in vars/
+galera_pinned_packages: []
+galera_debconf_items: []
+percona_upstream_packages: []
+
 
 galera_existing_cluster: true
 galera_running_and_bootstrapped: false
@@ -68,32 +73,6 @@ galera_wsrep_sst_auth_password: "{{ galera_root_password  }}"
 # xtrabackup parallel/compression/sync threads
 galera_xtrabackup_threads: 4
 
-# Repositories
-galera_apt_repo_url: "https://mirror.rackspace.com/mariadb/repo/10.0/ubuntu"
-galera_apt_repo:
-  repo: "deb {{ galera_apt_repo_url }} {{ ansible_distribution_release }} main"
-  state: "present"
-
-galera_apt_percona_xtrabackup_url: "https://repo.percona.com/apt"
-galera_apt_percona_xtrabackup_repo:
-  repo: "deb {{ galera_apt_percona_xtrabackup_url }} {{ ansible_distribution_release }} main"
-  state: "present"
-
-percona_package_path: "/opt/{{ percona_package_url | basename }}"
-
-galera_apt_pinned_packages: [{ package: "*", release: MariaDB, priority: "1001" }]
-
-# Validate SSL certificates when downloading the percona deb above
-# May be set to "no" when proxy server is intercepting the certificates.
-percona_package_download_validate_certs: "yes"
-
-#There is no package currently provided for Xenial, but vivid uses the
-#same libraries and installs without issue.
-qpress_deb_url: https://repo.percona.com/apt/pool/main/q/qpress/qpress_11-1.vivid_amd64.deb
-qpress_package_download_validate_certs: yes
-qpress_package_sha256: "54c02ae825b5c08bfae0792b23390b1577d7a26cadfb321384377bde31465959"
-qpress_package_path: "/opt/{{ qpress_deb_url | basename }}"
-
 galera_pip_packages:
   - MySQL-python
   - pycrypto
@@ -112,3 +91,5 @@ galera_debian_cnf_overrides: {}
 # the cluster will be used which is something to note if deploying galera on different
 # hardware.
 # galera_max_connections: 500
+
+using_mysql_init: no

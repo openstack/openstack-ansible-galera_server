@@ -65,6 +65,7 @@
   delay: 2
   when:
     - galera_upgrade | bool
+    - ansible_pkg_mgr == 'apt'
   tags:
     - galera-upgrade
     - galera-apt-packages
@@ -75,6 +76,7 @@
     state: absent
   when:
     - galera_upgrade | bool
+    - ansible_pkg_mgr == 'apt'
   tags:
     - galera-upgrade
     - galera-apt-packages

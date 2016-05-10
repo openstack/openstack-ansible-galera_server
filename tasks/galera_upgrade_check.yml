@@ -13,40 +13,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- name: Check major galera install version
-  command: "dpkg -s {{ galera_mariadb_server_package }}"
-  ignore_errors: true
-  register: installed_galera_specific
+- include: galera_upgrade_check_apt.yml
   when:
-    - not galera_upgrade | bool
+    - ansible_pkg_mgr == 'apt'
   tags:
-    - galera-package-deb
-    - galera-apt-packages
-    - galera-upgrade
+    - install-apt
 
-- name: Check for any galera install version
-  shell: |
-    dpkg --get-selections | grep mariadb-galera-server
-  ignore_errors: true
-  register: installed_galera_any
+- include: galera_upgrade_check_yum.yml
   when:
-    - not galera_upgrade | bool
-    - installed_galera_specific.rc != 0
+    - ansible_pkg_mgr == 'yum'
   tags:
-    - galera-package-deb
-    - galera-apt-packages
-    - galera-upgrade
-
-- name: Check if major version of Galera is installed
-  fail:
-    msg: "To install a new major version of mariadb-galera-server set '-e galera_upgrade=true'."
-  when:
-    - not galera_upgrade | bool
-    - installed_galera_specific.rc != 0 and installed_galera_any.rc == 0
-  tags:
-    - galera-package-deb
-    - galera-apt-packages
-    - galera-upgrade
+    - install-apt
 
 - include: galera_upgrade_pre.yml
   when:

@@ -15,7 +15,6 @@
 
 - name: Create test containers
   hosts: all_containers
-  connection: local
   gather_facts: false
   pre_tasks:
     - name: Destroy test containers

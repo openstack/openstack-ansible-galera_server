@@ -13,93 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-#TODO(evrardjp): Replace the next 2 tasks by a standard apt with cache
-#when https://github.com/ansible/ansible-modules-core/pull/1517 is merged
-#in 1.9.x or we move to 2.0 (if tested working)
-- name: Check apt last update file
-  stat:
-    path: /var/cache/apt
-  register: apt_cache_stat
-  tags:
-    - galera-apt-packages
-
-- name: Update apt if needed
-  apt:
-    update_cache: yes
-  when: "ansible_date_time.epoch|float - apt_cache_stat.stat.mtime > {{cache_timeout}}"
-  tags:
-    - galera-apt-packages
-
-- name: Install galera pre packages
-  apt:
-    pkg: "{{ item }}"
-    state: latest
-  register: install_packages
-  until: install_packages|success
-  retries: 5
-  delay: 2
-  with_items: "{{ galera_pre_apt_packages }}"
-  tags:
-    - galera-pre-apt-packages
-
-- name: Add galera apt-keys
-  apt_key:
-    id: "{{ item.hash_id }}"
-    keyserver: "{{ item.keyserver | default(omit) }}"
-    data: "{{ item.data | default(omit) }}"
-    url: "{{ item.url | default(omit) }}"
-    state: "present"
-  register: add_keys
-  until: add_keys|success
-  ignore_errors: True
-  retries: 5
-  delay: 2
-  with_items: "{{ galera_gpg_keys }}"
-  tags:
-    - galera-apt-keys
-
-- name: Add galera apt-keys using fallback keyserver
-  apt_key:
-    id: "{{ item.hash_id }}"
-    keyserver: "{{ item.fallback_keyserver | default(omit) }}"
-    url: "{{ item.fallback_url | default(omit) }}"
-    state: "present"
-  register: add_keys_fallback
-  until: add_keys_fallback|success
-  retries: 5
-  delay: 2
-  with_items: "{{ galera_gpg_keys }}"
-  when: add_keys|failed and (item.fallback_keyserver is defined or item.fallback_url is defined)
-  tags:
-    - galera-apt-keys
-
-- name: Add galera repo
-  apt_repository:
-    repo: "{{ item.repo }}"
-    state: "{{ item.state }}"
-  register: add_repos
-  until: add_repos|success
-  retries: 5
-  delay: 2
-  with_items:
-    - "{{ galera_apt_repo }}"
-  tags:
-    - galera-repos
-
-- name: Add percona repo
-  apt_repository:
-    repo: "{{ item.repo }}"
-    state: "{{ item.state }}"
-  register: add_repos
-  until: add_repos|success
-  retries: 5
-  delay: 2
-  with_items:
-    - "{{ galera_apt_percona_xtrabackup_repo }}"
-  tags:
-    - percona-repos
-
-- name: Download the percona package
+- name: Download the percona-xtrabackup package
   get_url:
     url: "{{ percona_package_url }}"
     dest: "{{ percona_package_path }}"
@@ -110,17 +24,23 @@
   retries: 3
   delay: 10
   until: package_download|success
+  when: not use_percona_upstream | bool
   tags:
     - percona-apt-packages
 
-- name: Prevent galera from starting on install
-  copy:
-    src: "policy-rc.d"
-    dest: "/usr/sbin/policy-rc.d"
-    mode: "0755"
-    backup: yes
+- name: Download the qpress package
+  get_url:
+    url: "{{ qpress_package_url }}"
+    dest: "{{ qpress_package_path }}"
+    sha256sum: "{{ qpress_package_sha256 }}"
+    validate_certs: "{{ qpress_package_download_validate_certs }}"
+  register: package_download
+  retries: 3
+  delay: 10
+  until: package_download|success
+  when: not use_percona_upstream | bool
   tags:
-    - galera-config
+    - percona-apt-packages
 
 - name: Drop limits config
   template:

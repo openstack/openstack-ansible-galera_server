@@ -1,0 +1,162 @@
+---
+# Copyright 2016, Rackspace US, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+- name: Update the local file system CRUD
+  file:
+    src: "{{ item.src|default(omit) }}"
+    path: "{{ item.path }}"
+    state: "{{ item.state }}"
+    force: "{{ item.force|default(omit) }}"
+  with_items:
+    - { path: "/etc/mysql", state: "directory" }
+    - { path: "/etc/mysql/conf.d", state: "directory" }
+    - { src: "/usr/lib64/galera", path: "/usr/lib/galera", state: "link", force: true }
+    - { src: "/etc/mysql/conf.d", path: "/etc/my.cnf.d", state: "link", force: true }
+    - { src: "/etc/mysql/my.cnf", path: "/etc/my.cnf", state: "link", force: true }
+  tags:
+    - galera-config
+
+- name: Add galera gpg-keys
+  rpm_key:
+    state: present
+    key: "{{ item.keyserver }}/{{ item.key_name }}"
+  register: add_keys
+  until: add_keys|success
+  ignore_errors: True
+  retries: 5
+  delay: 2
+  with_items: "{{ galera_client_gpg_keys }}"
+  tags:
+    - galera-gpg-keys
+
+- name: Add galera gpg-keys using fallback keyserver
+  rpm_key:
+    state: present
+    key: "{{ item.fallback_keyserver }}/{{ item.key_name }}"
+  register: add_keys
+  until: add_keys|success
+  ignore_errors: True
+  retries: 5
+  delay: 2
+  with_items: "{{ galera_client_gpg_keys }}"
+  when: add_keys|failed and (item.fallback_keyserver is defined)
+  tags:
+    - galera-gpg-keys
+
+#TODO(cloudnull) Remove this task once we move to Ansible 2.1
+# where we can leverage the `yum_repository` module:
+# https://docs.ansible.com/ansible/yum_repository_module.html
+- name: Add galera repo
+  copy:
+    content: |
+      [{{ item.name }}]
+      name={{ item.name }}
+      description={{ item.description }}
+      baseurl={{ item.baseurl }}
+      gpgkey={{ item.gpgkey }}
+      gpgcheck=1
+      enabled=1
+    dest: "/etc/yum.repos.d/{{ item.file }}.repo"
+  register: add_repos
+  until: add_repos|success
+  retries: 5
+  delay: 2
+  with_items:
+    - "{{ galera_repo }}"
+  tags:
+    - galera-repos
+
+- name: Install galera yum pre packages
+  yum:
+    pkg: "{{ item }}"
+    state: latest
+  register: install_packages
+  until: install_packages|success
+  retries: 5
+  delay: 2
+  with_items: "{{ galera_pre_packages }}"
+  tags:
+    - galera-pre-yum-packages
+
+- name: Install percona repo
+  yum:
+    pkg: "{{ galera_percona_xtrabackup_repo.repo }}"
+    state: "{{ galera_percona_xtrabackup_repo.state }}"
+  register: install_packages
+  until: install_packages|success
+  retries: 5
+  delay: 2
+  when: use_percona_upstream | bool
+  tags:
+    - galera-pre-yum-packages
+
+- name: Install percona yum packages
+  yum:
+    pkg: "{{ item }}"
+    state: latest
+  register: install_packages
+  until: install_packages|success
+  retries: 5
+  delay: 2
+  with_items: "{{ percona_upstream_packages }}"
+  when: use_percona_upstream | bool
+  tags:
+    - galera-pre-yum-packages
+
+- name: Install galera yum packages
+  yum:
+    pkg: "{{ item }}"
+    state: latest
+  register: install_packages
+  until: install_packages|success
+  retries: 5
+  delay: 2
+  with_items: "{{ galera_packages }}"
+  tags:
+    - galera-pre-yum-packages
+
+- name: Enable mysql to start at boot
+  service:
+    name: "mysql"
+    enabled: "yes"
+  tags:
+    - galera-enable
+
+# NOTE(cloudnull): This is an idempotent shell task is it will only run once
+#  provided the "/etc/mysql/rhel_configured" exists. This tasks automates the
+#  MySQL secure setup which is done automatically in Ubuntu deployments.
+- name: "Update root user, connections, and grant options"
+  shell: |
+    service mysql start || true
+    # Reset the root password, at this time there is no password set
+    mysqladmin --no-defaults --port=3306 --socket=/var/run/mysqld/mysqld.sock --host=127.0.0.1 --user=root password "{{ galera_root_password }}"
+    # Setup the root user for MySQL
+    mysql -u root -h localhost -e "UPDATE mysql.user SET Password=PASSWORD('$rootpass') WHERE User='root';"
+    mysql -u root -h localhost -e "DELETE FROM mysql.user WHERE user='';"
+    mysql -u root -h localhost -e "DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('%', 'localhost', '127.0.0.1', '::1');"
+    mysql -u root -h localhost -e "DELETE FROM mysql.db WHERE Db='test' OR Db='test\_%';"
+    mysql -u root -h localhost -e "GRANT ALL PRIVILEGES ON *.* TO '{{ galera_root_user }}'@'localhost' IDENTIFIED BY '{{ galera_root_password }}' WITH GRANT OPTION;"
+    mysql -u root -h localhost -e "GRANT ALL PRIVILEGES ON *.* TO '{{ galera_root_user }}'@'127.0.0.1' IDENTIFIED BY '{{ galera_root_password }}' WITH GRANT OPTION;"
+    mysql -u root -h localhost -e "GRANT ALL PRIVILEGES ON *.* TO '{{ galera_root_user }}'@'::1' IDENTIFIED BY '{{ galera_root_password }}' WITH GRANT OPTION;"
+    mysql -u root -h localhost -e "GRANT ALL PRIVILEGES ON *.* TO '{{ galera_root_user }}'@'%' IDENTIFIED BY '{{ galera_root_password }}' WITH GRANT OPTION;"
+    mysql -u root -h localhost -e "FLUSH PRIVILEGES;"
+    # Create a marker file to ensure this script is not run again
+    touch /etc/mysql/rhel_configured
+    service mysql stop
+  args:
+    creates: /etc/mysql/rhel_configured
+  tags:
+    - galera-rhel-config
+    - skip_ansible_lint

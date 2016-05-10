@@ -22,6 +22,10 @@ if [ "$(which apt-get)" ]; then
   apt-get install -y build-essential python2.7 python-dev git-core libssl-dev libffi-dev
 fi
 
+if [ "$(which yum)" ]; then
+  yum install -y '@Development Tools' python-devel git libffi-devel openssl-devel
+fi
+
 # get pip, if necessary
 if [ ! "$(which pip)" ]; then
   curl --silent --show-error --retry 5 \
