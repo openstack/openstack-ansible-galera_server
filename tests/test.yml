@@ -29,28 +29,3 @@
 
 # Run functional tests
 - include: test-galera-server-functional.yml
-
-############################# UPGRADE TESTING #############################
-
-# Run container clean up and build
-- include: test-prepare-containers.yml
-
-# Install previous version of Galera server
-- include: test-install-galera-server.yml
-  vars:
-    message: "===== Running MariaDB 5.5 Deployment for Upgrade ====="
-    galera_mariadb_server_package: "mariadb-galera-server-5.5"
-    galera_apt_repo_url: "https://mirror.rackspace.com/mariadb/repo/5.5/ubuntu"
-
-# Run initial functional tests
-- include: test-galera-server-functional.yml
-
-# Perform upgrade of Galera server
-- include: test-install-galera-server.yml
-  vars:
-    message: "===== Running MariaDB 5.5 to Current Upgrade ====="
-    galera_ignore_cluster_state: true
-    galera_upgrade: true
-
-# Run final functional tests
-- include: test-galera-server-functional.yml
