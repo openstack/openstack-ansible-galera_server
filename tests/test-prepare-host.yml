@@ -32,31 +32,12 @@
       stat:
         path: /etc/nodepool/provider
       register: nodepool
-    - name: Set the files to copy into the container cache for OpenStack-CI instances (rhel)
+    - name: Set the files to copy into the container cache for OpenStack-CI instances
       set_fact:
         lxc_container_cache_files:
           - { src: '/etc/pip.conf', dest: '/etc/pip.conf' }
       when:
         - nodepool.stat.exists | bool
-        - ansible_pkg_mgr == 'yum'
-    - name: Set the files to copy into the container cache for OpenStack-CI instances (deb)
-      set_fact:
-        lxc_container_cache_files:
-          - { src: '/etc/pip.conf', dest: '/etc/pip.conf' }
-          - { src: '/etc/apt/apt.conf.d/99unauthenticated', dest: '/etc/apt/apt.conf.d/99unauthenticated' }
-      when:
-        - nodepool.stat.exists | bool
-        - ansible_pkg_mgr == 'apt'
-    - name: Determine the existing Ubuntu repo configuration
-      shell: 'awk "/^deb .*ubuntu\/? {{ ansible_distribution_release }} main/ {print \$2; exit}" /etc/apt/sources.list'
-      register: ubuntu_repo
-      changed_when: false
-      when: ansible_pkg_mgr == 'apt'
-    - name: Set apt repo facts based on discovered information
-      set_fact:
-        lxc_container_template_main_apt_repo: "{{ ubuntu_repo.stdout }}"
-        lxc_container_template_security_apt_rep: "{{ ubuntu_repo.stdout }}"
-      when: ansible_pkg_mgr == 'apt'
   roles:
     - role: "lxc_hosts"
       lxc_net_address: 10.100.100.1
@@ -64,8 +45,3 @@
       lxc_net_bridge: lxcbr0
       lxc_kernel_options:
         - { key: 'fs.inotify.max_user_instances', value: 1024 }
-      lxc_container_caches:
-        - url: "https://rpc-repo.rackspace.com/container_images/rpc-trusty-container.tgz"
-          name: "trusty.tgz"
-          sha256sum: "56c6a6e132ea7d10be2f3e8104f47136ccf408b30e362133f0dc4a0a9adb4d0c"
-          chroot_path: trusty/rootfs-amd64
