@@ -83,12 +83,12 @@ qpress_package_sha256: "21e2f4466a1dffd6281d01d0b29388e2a2f0f9c6ba9538b128c34af6
 qpress_package_path: "/opt/{{ qpress_package_url | basename }}"
 
 # Repositories
-galera_percona_xtrabackup_repo_url: "https://repo.percona.com/apt"
+galera_percona_xtrabackup_repo_url: "http://repo.percona.com/apt"
 galera_percona_xtrabackup_repo:
   repo: "deb {{ galera_percona_xtrabackup_repo_url }} {{ ansible_distribution_release }} main"
   state: "present"
 
-galera_apt_repo_url: "https://mirror.rackspace.com/mariadb/repo/10.0/ubuntu"
+galera_apt_repo_url: "http://mirror.rackspace.com/mariadb/repo/10.0/ubuntu"
 galera_repo:
   repo: "deb {{ galera_apt_repo_url }} {{ ansible_distribution_release }} main"
   state: "present"
