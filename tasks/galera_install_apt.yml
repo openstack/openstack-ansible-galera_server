@@ -33,7 +33,7 @@
 - name: Install galera apt pre packages
   apt:
     pkg: "{{ item }}"
-    state: latest
+    state: "{{ galera_server_package_state }}"
   register: install_packages
   until: install_packages|success
   retries: 5
@@ -141,7 +141,7 @@
 - name: Install galera packages
   apt:
     pkg: "{{ item }}"
-    state: latest
+    state: "{{ galera_server_package_state }}"
   register: install_packages
   until: install_packages|success
   retries: 5

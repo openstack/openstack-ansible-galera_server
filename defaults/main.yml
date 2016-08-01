@@ -13,6 +13,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# Set the package install state for distribution packages
+# Options are 'present' and 'latest'
+galera_server_package_state: "latest"
+
 galera_cluster_members: "{{ groups['galera_all'] }}"
 galera_server_bootstrap_node: "{{ galera_cluster_members[0] }}"
 galera_ignore_cluster_state: false
