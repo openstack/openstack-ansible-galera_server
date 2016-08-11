@@ -61,3 +61,6 @@ releasenotes/build
 
 # Test temp files
 tests/plugins
+
+# Vagrant testing artifacts
+.vagrant
