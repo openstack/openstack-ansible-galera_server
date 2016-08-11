@@ -13,19 +13,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Prepare the user ssh keys
-- include: test-prepare-keys.yml
+# Setup the host
+- include: playbooks/test-setup-host.yml
 
-# Prepare the host
-- include: test-prepare-host.yml
-
-# Run container clean up and build
-- include: test-prepare-containers.yml
+# Prepare the containers
+- include: playbooks/test-prepare-containers.yml
 
 # Install Galera server
-- include: test-install-galera-server.yml
-  vars:
-    message: "===== Running Current MariaDB Deployment ====="
+- include: playbooks/test-install-galera.yml
 
 # Run functional tests
 - include: test-galera-server-functional.yml

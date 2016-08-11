@@ -14,7 +14,7 @@
 # limitations under the License.
 
 - name: Run functional tests
-  hosts: galera_test_hosts
+  hosts: galera_all
   user: root
   gather_facts: true
   tasks:
@@ -73,4 +73,4 @@
         - "%"
       when: ansible_ssh_host == '10.100.100.102'
   vars_files:
-    - test-vars.yml
+    - playbooks/test-vars.yml

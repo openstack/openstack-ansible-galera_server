@@ -1,13 +1,15 @@
 [all]
-localhost ansible_connection=local ansible_become=True
+localhost ansible_become=True
 container1 ansible_ssh_host=10.100.100.101 ansible_host=10.100.100.101 ansible_become=True ansible_user=root
 container2 ansible_ssh_host=10.100.100.102 ansible_host=10.100.100.102 ansible_become=True ansible_user=root
 container3 ansible_ssh_host=10.100.100.103 ansible_host=10.100.100.103 ansible_become=True ansible_user=root
 
-[galera_test_hosts]
+[galera_all]
 container1
 container2
 container3
 
-[all_containers:children]
-galera_test_hosts
+[all_containers]
+container1
+container2
+container3
