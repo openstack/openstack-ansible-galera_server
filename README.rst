@@ -1,35 +1,9 @@
-OpenStack-Ansible Galera Server
-###############################
+===============================
+OpenStack-Ansible Galera server
+===============================
 
-Ansible role to install and configure a Galera cluster powered by MariaDB
+Documentation for the project can be found at:
+  http://docs.openstack.org/developer/openstack-ansible-galera_server
 
-Default Variables
-=================
-
-.. literalinclude:: ../../defaults/main.yml
-   :language: yaml
-   :start-after: under the License.
-
-Required Variables
-==================
-
-To use this role, define the following variables:
-
-.. code-block:: yaml
-
-    galera_root_password: secrete
-
-
-Example Playbook
-================
-
-.. code-block:: yaml
-
-    - name: Install galera server
-      hosts: galera_all
-      user: root
-      roles:
-        - { role: "galera_server" }
-      vars:
-        galera_root_password: secrete
-
+The project home is at:
+  http://launchpad.net/openstack-ansible
