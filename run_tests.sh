@@ -17,24 +17,31 @@ set -euov
 
 FUNCTIONAL_TEST=${FUNCTIONAL_TEST:-true}
 
-# prep the host
-if [ "$(which apt-get)" ]; then
-  apt-get update
-  apt-get install -y build-essential python2.7 python-dev git-core libssl-dev libffi-dev
-fi
-
-if [ "$(which yum)" ]; then
-  yum install -y '@Development Tools' python-devel git libffi-devel openssl-devel
-fi
-
-# get pip, if necessary
+# Install pip
 if [ ! "$(which pip)" ]; then
   curl --silent --show-error --retry 5 \
     https://bootstrap.pypa.io/get-pip.py | sudo python2.7
 fi
 
-# install tox
-pip install tox
+# Install bindep and tox
+pip install bindep tox
+
+# CentOS 7 requires two additional packages:
+#   redhat-lsb-core - for bindep profile support
+#   epel-release    - required to install python-ndg_httpsclient/python2-pyasn1
+if [ "$(which yum)" ]; then
+    yum -y install redhat-lsb-core epel-release
+fi
+
+# Install OS packages using bindep
+if apt-get -v >/dev/null 2>&1 ; then
+    apt-get update
+    DEBIAN_FRONTEND=noninteractive \
+      apt-get -q --option "Dpkg::Options::=--force-confold" \
+      --assume-yes install `bindep -b -f bindep.txt test`
+else
+    yum install -y `bindep -b -f bindep.txt test`
+fi
 
 # run through each tox env and execute the test
 for tox_env in $(awk -F= '/envlist/ {print $2}' tox.ini | sed 's/,/ /g'); do
