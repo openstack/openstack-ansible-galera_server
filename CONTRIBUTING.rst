@@ -1,7 +1,5 @@
 OpenStack-Ansible Galera Server
 ###############################
-:tags: openstack, cloud, ansible
-:category: \*nix
 
 Contributor Guidelines
 ^^^^^^^^^^^^^^^^^^^^^^
