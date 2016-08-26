@@ -86,7 +86,7 @@
   until: install_packages|success
   retries: 5
   delay: 2
-  with_items: "{{ galera_pre_packages }}"
+  with_items: "{{ galera_server_required_distro_packages }}"
   tags:
     - galera-pre-yum-packages
 
@@ -110,7 +110,7 @@
   until: install_packages|success
   retries: 5
   delay: 2
-  with_items: "{{ percona_upstream_packages }}"
+  with_items: "{{ galera_server_percona_distro_packages }}"
   when: use_percona_upstream | bool
   tags:
     - galera-pre-yum-packages
@@ -123,7 +123,7 @@
   until: install_packages|success
   retries: 5
   delay: 2
-  with_items: "{{ galera_packages }}"
+  with_items: "{{ galera_server_mariadb_distro_packages }}"
   tags:
     - galera-pre-yum-packages
 

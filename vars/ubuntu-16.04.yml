@@ -16,7 +16,7 @@
 ## APT Cache Options
 cache_timeout: 600
 
-galera_pinned_packages: [{ package: "*", release: MariaDB, priority: "1001" }]
+galera_server_distro_package_pins: [{ package: "*", release: MariaDB, priority: "1001" }]
 
 # Galera GPG Keys
 galera_gpg_keys:
@@ -29,7 +29,7 @@ galera_gpg_keys:
     fallback_keyserver: 'hkp://p80.pool.sks-keyservers.net:80'
     hash_id: '0x1c4cbdcdcd2efd2a'
 
-galera_pre_packages:
+galera_server_required_distro_packages:
   - apt-transport-https
   - debconf-utils
   - libaio1
@@ -46,10 +46,11 @@ galera_pre_packages:
 # "galera_common" role.
 galera_mariadb_apt_server_package: "mariadb-galera-server-10.0"
 
-# NB This is specifically galera_packages as these packages only get installed
-# during the galera play - this is because of the preseed task and the service
-# startup control used when installing mariadb-galera-server and galera.
-galera_packages:
+# NB This is specifically galera_server_mariadb_distro_packages as these
+# packages only get installed during the galera play - this is because of
+# the preseed task and the service startup control used when installing
+# mariadb-galera-server and galera.
+galera_server_mariadb_distro_packages:
   - mariadb-client
   - "{{ galera_mariadb_apt_server_package }}"
   - galera-3
@@ -66,7 +67,7 @@ galera_debconf_items:
     value: "{{ galera_root_password }}"
     vtype: "string"
 
-percona_upstream_packages:
+galera_server_percona_distro_packages:
   - qpress
   - percona-xtrabackup
 
