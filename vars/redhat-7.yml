@@ -19,7 +19,7 @@ galera_gpg_keys:
     keyserver: 'https://yum.mariadb.org'
     fallback_keyserver: 'https://yum.mariadb.org'
 
-galera_pre_packages:
+galera_server_required_distro_packages:
   - gnupg2
   - libaio
   - libstdc++
@@ -34,7 +34,7 @@ percona_package_download_validate_certs: "yes"
 
 galera_mariadb_yum_server_package: "MariaDB-Galera-server"
 
-galera_packages:
+galera_server_mariadb_distro_packages:
   - which
   - "{{ galera_mariadb_yum_server_package }}"
   - MariaDB-shared
@@ -56,7 +56,7 @@ galera_percona_xtrabackup_repo:
   repo: "http://www.percona.com/downloads/percona-release/redhat/0.1-3/percona-release-0.1-3.noarch.rpm"
   state: "present"
 
-percona_upstream_packages:
+galera_server_percona_distro_packages:
   - qpress
   - percona-xtrabackup
 
