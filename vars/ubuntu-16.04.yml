@@ -77,11 +77,9 @@ percona_package_url: "https://www.percona.com/downloads/XtraBackup/Percona-XtraB
 percona_package_sha256: "3e3b15b2b261da004f7c4419ae427af9ec5707b40be1effe22a0142311c51856"
 percona_package_path: "/opt/{{ percona_package_url | basename }}"
 
-#There is no package currently provided for Xenial, but vivid uses the
-# same libraries and installs without issue.
 qpress_package_download_validate_certs: yes
-qpress_package_url: https://repo.percona.com/apt/pool/main/q/qpress/qpress_11-1.vivid_amd64.deb
-qpress_package_sha256: "54c02ae825b5c08bfae0792b23390b1577d7a26cadfb321384377bde31465959"
+qpress_package_url: https://repo.percona.com/apt/pool/main/q/qpress/qpress_11-1.xenial_amd64.deb
+qpress_package_sha256: "c615ec08eb38a9cb59541ae1d7ed42db35e92513735834b48d30d4c485e01534"
 qpress_package_path: "/opt/{{ qpress_package_url | basename }}"
 
 # Repositories
