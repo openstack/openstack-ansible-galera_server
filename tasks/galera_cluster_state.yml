@@ -64,6 +64,22 @@
   tags:
     - galera-cluster-state-check
 
+- name: Fail if galera_cluster_name doesnt match file value
+  fail:
+    msg: >
+      "The galera_cluster_name variable does not match what is set in mysql.
+       Check your galera_cluster_name setting in your user_*.yml files in /etc/openstack_deploy
+       and compare to the current value in /etc/mysql/conf.d/cluster.cnf on the host, and
+       the wsrep_cluster_name value set in your running galera cluster.
+       If you are sure you want to change this variable you can force change your
+       galera_cluster_name variable by setting 'galera_force_change_cluster_name: True'"
+  when:
+    - mysql_running.rc == 0
+    - mysql_status['wsrep_cluster_name'] != galera_cluster_name
+    - not galera_force_change_cluster_name | bool
+  tags:
+    - galera-cluster-state-check
+
 - set_fact:
     galera_existing_cluster: true
   when: mysql_running.rc == 0

@@ -24,9 +24,9 @@ DOCUMENTATION = """
 ---
 module: mysql_status_facts
 short_description:
-    - A module for gathering mysql status facts.
+    - A module for gathering mysql status and global variable facts.
 description:
-    - A module for gathering mysql status facts.
+    - A module for gathering mysql status and global variable facts.
 author: Rcbops
 """
 
@@ -44,13 +44,17 @@ class MysqlStatusFacts(object):
     def gather_facts(self):
         """Get information about mysql status."""
         try:
-            output = subprocess.check_output(["mysql", "-e", "show status"],
+            status = subprocess.check_output(["mysql", "-e", "show status"],
                                              stderr=subprocess.STDOUT)
+            global_vars = subprocess.check_output(["mysql", "-e",
+                                                   "show global variables"],
+                                                  stderr=subprocess.STDOUT)
         except subprocess.CalledProcessError as e:
             message = 'Mysql fact collection failed: "%s".' % e.output.strip()
             self.module.fail_json(msg=message)
         else:
-            lines = output.split('\n')
+            lines = status.split('\n')
+            lines += global_vars.split('\n')
             facts = dict(l.split('\t') for l in lines if l)
             self.module.exit_json(
                 changed=self.state_change,
