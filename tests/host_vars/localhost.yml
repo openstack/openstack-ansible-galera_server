@@ -13,15 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- name: Install galera server
-  hosts: galera_test_hosts
-  serial: 1
-  user: root
-  gather_facts: true
-  pre_tasks:
-    - debug:
-        msg: "{{ message }}"
-  roles:
-    - role: "{{ rolename | basename }}"
-  vars_files:
-    - test-vars.yml
+bridges:
+  - "br-mgmt"
+
+ansible_python_interpreter: "/usr/bin/python2"
