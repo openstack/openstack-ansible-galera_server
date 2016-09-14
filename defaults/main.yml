@@ -25,6 +25,10 @@ galera_upgrade: false
 galera_wsrep_node_name: "{{ inventory_hostname }}"
 galera_cluster_name: openstack_galera_cluster
 
+# This variable will prevent the galera_cluster_name from changing unintentionally on a running cluster.
+# To intentionally change the galera_cluster_name set this variable to True
+galera_force_change_cluster_name: False
+
 # The galera server-id should be set on all cluster nodes to ensure
 #  that replication is handled correctly and the error
 #  "Warning: You should set server-id to a non-0 value if master_host is
