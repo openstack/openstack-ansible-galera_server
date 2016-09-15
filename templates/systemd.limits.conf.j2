@@ -1,0 +1,12 @@
+# {{ ansible_managed }}
+
+{%- set all_calculated_max_connections = [] %}
+{%- for galera_node in galera_cluster_members %}
+    {%- set _ = all_calculated_max_connections.append((hostvars[galera_node]['ansible_processor_vcpus'] | int > 0) | ternary (ansible_processor_vcpus, 2) * 100) %}
+{%- endfor %}
+{%- set calculated_min_connections = all_calculated_max_connections | min %}
+{%- set calculated_max_connections = galera_max_connections | default(calculated_min_connections) %}
+
+[Service]
+LimitNOFILE={{ calculated_max_connections }}
+

@@ -68,14 +68,54 @@
   tags:
     - galera-config
 
-# NOTE: (mancdaz) The target will need to change to /etc/default/mariadb
-#       for mariadb-10.1
-- name: Drop mariadb config(s)
+- name: Drop limits config (upstart)
+  template:
+    src: "upstart.limits.conf.j2"
+    dest: "/etc/security/limits.conf"
+  when:
+    - pid1_name != "systemd"
+  notify:
+    - Restart mysql
+  tags:
+    - galera-config
+
+# NOTE: (mancdaz) REMOVE "/etc/default/mysql" when running MariaDB 10.1
+- name: Apply resource limits (upstart)
   template:
     src: "mysql_defaults.j2"
-    dest: "/etc/default/mysql"
+    dest: "{{ item }}"
     mode: "0644"
-  notify: Restart mysql
+  with_items:
+    - /etc/default/mysql
+    - /etc/default/mariadb
+  when:
+    - ansible_pkg_mgr == 'apt'
+    - pid1_name != "systemd"
+  notify:
+    - Restart mysql
+  tags:
+    - galera-config
+
+- name: Create mariadb systemd service config dir
+  file:
+    path: "/etc/systemd/system/mariadb.service.d"
+    state: "directory"
+    group: "root"
+    owner: "root"
+    mode: "0755"
+  when:
+    - pid1_name == "systemd"
+
+- name: Apply resource limits (systemd)
+  template:
+    src: "systemd.limits.conf.j2"
+    dest: "/etc/systemd/system/mariadb.service.d/limits.conf"
+    mode: "0644"
+  when:
+    - pid1_name == "systemd"
+  notify:
+    - Reload the systemd daemon
+    - Restart mysql
   tags:
     - galera-config
 
