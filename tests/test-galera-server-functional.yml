@@ -20,7 +20,7 @@
   tasks:
     - name: Check cluster incoming addresses
       command: |
-        mysql -h {{ ansible_ssh_host }} \
+        mysql -h {{ ansible_host }} \
               -p"{{ galera_root_password }}" \
               -e "show status like 'wsrep_incoming_addresses';" \
               --silent \
@@ -28,7 +28,7 @@
       register: wsrep_incoming_addresses
     - name: Check cluster local state
       command: |
-        mysql -h {{ ansible_ssh_host }} \
+        mysql -h {{ ansible_host }} \
               -p"{{ galera_root_password }}" \
               -e "show status like 'wsrep_local_state_comment';" \
               --silent \
@@ -36,7 +36,7 @@
       register: wsrep_local_state_comment
     - name: Check cluster evs state
       command: |
-        mysql -h {{ ansible_ssh_host }} \
+        mysql -h {{ ansible_host }} \
               -p"{{ galera_root_password }}" \
               -e "show status like 'wsrep_evs_state';" \
               --silent \

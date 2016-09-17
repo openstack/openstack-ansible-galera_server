@@ -66,8 +66,8 @@ galera_innodb_log_file_size: 1024M
 galera_innodb_log_buffer_size: 128M
 
 ## wsrep configuration
-galera_wsrep_address: "{{ ansible_ssh_host }}"
-galera_wsrep_cluster_address: "{% for host in galera_cluster_members %}{{ hostvars[host]['ansible_ssh_host'] }}{% if not loop.last %},{% endif %}{% endfor %}"
+galera_wsrep_address: "{{ ansible_host }}"
+galera_wsrep_cluster_address: "{% for host in galera_cluster_members %}{{ hostvars[host]['ansible_host'] }}{% if not loop.last %},{% endif %}{% endfor %}"
 galera_wsrep_node_incoming_address: "{{ galera_wsrep_address }}"
 galera_wsrep_slave_threads: "{{ (ansible_processor_vcpus | int > 0) | ternary (ansible_processor_vcpus, 2) }}"
 galera_wsrep_retry_autocommit: 3
