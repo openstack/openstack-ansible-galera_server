@@ -18,5 +18,16 @@ export ANSIBLE_LIBRARY=${HOME}/.ansible/plugins/library
 # specified in ansible.cfg
 export ANSIBLE_ROLES_PATH=${HOME}/.ansible/roles:$(pwd)/..
 
+export ANSIBLE_SSH_ARGS="-o ControlMaster=no \
+  -o UserKnownHostsFile=/dev/null \
+  -o StrictHostKeyChecking=no \
+  -o ServerAliveInterval=64 \
+  -o ServerAliveCountMax=1024 \
+  -o Compression=no \
+  -o TCPKeepAlive=yes \
+  -o VerifyHostKeyDNS=no \
+  -o ForwardX11=no \
+  -o ForwardAgent=yes"
+
 echo "Run manual functional tests by executing the following:"
 echo "# ./.tox/functional/bin/ansible-playbook -i tests/inventory tests/test.yml -e \"rolename=$(pwd)\""
