@@ -14,17 +14,20 @@
 # limitations under the License.
 
 - include: galera_upgrade_check_apt.yml
+  static: no
   when:
     - ansible_pkg_mgr == 'apt'
   tags:
     - install-apt
 
 - include: galera_upgrade_check_yum.yml
+  static: no
   when:
     - ansible_pkg_mgr == 'yum'
   tags:
     - install-apt
 
 - include: galera_upgrade_pre.yml
+  static: no
   when:
     - galera_upgrade | bool

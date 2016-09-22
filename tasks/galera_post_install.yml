@@ -127,5 +127,6 @@
     - galera-config
 
 - include: galera_upgrade_post.yml
+  static: no
   when:
     - galera_upgrade | bool

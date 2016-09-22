@@ -14,12 +14,14 @@
 # limitations under the License.
 
 - include: galera_install_apt.yml
+  static: no
   when:
     - ansible_pkg_mgr == 'apt'
   tags:
     - install-apt
 
 - include: galera_install_yum.yml
+  static: no
   when:
     - ansible_pkg_mgr == 'yum'
   tags:
