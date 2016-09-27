@@ -14,13 +14,13 @@
 # limitations under the License.
 
 # Setup the host
-- include: playbooks/test-setup-host.yml
+- include: common/test-setup-host.yml
 
 # Prepare the containers
-- include: playbooks/test-prepare-containers.yml
+- include: common/test-prepare-containers.yml
 
 # Install Galera server
-- include: playbooks/test-install-galera.yml
+- include: common/test-install-galera.yml
 
 # Run functional tests
 - include: test-galera-server-functional.yml
