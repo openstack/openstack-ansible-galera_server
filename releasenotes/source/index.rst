@@ -6,4 +6,5 @@
    :maxdepth: 1
 
    mitaka
+   newton
    unreleased
