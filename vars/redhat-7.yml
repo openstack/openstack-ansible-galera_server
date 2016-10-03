@@ -28,10 +28,6 @@ galera_server_required_distro_packages:
   - MariaDB-client
   - MariaDB-devel
 
-# Validate SSL certificates when downloading the galera deb above
-# May be set to "no" when proxy server is intercepting the certificates.
-percona_package_download_validate_certs: "yes"
-
 galera_mariadb_yum_server_package: "MariaDB-Galera-server"
 
 galera_server_mariadb_distro_packages:
@@ -60,6 +56,8 @@ galera_server_percona_distro_packages:
   - qpress
   - percona-xtrabackup
 
+# Validate SSL certificates when downloading the galera packages above
+# May be set to "no" when proxy server is intercepting the certificates.
 percona_package_download_validate_certs: "yes"
 percona_package_url: "{{ percona_arch_url.get( hostvars[physical_host]['ansible_architecture'] | lower ) }}"
 percona_package_sha256: "{{ percona_arch_sha256.get( hostvars[physical_host]['ansible_architecture'] | lower ) }}"
