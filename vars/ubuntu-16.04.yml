@@ -74,8 +74,8 @@ galera_server_percona_distro_packages:
 # Validate SSL certificates when downloading the galera deb above
 # May be set to "no" when proxy server is intercepting the certificates.
 percona_package_download_validate_certs: yes
-percona_package_url: "{{ percona_arch_url.get( hostvars[physical_host]['ansible_architecture'] | lower ) }}"
-percona_package_sha256: "{{ percona_arch_sha256.get( hostvars[physical_host]['ansible_architecture'] | lower ) }}"
+percona_package_url: "{{ percona_arch_url.get( hostvars[physical_host | default(inventory_hostname)]['ansible_architecture'] | lower ) }}"
+percona_package_sha256: "{{ percona_arch_sha256.get( hostvars[physical_host | default(inventory_hostname)]['ansible_architecture'] | lower ) }}"
 percona_package_path: "/opt/{{ percona_package_url | basename }}"
 
 percona_arch_url:
@@ -86,8 +86,8 @@ percona_arch_sha256:
   ppc64le: "902969b427a36743f5af1e399ff19b3904c3803d760700f959c8cc9102ab802c"
 
 qpress_package_download_validate_certs: yes
-qpress_package_url: "{{ qpress_arch_url.get( hostvars[physical_host]['ansible_architecture'] | lower ) }}"
-qpress_package_sha256: "{{ qpress_arch_sha256.get( hostvars[physical_host]['ansible_architecture'] | lower ) }}"
+qpress_package_url: "{{ qpress_arch_url.get( hostvars[physical_host | default(inventory_hostname)]['ansible_architecture'] | lower ) }}"
+qpress_package_sha256: "{{ qpress_arch_sha256.get( hostvars[physical_host | default(inventory_hostname)]['ansible_architecture'] | lower ) }}"
 qpress_package_path: "/opt/{{ qpress_package_url | basename }}"
 
 qpress_arch_url:
