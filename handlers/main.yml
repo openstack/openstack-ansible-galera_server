@@ -13,6 +13,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+- name: Reload the systemd daemon
+  command: "systemctl daemon-reload"
+  when:
+    - pid1_name == "systemd"
+
 - name: Restart mysql
   service:
     name: mysql
@@ -53,8 +58,3 @@
   until: galera_restart_fall_back | success
   retries: 3
   delay: 5
-
-- name: Reload the systemd daemon
-  command: "systemctl daemon-reload"
-  when:
-    - pid1_name == "systemd"
