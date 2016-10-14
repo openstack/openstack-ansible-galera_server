@@ -33,7 +33,7 @@
 
 - name: Gather mysql facts
   mysql_status_facts:
-  ignore_errors: true
+  failed_when: false
   tags:
     - galera-cluster-state-check
 

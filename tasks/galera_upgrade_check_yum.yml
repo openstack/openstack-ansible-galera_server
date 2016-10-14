@@ -15,7 +15,7 @@
 
 - name: Check major galera install version
   command: "rpm -qi '{{ galera_mariadb_yum_server_package }}'"
-  ignore_errors: true
+  failed_when: false
   register: installed_galera_specific
   when:
     - not galera_upgrade | bool
@@ -28,7 +28,7 @@
 - name: Check for any galera install version
   shell: |
     rpm -qa | grep -i "{{ galera_mariadb_yum_server_package }}"
-  ignore_errors: true
+  failed_when: false
   register: installed_galera_any
   when:
     - not galera_upgrade | bool
