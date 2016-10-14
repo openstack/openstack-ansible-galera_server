@@ -15,7 +15,7 @@
 
 - name: Check major galera install version
   command: "dpkg -s {{ galera_mariadb_apt_server_package }}"
-  ignore_errors: true
+  failed_when: false
   register: installed_galera_specific
   when:
     - not galera_upgrade | bool
@@ -28,7 +28,7 @@
 - name: Check for any galera install version
   shell: |
     dpkg --get-selections | grep mariadb-galera-server
-  ignore_errors: true
+  failed_when: false
   register: installed_galera_any
   when:
     - not galera_upgrade | bool
