@@ -37,7 +37,7 @@
   failed_when: false
   retries: 5
   delay: 2
-  with_items: "{{ galera_client_gpg_keys }}"
+  with_items: "{{ galera_gpg_keys }}"
   tags:
     - galera-gpg-keys
 
@@ -49,7 +49,7 @@
   until: add_keys|success
   retries: 5
   delay: 2
-  with_items: "{{ galera_client_gpg_keys }}"
+  with_items: "{{ galera_gpg_keys }}"
   when: add_keys|failed and (item.fallback_keyserver is defined)
   tags:
     - galera-gpg-keys
