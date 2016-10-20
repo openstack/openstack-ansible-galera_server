@@ -28,8 +28,6 @@
     done
     echo "Service failed to start"
     exit 1
-  when:
-    - galera_upgrade | bool
   tags:
     - galera-upgrade
 
@@ -44,7 +42,5 @@
   until: galera_mysql_upgrade | success
   retries: 3
   delay: 10
-  when:
-    - galera_upgrade | bool
   tags:
     - galera-upgrade

@@ -16,8 +16,6 @@
 - name: Set fact to ignore cluster state
   set_fact:
     galera_ignore_cluster_state: true
-  when:
-    - galera_upgrade | bool
   tags:
     - galera-upgrade
 
@@ -29,8 +27,6 @@
   until: galera_restart_fall_back | success
   retries: 3
   delay: 5
-  when:
-    - galera_upgrade | bool
   tags:
     - galera-upgrade
 
@@ -38,8 +34,6 @@
   shell: |
     grep -rnil maria /etc/apt/sources.list.d/*
   register: old_sources
-  when:
-    - galera_upgrade | bool
   tags:
     - galera-upgrade
     - galera-apt-packages
@@ -49,8 +43,6 @@
     path: "{{ item }}"
     state: absent
   with_items: "{{ old_sources.stdout_lines | default([]) }}"
-  when:
-    - galera_upgrade | bool
   tags:
     - galera-upgrade
     - galera-apt-packages
@@ -64,7 +56,6 @@
   retries: 5
   delay: 2
   when:
-    - galera_upgrade | bool
     - ansible_pkg_mgr == 'apt'
   tags:
     - galera-upgrade
@@ -75,7 +66,6 @@
     pkg: "mariadb-galera-server*"
     state: absent
   when:
-    - galera_upgrade | bool
     - ansible_pkg_mgr == 'apt'
   tags:
     - galera-upgrade
