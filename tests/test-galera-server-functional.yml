@@ -57,7 +57,7 @@
         login_host: "10.100.100.101"
         name: "OSA-test"
         state: "present"
-      when: ansible_ssh_host == '10.100.100.101'
+      when: ansible_host == '10.100.100.101'
     - name: Grant access to the DB on 10.100.100.102
       mysql_user:
         login_user: "{{ galera_root_user }}"
@@ -71,6 +71,6 @@
       with_items:
         - "localhost"
         - "%"
-      when: ansible_ssh_host == '10.100.100.102'
+      when: ansible_host == '10.100.100.102'
   vars_files:
     - common/test-vars.yml
