@@ -68,19 +68,8 @@
   tags:
     - galera-config
 
-- name: Drop limits config (upstart)
-  template:
-    src: "upstart.limits.conf.j2"
-    dest: "/etc/security/limits.conf"
-  when:
-    - pid1_name != "systemd"
-  notify:
-    - Restart mysql
-  tags:
-    - galera-config
-
 # NOTE: (mancdaz) REMOVE "/etc/default/mysql" when running MariaDB 10.1
-- name: Apply resource limits (upstart)
+- name: Apply service defaults
   template:
     src: "mysql_defaults.j2"
     dest: "{{ item }}"
@@ -88,8 +77,17 @@
   with_items:
     - /etc/default/mysql
     - /etc/default/mariadb
+  notify:
+    - Restart mysql
+    - Reload the systemd daemon
+  tags:
+    - galera-config
+
+- name: Drop limits config (upstart)
+  template:
+    src: "upstart.limits.conf.j2"
+    dest: "/etc/security/limits.conf"
   when:
-    - ansible_pkg_mgr == 'apt'
     - pid1_name != "systemd"
   notify:
     - Restart mysql
