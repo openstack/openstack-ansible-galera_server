@@ -17,7 +17,7 @@ container_name: "{{ inventory_hostname }}"
 container_networks:
   management_address:
     address: "{{ ansible_host }}"
-    bridge: "lxcbr0"
+    bridge: "br-mgmt"
     interface: "eth1"
     netmask: "255.255.252.0"
     type: "veth"

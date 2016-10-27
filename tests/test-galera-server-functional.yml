@@ -47,22 +47,22 @@
         that:
           - "'Synced' in wsrep_local_state_comment.stdout"
           - "'OPERATIONAL' in wsrep_evs_state.stdout"
-          - "'10.100.100.101' in wsrep_incoming_addresses.stdout"
-          - "'10.100.100.102' in wsrep_incoming_addresses.stdout"
-          - "'10.100.100.103' in wsrep_incoming_addresses.stdout"
-    - name: Create DB for service on 10.100.100.101
+          - "'10.1.0.2' in wsrep_incoming_addresses.stdout"
+          - "'10.1.0.3' in wsrep_incoming_addresses.stdout"
+          - "'10.1.0.4' in wsrep_incoming_addresses.stdout"
+    - name: Create DB for service on 10.1.0.2
       mysql_db:
         login_user: "{{ galera_root_user }}"
         login_password: "{{ galera_root_password }}"
-        login_host: "10.100.100.101"
+        login_host: "10.1.0.2"
         name: "OSA-test"
         state: "present"
-      when: ansible_ssh_host == '10.100.100.101'
-    - name: Grant access to the DB on 10.100.100.102
+      when: ansible_host == '10.1.0.2'
+    - name: Grant access to the DB on 10.1.0.3
       mysql_user:
         login_user: "{{ galera_root_user }}"
         login_password: "{{ galera_root_password }}"
-        login_host: "10.100.100.102"
+        login_host: "10.1.0.3"
         name: "osa-tester"
         password: "tester-secrete"
         host: "{{ item }}"
@@ -71,6 +71,6 @@
       with_items:
         - "localhost"
         - "%"
-      when: ansible_ssh_host == '10.100.100.102'
+      when: ansible_host == '10.1.0.3'
   vars_files:
     - common/test-vars.yml
