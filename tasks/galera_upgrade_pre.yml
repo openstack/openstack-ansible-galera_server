@@ -31,8 +31,9 @@
     - galera-upgrade
 
 - name: Find old sources
-  shell: |
+  command: >
     grep -rnil maria /etc/apt/sources.list.d/*
+  changed_when: false
   register: old_sources
   tags:
     - galera-upgrade

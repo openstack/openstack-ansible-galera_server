@@ -80,7 +80,8 @@
   tags:
     - galera-cluster-state-check
 
-- set_fact:
+- name: Set the galera existing cluster fact
+  set_fact:
     galera_existing_cluster: true
   when: mysql_running.rc == 0
   tags:

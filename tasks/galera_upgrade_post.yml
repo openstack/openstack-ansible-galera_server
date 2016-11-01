@@ -28,6 +28,7 @@
     done
     echo "Service failed to start"
     exit 1
+  changed_when: false
   tags:
     - galera-upgrade
 
@@ -38,6 +39,7 @@
 
 - name: Run MySQL Upgrade
   command: "/usr/bin/mysql_upgrade"
+  changed_when: false
   register: galera_mysql_upgrade
   until: galera_mysql_upgrade | success
   retries: 3

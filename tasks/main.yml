@@ -13,7 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- fail:
+- name: Fail when the host is not in galera_cluster_members
+  fail:
     msg: "The host {{ inventory_hostname }} must be in galera_cluster_members."
   when: inventory_hostname not in galera_cluster_members
 
@@ -37,6 +38,7 @@
 
 - name: Check init system
   command: cat /proc/1/comm
+  changed_when: false
   register: _pid1_name
   tags:
     - always
