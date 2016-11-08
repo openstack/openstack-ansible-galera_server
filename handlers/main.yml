@@ -24,7 +24,7 @@
     state: restarted
     sleep: 2
     pattern: mysql
-    args: "{{ (not galera_existing_cluster | bool and inventory_hostname == galera_server_bootstrap_node) or (galera_cluster_members | length == 1) | ternary('--wsrep-new-cluster', '') }}"
+    args: "{{ (not galera_existing_cluster | bool and inventory_hostname == galera_server_bootstrap_node) | ternary('--wsrep-new-cluster', '') }}"
   environment:
     MYSQLD_STARTUP_TIMEOUT: 180
   when:
@@ -51,7 +51,7 @@
     state: restarted
     sleep: 2
     pattern: mysql
-    args: "{{ (not galera_existing_cluster | bool and inventory_hostname == galera_server_bootstrap_node) or (galera_cluster_members | length == 1) | ternary('--wsrep-new-cluster', '') }}"
+    args: "{{ (not galera_existing_cluster | bool and inventory_hostname == galera_server_bootstrap_node) | ternary('--wsrep-new-cluster', '') }}"
   environment:
     MYSQLD_STARTUP_TIMEOUT: 180
   register: galera_restart_fall_back
