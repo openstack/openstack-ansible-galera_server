@@ -16,7 +16,7 @@
 - name: Reload the systemd daemon
   command: "systemctl daemon-reload"
   when:
-    - pid1_name == "systemd"
+    - ansible_service_mgr == 'systemd'
 
 - name: Restart mysql
   service:
