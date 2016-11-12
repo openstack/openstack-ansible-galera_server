@@ -22,7 +22,7 @@
   service:
     name: mysql
     state: restarted
-    args: "--wsrep-new-cluster"
+    arguments: "--wsrep-new-cluster"
   when:
     - not using_mysql_init | bool
     - inventory_hostname == galera_server_bootstrap_node
