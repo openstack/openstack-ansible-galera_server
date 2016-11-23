@@ -18,24 +18,37 @@
     num_retries: 1
     wait_delay: 3
 
+- name: Start galera cluster
+  command: galera_new_cluster
+  when:
+    - ansible_service_mgr == 'systemd'
+    - inventory_hostname == galera_server_bootstrap_node
+    - mysql_running.rc != 0
+  register: start_cluster
+  failed_when: false
+  tags:
+    - galera-bootstrap
+
+# TODO: Remove this task after 10.0 is removed from upgrade path
+- name: Start cluster with wsrep init fallback
+  command: "/etc/init.d/mysql bootstrap"
+  when:
+    - ansible_service_mgr == 'systemd'
+    - start_cluster | failed
+    - inventory_hostname == galera_server_bootstrap_node
+    - mysql_running.rc != 0
+  tags:
+    - galera-bootstrap
+
 - name: Start cluster with wsrep
   service:
     name: mysql
     state: restarted
     arguments: "--wsrep-new-cluster"
   when:
-    - not using_mysql_init | bool
+    - ansible_service_mgr != 'systemd'
     - inventory_hostname == galera_server_bootstrap_node
     - mysql_running.rc != 0
-  tags:
-    - galera-bootstrap
-
-- name: Start cluster with wsrep init
-  command: "/etc/init.d/mysql bootstrap"
-  when:
-    - inventory_hostname == galera_server_bootstrap_node
-    - mysql_running.rc != 0
-    - using_mysql_init | bool
   tags:
     - galera-bootstrap
 
@@ -62,3 +75,8 @@
   tags:
     - galera-operational
     - galera-bootstrap
+
+- include: galera_upgrade_post.yml
+  static: no
+  when:
+    - galera_upgrade | bool

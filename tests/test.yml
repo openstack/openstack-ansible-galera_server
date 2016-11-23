@@ -19,8 +19,19 @@
 # Prepare the containers
 - include: common/test-prepare-containers.yml
 
-# Install Galera server
+# Install previous version Galera server
 - include: common/test-install-galera.yml
+  vars:
+    galera_mariadb_server_package: "{{ galera_server_old_package[ansible_os_family | lower]['galera_mariadb_server_package'] }}"
+    galera_repo_url: "{{ galera_server_old_package[ansible_os_family | lower]['galera_repo_url'] }}"
 
 # Run functional tests
+- include: test-galera-server-functional.yml
+
+# Install current version Galera server
+- include: common/test-install-galera.yml
+  vars:
+    galera_upgrade: true
+
+# Re-run functional tests
 - include: test-galera-server-functional.yml

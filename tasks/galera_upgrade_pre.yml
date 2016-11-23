@@ -30,10 +30,22 @@
   tags:
     - galera-upgrade
 
+# Stop through the init script in case the service
+# was initially started outside of systemctl.
+- name: Stop mysql
+  command: /etc/init.d/mysql stop
+  changed_when: false
+  tags:
+    - galera-upgrade
+
+# TODO: Remove the following three tasks in Pike
+# They're only required during upgrades transitioning to a
+# statically named apt sources file.
 - name: Find old sources
   command: >
-    grep -rnil maria /etc/apt/sources.list.d/*
+    grep -rnil maria /etc/apt/sources.list.d/ --exclude MariaDB.list
   changed_when: false
+  failed_when: false
   register: old_sources
   tags:
     - galera-upgrade
@@ -45,8 +57,8 @@
     state: absent
   with_items: "{{ old_sources.stdout_lines | default([]) }}"
   tags:
-    - galera-upgrade
-    - galera-apt-packages
+   - galera-upgrade
+   - galera-apt-packages
 
 - name: Update apt sources (Forced)
   apt:
@@ -63,11 +75,15 @@
     - galera-apt-packages
 
 - name: UN-Install galera-server package
-  apt:
-    pkg: "mariadb-galera-server*"
+  package:
+    name: "{{ item }}"
     state: absent
-  when:
-    - ansible_pkg_mgr == 'apt'
+  with_items:
+    - "mariadb-galera-server*"
+    - "mariadb-server*"
+    - MariaDB-Galera-server
+    - MariaDB-server
+    - mysql-common
   tags:
     - galera-upgrade
     - galera-apt-packages

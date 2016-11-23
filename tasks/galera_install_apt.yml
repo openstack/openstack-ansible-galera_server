@@ -58,29 +58,39 @@
   tags:
     - galera-apt-keys
 
+- name: Remove old repos
+  lineinfile:
+    dest: "/etc/apt/sources.list.d/{{ item.name }}.list"
+    regexp: "^((?!{{ item.repo }}).*)$"
+    state: absent
+  with_items:
+    - { name: "MariaDB", repo: "{{ galera_repo.repo }}" }
+    - { name: "Percona", repo: "{{ galera_percona_xtrabackup_repo.repo }}" }
+  tags:
+    - galera-client-repos
+    - percona-repos
+
 - name: Add galera repo
   apt_repository:
-    repo: "{{ item.repo }}"
-    state: "{{ item.state }}"
+    repo: "{{ galera_repo.repo }}"
+    filename: MariaDB
+    state: "{{ galera_repo.state }}"
   register: add_repos
   until: add_repos|success
   retries: 5
   delay: 2
-  with_items:
-    - "{{ galera_repo }}"
   tags:
     - galera-repos
 
 - name: Add percona repo
   apt_repository:
-    repo: "{{ item.repo }}"
-    state: "{{ item.state }}"
+    repo: "{{ galera_percona_xtrabackup_repo.repo }}"
+    filename: Percona
+    state: "{{ galera_percona_xtrabackup_repo.state }}"
   register: add_repos
   until: add_repos|success
   retries: 5
   delay: 2
-  with_items:
-    - "{{ galera_percona_xtrabackup_repo }}"
   when: use_percona_upstream | bool
   tags:
     - percona-repos

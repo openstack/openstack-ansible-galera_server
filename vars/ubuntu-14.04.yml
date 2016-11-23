@@ -44,7 +44,7 @@ galera_server_required_distro_packages:
 # The package name for mariaDB is set as a variable
 # so that it can be used in debconf later in the
 # "galera_common" role.
-galera_mariadb_apt_server_package: "mariadb-galera-server-10.0"
+_galera_mariadb_server_package: "mariadb-server-10.1"
 
 # NB This is specifically galera_server_mariadb_distro_packages as these
 # packages only get installed during the galera play - this is because of
@@ -53,18 +53,18 @@ galera_mariadb_apt_server_package: "mariadb-galera-server-10.0"
 galera_server_mariadb_distro_packages:
   - libmariadbclient-dev
   - mariadb-client
-  - "{{ galera_mariadb_apt_server_package }}"
+  - "{{ galera_mariadb_server_package }}"
   - galera-3
   - rsync
   - socat
 
 galera_debconf_items:
   - question: "mysql-server/root_password"
-    name: "{{ galera_mariadb_apt_server_package }}"
+    name: "{{ galera_mariadb_server_package }}"
     value: "{{ galera_root_password }}"
     vtype: "string"
   - question: "mysql-server/root_password_again"
-    name: "{{ galera_mariadb_apt_server_package }}"
+    name: "{{ galera_mariadb_server_package }}"
     value: "{{ galera_root_password }}"
     vtype: "string"
 
@@ -100,10 +100,9 @@ galera_percona_xtrabackup_repo:
   repo: "deb {{ galera_percona_xtrabackup_repo_url }} {{ ansible_distribution_release }} main"
   state: "present"
 
-galera_apt_repo_url: "http://mirror.rackspace.com/mariadb/repo/10.0/ubuntu"
+_galera_repo_url: "http://mirror.rackspace.com/mariadb/repo/10.1/ubuntu"
 galera_repo:
-  repo: "deb {{ galera_apt_repo_url }} {{ ansible_distribution_release }} main"
+  repo: "deb {{ galera_repo_url }} {{ ansible_distribution_release }} main"
   state: "present"
 
 use_percona_upstream: no
-using_mysql_init: no
