@@ -41,3 +41,4 @@ dependencies:
       - ansible_pkg_mgr == 'apt'
   - role: galera_client
     galera_client_drop_config_file: true
+    galera_client_package_install: false

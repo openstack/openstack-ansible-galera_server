@@ -85,6 +85,8 @@ galera_pip_packages:
   - MySQL-python
   - pycrypto
 
+galera_pip_package_state: "latest"
+
 # Galera slow/unindexed query logging
 galera_slow_query_logging: 0
 galera_unindexed_query_logging: 0
