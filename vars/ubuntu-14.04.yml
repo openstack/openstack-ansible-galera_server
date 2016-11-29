@@ -51,6 +51,7 @@ galera_mariadb_apt_server_package: "mariadb-galera-server-10.0"
 # the preseed task and the service startup control used when installing
 # mariadb-galera-server and galera.
 galera_server_mariadb_distro_packages:
+  - libmariadbclient-dev
   - mariadb-client
   - "{{ galera_mariadb_apt_server_package }}"
   - galera-3
