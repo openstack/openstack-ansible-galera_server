@@ -1,6 +1,7 @@
 {%- set all_calculated_max_connections = [] %}
 {%- for galera_node in galera_cluster_members %}
-    {%- if all_calculated_max_connections.append((hostvars[galera_node]['ansible_processor_vcpus'] | int > 0) | ternary (ansible_processor_vcpus, 2) * 100) %}
+    {%- set vcpus = hostvars[galera_node]['ansible_processor_vcpus'] %}
+    {%- if all_calculated_max_connections.append((vcpus | int > 0) | ternary (vcpus, 2) * 100) %}
     {%- endif %}
 {%- endfor %}
 {%- set calculated_max_connections = all_calculated_max_connections|sort %}
