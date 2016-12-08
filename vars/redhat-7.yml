@@ -28,24 +28,22 @@ galera_server_required_distro_packages:
   - MariaDB-client
   - MariaDB-devel
 
-galera_mariadb_yum_server_package: "MariaDB-Galera-server"
+_galera_mariadb_server_package: "MariaDB-server"
 
 galera_server_mariadb_distro_packages:
   - which
-  - "{{ galera_mariadb_yum_server_package }}"
+  - "{{ galera_mariadb_server_package }}"
   - MariaDB-shared
   - percona-xtrabackup
   - percona-toolkit
   - rsync
   - socat
 
-galera_yum_repo_url: "http://yum.mariadb.org/10.0/centos/7/x86_64"
+_galera_repo_url: "http://yum.mariadb.org/10.1/centos/7/x86_64"
 galera_repo:
-  state: "present"
   name: MariaDB
   description: "MariaDB Repo"
-  file: MariaDB
-  baseurl: "{{ galera_yum_repo_url }}"
+  baseurl: "{{ galera_repo_url }}"
   gpgkey: "https://yum.mariadb.org/RPM-GPG-KEY-MariaDB"
 
 galera_percona_xtrabackup_repo:
@@ -79,4 +77,3 @@ qpress_arch_sha256:
   x86_64: "d6b6b7ca3a5ad4baea34975743106ac54ac746b3e6497d59bce55765d604b697"
 
 use_percona_upstream: yes
-using_mysql_init: yes

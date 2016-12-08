@@ -42,6 +42,8 @@ galera_force_change_cluster_name: False
 galera_server_distro_package_pins: []
 galera_debconf_items: []
 galera_server_percona_distro_packages: []
+galera_mariadb_server_package: "{{ _galera_mariadb_server_package }}"
+galera_repo_url: "{{ _galera_repo_url }}"
 
 
 galera_existing_cluster: true
@@ -101,5 +103,3 @@ galera_debian_cnf_overrides: {}
 # the cluster will be used which is something to note if deploying galera on different
 # hardware.
 # galera_max_connections: 500
-
-using_mysql_init: no

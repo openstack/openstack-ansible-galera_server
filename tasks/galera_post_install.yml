@@ -63,20 +63,16 @@
     dest: /etc/init.d/mysql
     state: present
     insertafter: '^export HOME=/etc/mysql/'
-    line: '[ -r /etc/default/mysql ] && . /etc/default/mysql'
+    line: '[ -r /etc/default/mariadb ] && . /etc/default/mariadb'
     backup: yes
   tags:
     - galera-config
 
-# NOTE: (mancdaz) REMOVE "/etc/default/mysql" when running MariaDB 10.1
 - name: Apply service defaults
   template:
     src: "mysql_defaults.j2"
-    dest: "{{ item }}"
+    dest: "/etc/default/mariadb"
     mode: "0644"
-  with_items:
-    - /etc/default/mysql
-    - /etc/default/mariadb
   notify:
     - Restart mysql
     - Reload the systemd daemon
@@ -104,11 +100,14 @@
   when:
     - ansible_service_mgr == 'systemd'
 
-- name: Apply resource limits (systemd)
+- name: Apply systemd options
   template:
-    src: "systemd.limits.conf.j2"
-    dest: "/etc/systemd/system/mariadb.service.d/limits.conf"
+    src: "{{ item.src }}"
+    dest: "/etc/systemd/system/mariadb.service.d/{{ item.dest }}"
     mode: "0644"
+  with_items:
+    - { src: "systemd.limits.conf.j2", dest: "limits.conf" }
+    - { src: "systemd.timeout.conf.j2", dest: "timeout.conf" }
   when:
     - ansible_service_mgr == 'systemd'
   notify:
@@ -123,8 +122,3 @@
     state: absent
   tags:
     - galera-config
-
-- include: galera_upgrade_post.yml
-  static: no
-  when:
-    - galera_upgrade | bool

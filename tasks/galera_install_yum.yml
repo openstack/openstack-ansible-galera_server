@@ -54,26 +54,18 @@
   tags:
     - galera-gpg-keys
 
-#TODO(cloudnull) Remove this task once we move to Ansible 2.1
-# where we can leverage the `yum_repository` module:
-# https://docs.ansible.com/ansible/yum_repository_module.html
 - name: Add galera repo
-  copy:
-    content: |
-      [{{ item.name }}]
-      name={{ item.name }}
-      description={{ item.description }}
-      baseurl={{ item.baseurl }}
-      gpgkey={{ item.gpgkey }}
-      gpgcheck=1
-      enabled=1
-    dest: "/etc/yum.repos.d/{{ item.file }}.repo"
+  yum_repository:
+    name: "{{ galera_repo.name }}"
+    description: "{{ galera_repo.description }}"
+    baseurl: "{{ galera_repo.baseurl }}"
+    gpgkey: "{{ galera_repo.gpgkey }}"
+    gpgcheck: yes
+    enabled: yes
   register: add_repos
   until: add_repos|success
   retries: 5
   delay: 2
-  with_items:
-    - "{{ galera_repo }}"
   tags:
     - galera-repos
 

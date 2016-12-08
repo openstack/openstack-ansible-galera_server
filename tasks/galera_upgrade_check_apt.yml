@@ -14,7 +14,7 @@
 # limitations under the License.
 
 - name: Check major galera install version
-  command: "dpkg -s {{ galera_mariadb_apt_server_package }}"
+  command: "dpkg -s {{ galera_mariadb_server_package }}"
   failed_when: false
   register: installed_galera_specific
   when:
