@@ -34,7 +34,7 @@ libselinux-python [platform:rpm]
 # For SSL SNI support
 python-pyasn1               [platform:dpkg]
 python-openssl              [platform:dpkg]
-python-ndg-httpsclient      [platform:ubuntu !platform:ubuntu-trusty]
+python-ndg-httpsclient      [platform:ubuntu]
 python2-pyasn1              [platform:rpm]
 pyOpenSSL                   [platform:rpm]
 python-ndg_httpsclient      [platform:rpm]

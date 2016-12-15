@@ -79,17 +79,6 @@
   tags:
     - galera-config
 
-- name: Drop limits config (upstart)
-  template:
-    src: "upstart.limits.conf.j2"
-    dest: "/etc/security/limits.conf"
-  when:
-    - ansible_service_mgr == 'systemd'
-  notify:
-    - Restart mysql
-  tags:
-    - galera-config
-
 - name: Create mariadb systemd service config dir
   file:
     path: "/etc/systemd/system/mariadb.service.d"

@@ -23,7 +23,6 @@
     name: mysql
     state: restarted
     sleep: 2
-    pattern: mysql
     arguments: "{{ (not galera_existing_cluster | bool and inventory_hostname == galera_server_bootstrap_node) | ternary('--wsrep-new-cluster', '') }}"
   environment:
     MYSQLD_STARTUP_TIMEOUT: 180
@@ -50,7 +49,6 @@
     name: mysql
     state: restarted
     sleep: 2
-    pattern: mysql
     arguments: "{{ (not galera_existing_cluster | bool and inventory_hostname == galera_server_bootstrap_node) | ternary('--wsrep-new-cluster', '') }}"
   environment:
     MYSQLD_STARTUP_TIMEOUT: 180

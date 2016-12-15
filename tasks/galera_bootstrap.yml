@@ -40,18 +40,6 @@
   tags:
     - galera-bootstrap
 
-- name: Start cluster with wsrep
-  service:
-    name: mysql
-    state: restarted
-    arguments: "--wsrep-new-cluster"
-  when:
-    - ansible_service_mgr != 'systemd'
-    - inventory_hostname == galera_server_bootstrap_node
-    - mysql_running.rc != 0
-  tags:
-    - galera-bootstrap
-
 - name: Wait for operational state
   command: mysql --silent --skip-column-names -e 'SHOW STATUS LIKE "wsrep_evs_state"'
   register: galera_check_wait
