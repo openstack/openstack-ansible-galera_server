@@ -4,6 +4,9 @@ OpenStack-Ansible Galera server
 
 Ansible role to install and configure a Galera cluster powered by MariaDB
 
+To clone or view the source code for this repository, visit the role repository
+for `galera_server <https://github.com/openstack/openstack-ansible-galera_server>`_.
+
 Default variables
 ~~~~~~~~~~~~~~~~~
 
