@@ -25,8 +25,6 @@
     - { src: "/usr/lib64/galera", path: "/usr/lib/galera", state: "link", force: true }
     - { src: "/etc/mysql/conf.d", path: "/etc/my.cnf.d", state: "link", force: true }
     - { src: "/etc/mysql/my.cnf", path: "/etc/my.cnf", state: "link", force: true }
-  tags:
-    - galera-config
 
 - name: Add galera gpg-keys
   rpm_key:
@@ -131,6 +129,7 @@
     name: "mysql"
     enabled: "yes"
   tags:
+    - galera_server-config
     - galera-enable
 
 # NOTE(cloudnull): This is an idempotent shell task is it will only run once
@@ -157,5 +156,6 @@
   args:
     creates: /etc/mysql/rhel_configured
   tags:
+    - galera_server-config
     - galera-rhel-config
     - skip_ansible_lint

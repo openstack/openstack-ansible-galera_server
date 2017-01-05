@@ -113,8 +113,6 @@
     dest: "/usr/sbin/policy-rc.d"
     mode: "0755"
     backup: yes
-  tags:
-    - galera-config
 
 #TODO(evrardjp): Replace the next 2 tasks by a standard apt with cache
 #when https://github.com/ansible/ansible-modules-core/pull/1517 is merged
@@ -178,4 +176,4 @@
     path: "/usr/sbin/policy-rc.d"
     state: absent
   tags:
-    - galera-config
+    - galera_server-config
