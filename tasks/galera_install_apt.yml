@@ -111,8 +111,6 @@
     dest: "/usr/sbin/policy-rc.d"
     mode: "0755"
     backup: yes
-  tags:
-    - galera-config
 
 - name: Install galera packages
   apt:
@@ -159,4 +157,4 @@
     path: "/usr/sbin/policy-rc.d"
     state: absent
   tags:
-    - galera-config
+    - galera_server-config
