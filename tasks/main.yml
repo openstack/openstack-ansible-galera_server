@@ -37,11 +37,22 @@
     - always
 
 - include: galera_upgrade_check.yml
+  tags: galera_server-upgrade
+
 - include: galera_cluster_state.yml
+  tags: galera_server-config
+
 - include: galera_pre_install.yml
+  tags: galera_server-install
+
 - include: galera_install.yml
+  tags: galera_server-install
+
 - include: galera_post_install.yml
+  tags: galera_server-config
+
 - include: galera_bootstrap.yml
+  tags: galera_server-config
 
 - name: Flush handlers
   meta: flush_handlers
@@ -50,6 +61,8 @@
   vars:
     num_retries: 10
     wait_delay: 3
+  tags: galera_server-config
 
 - include: galera_setup.yml
   when: inventory_hostname == galera_server_bootstrap_node
+  tags: galera_server-config
