@@ -111,3 +111,8 @@
     state: absent
   tags:
     - galera-config
+
+- name: Reload the systemd daemon
+  command: "systemctl daemon-reload"
+  when:
+    - ansible_service_mgr == 'systemd'
