@@ -60,20 +60,10 @@ galera_server_percona_distro_packages:
   - qpress
   - percona-xtrabackup
 
-percona_package_download_validate_certs: "yes"
-percona_package_url: "{{ percona_arch_url.get( hostvars[physical_host | default(inventory_hostname)]['ansible_architecture'] | lower ) }}"
-percona_package_sha256: "{{ percona_arch_sha256.get( hostvars[physical_host | default(inventory_hostname)]['ansible_architecture'] | lower ) }}"
-percona_package_path: "/opt/{{ percona_package_url | basename }}"
-
 percona_arch_url:
   x86_64: "https://www.percona.com/downloads/XtraBackup/Percona-XtraBackup-2.2.13/binary/redhat/7/x86_64/percona-xtrabackup-22-2.2.13-1.el7.x86_64.rpm"
 percona_arch_sha256:
   x86_64: "030585abb52b24a781641374fe7c4530518b176a10ed4eb75547803b6b1f60e4"
-
-qpress_package_download_validate_certs: yes
-qpress_package_url: "{{ qpress_arch_url.get( hostvars[physical_host | default(inventory_hostname)]['ansible_architecture'] | lower ) }}"
-qpress_package_sha256: "{{ qpress_arch_sha256.get( hostvars[physical_host | default(inventory_hostname)]['ansible_architecture'] | lower ) }}"
-qpress_package_path: "/opt/{{ qpress_package_url | basename }}"
 
 qpress_arch_url:
   x86_64: "https://repo.percona.com/centos/7/RPMS/x86_64/qpress-11-1.el7.x86_64.rpm"
