@@ -74,10 +74,10 @@ galera_server_percona_distro_packages:
 
 percona_arch_url:
   x86_64: "https://www.percona.com/downloads/XtraBackup/Percona-XtraBackup-2.4.5/binary/debian/xenial/x86_64/percona-xtrabackup-24_2.4.5-1.xenial_amd64.deb"
-  ppc64le: "http://public.dhe.ibm.com/systems/virtualization/Novalink/misc/percona-xtrabackup/percona-xtrabackup-22_2.2.13-1_ppc64el.deb"
+  ppc64le: "http://public.dhe.ibm.com/systems/virtualization/Novalink/misc/percona-xtrabackup/percona-xtrabackup-24_2.4.5-1_ppc64el.deb"
 percona_arch_sha256:
   x86_64: "6a71704e625194689d2a6b325765608040ff5da82ac4bc8ce6ac3756f9a9130f"
-  ppc64le: "902969b427a36743f5af1e399ff19b3904c3803d760700f959c8cc9102ab802c"
+  ppc64le: "3d4e4112f4c8020c9190a91d962dabed1dfaad307160a939e121208887eaee2a"
 
 qpress_arch_url:
   x86_64: "https://repo.percona.com/apt/pool/main/q/qpress/qpress_11-1.xenial_amd64.deb"
