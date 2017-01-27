@@ -1,0 +1,65 @@
+---
+# Copyright 2015, Rackspace US, Inc., Mirantis Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+- name: Create ssl directory
+  file:
+    path: "{{ galera_user_ssl_ca_cert | dirname }}"
+    state: "directory"
+  delegate_to: localhost
+
+- name: Remove self signed cert for regen
+  file:
+    dest: "{{ item }}"
+    state: "absent"
+  with_items:
+    - "{{ galera_user_ssl_ca_cert }}"
+    - "{{ galera_user_ssl_cert }}"
+    - "{{ galera_user_ssl_key }}"
+    - "{{ galera_user_ssl_ca_cert | dirname }}/galera-ca.key "
+    - "{{ galera_user_ssl_ca_cert | dirname }}/galera-req.pem "
+  delegate_to: localhost
+  when: galera_ssl_self_signed_regen | bool
+
+- name: Create galera CA cert
+  command: >
+    openssl req -new -nodes -x509 -subj
+    "{{ galera_ssl_ca_self_signed_subject }}"
+    -keyout {{ galera_user_ssl_ca_cert | dirname }}/galera-ca.key
+    -out {{ galera_user_ssl_ca_cert }}
+    creates={{ galera_user_ssl_ca_cert }}
+  delegate_to: localhost
+
+- name: Create galera ssl request
+  command: >
+    openssl req -new -nodes -sha256 -subj
+    "{{ galera_ssl_self_signed_subject }}"
+    -days 3650
+    -keyout {{ galera_user_ssl_key }}
+    -out {{ galera_user_ssl_ca_cert | dirname }}/galera-req.pem
+    -extensions v3_ca
+    creates={{ galera_user_ssl_ca_cert | dirname }}/galera-req.pem
+  delegate_to: localhost
+
+- name: Create galera ssl cert
+  command: >
+    openssl x509 -req
+    -days 3650
+    -in {{ galera_user_ssl_ca_cert | dirname }}/galera-req.pem
+    -CA {{ galera_user_ssl_ca_cert }}
+    -CAkey {{ galera_user_ssl_ca_cert | dirname }}/galera-ca.key
+    -out {{ galera_user_ssl_cert }}
+    -set_serial 01
+    creates={{ galera_user_ssl_cert }}
+  delegate_to: localhost

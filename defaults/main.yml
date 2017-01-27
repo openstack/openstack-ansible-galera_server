@@ -117,3 +117,23 @@ qpress_package_download_validate_certs: yes
 qpress_package_url: "{{ qpress_arch_url.get( galera_package_arch | lower ) }}"
 qpress_package_sha256: "{{ qpress_arch_sha256.get( galera_package_arch | lower ) }}"
 qpress_package_path: "/opt/{{ qpress_package_url | basename }}"
+
+# Galera Server SSL functionality.
+
+galera_use_ssl: false
+galera_ssl_cert: /etc/mysql/ssl/galera.pem
+galera_ssl_key: /etc/mysql/ssl/galera.key
+galera_ssl_ca_cert: /etc/mysql/ssl/galera-ca.pem
+# These options should be specified in user_variables if necessary, otherwise self-signed certs are used.
+galera_user_ssl_cert: /etc/openstack_deploy/self_signed_certs/galera.pem
+galera_user_ssl_key: /etc/openstack_deploy/self_signed_certs/galera.key
+galera_user_ssl_ca_cert: /etc/openstack_deploy/self_signed_certs/galera-ca.pem
+# Set galera_ssl_self_signed_regen to true if you want to generate a new
+# SSL certificate for Galera when this playbook runs.  You can also change
+# the subject of the self-signed certificate here if you prefer.
+galera_ssl_self_signed_regen: false
+galera_ssl_self_signed_subject: "/C=US/ST=Texas/L=San Antonio/O=IT/CN={{ galera_ssl_address }}"
+galera_ssl_ca_self_signed_subject: "/C=US/ST=Texas/L=San Antonio/O=IT"
+# This option is used for creating the CA and overriding the Galera address on the clients side.
+# Should be set to either public VIP of VIP FQDN, depending on what is currently used in the env.
+galera_ssl_address: "{{ ansible_host }}"
