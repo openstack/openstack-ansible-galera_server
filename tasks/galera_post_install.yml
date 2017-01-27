@@ -29,6 +29,13 @@
   tags:
     - galera-config
 
+- include: galera_ssl.yml
+  when:
+    - galera_use_ssl | bool
+  tags:
+    - galera-config
+    - galera-ssl
+
 - name: Drop mariadb config(s)
   config_template:
     src: "{{ item.src }}"
