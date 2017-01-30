@@ -86,7 +86,7 @@
 - name: Drop limits config (upstart)
   template:
     src: "upstart.limits.conf.j2"
-    dest: "/etc/security/limits.conf"
+    dest: "/etc/security/limits.d/99-limits.conf"
   when:
     - ansible_service_mgr != 'systemd'
   notify:
