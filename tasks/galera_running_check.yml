@@ -13,8 +13,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+- name: Set fact for extra arguments in MySQL commands
+  set_fact:
+    mysql_extra_args: "{{ ansible_os_family == 'Debian' | ternary('--defaults-file=/etc/mysql/debian.cnf', '') }}"
+  tags:
+    - galera-cluster-state-check
+    - galera-bootstrap
+
 - name: Confirm service connectivity
-  command: "/usr/bin/mysqladmin --defaults-file=/etc/mysql/debian.cnf ping"
+  command: "/usr/bin/mysqladmin {{ mysql_extra_args }} ping"
   register: _mysql_running
   until: _mysql_running.rc == 0
   retries: "{{ num_retries }}"
@@ -26,7 +33,7 @@
     - galera-bootstrap
 
 - name: Check that WSREP is ready
-  shell: "/usr/bin/mysqladmin --defaults-file=/etc/mysql/debian.cnf extended-status | egrep '(wsrep_ready|wsrep_evs_state)'"
+  shell: "/usr/bin/mysqladmin {{ mysql_extra_args }} extended-status | egrep '(wsrep_ready|wsrep_evs_state)'"
   changed_when: >
     _mysql_ready.rc != 0
   register: _mysql_ready
