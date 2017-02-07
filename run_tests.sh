@@ -17,6 +17,15 @@ set -xeuo pipefail
 
 FUNCTIONAL_TEST=${FUNCTIONAL_TEST:-true}
 
+# Install python2 for Ubuntu 16.04 and CentOS 7
+if which apt-get; then
+    sudo apt-get update && sudo apt-get install -y python
+fi
+
+if which yum; then
+    sudo yum install -y python
+fi
+
 # Install pip.
 if ! which pip; then
   curl --silent --show-error --retry 5 \
