@@ -67,18 +67,6 @@
   tags:
     - galera-repos
 
-- name: Install galera yum pre packages
-  yum:
-    pkg: "{{ item }}"
-    state: "{{ galera_server_package_state }}"
-  register: install_packages
-  until: install_packages|success
-  retries: 5
-  delay: 2
-  with_items: "{{ galera_server_required_distro_packages }}"
-  tags:
-    - galera-pre-yum-packages
-
 - name: Install percona repo
   yum:
     pkg: "{{ galera_percona_xtrabackup_repo.repo }}"
@@ -91,30 +79,12 @@
   tags:
     - galera-pre-yum-packages
 
-- name: Install percona yum packages
+- name: Install galera_server role remote packages (yum)
   yum:
-    pkg: "{{ item }}"
+    name: "{{ item }}"
     state: "{{ galera_server_package_state }}"
-  register: install_packages
-  until: install_packages|success
-  retries: 5
-  delay: 2
-  with_items: "{{ galera_server_percona_distro_packages }}"
-  when: use_percona_upstream | bool
-  tags:
-    - galera-pre-yum-packages
-
-- name: Install galera yum packages
-  yum:
-    pkg: "{{ item }}"
-    state: "{{ galera_server_package_state }}"
-  register: install_packages
-  until: install_packages|success
-  retries: 5
-  delay: 2
-  with_items: "{{ galera_server_mariadb_distro_packages }}"
-  tags:
-    - galera-pre-yum-packages
+  with_items:
+    - "{{ galera_packages_list | selectattr('enabled') | sum(attribute='packages', start=[]) }}"
 
 - name: Enable mysql to start at boot
   service:
