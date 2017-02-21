@@ -35,6 +35,11 @@
   tags:
     - always
 
+- name: Gather variables that apply to all operating systems
+  include_vars: common.yml
+  tags:
+    - always
+
 - include: galera_upgrade_check.yml
   tags: galera_server-upgrade
 
