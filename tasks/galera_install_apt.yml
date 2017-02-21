@@ -13,20 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- name: Install galera apt pre packages
-  apt:
-    pkg: "{{ item }}"
-    state: "{{ galera_server_package_state }}"
-    update_cache: yes
-    cache_valid_time: "{{ cache_timeout }}"
-  register: install_packages
-  until: install_packages|success
-  retries: 5
-  delay: 2
-  with_items: "{{ galera_server_required_distro_packages }}"
-  tags:
-    - galera-pre-apt-packages
-
 - name: Add galera apt-keys
   apt_key:
     id: "{{ item.hash_id }}"
@@ -111,45 +97,21 @@
     mode: "0755"
     backup: yes
 
-- name: Install galera packages
+- name: Install galera_server role remote packages (apt)
   apt:
-    pkg: "{{ item }}"
+    name: "{{ item }}"
     state: "{{ galera_server_package_state }}"
     update_cache: yes
     cache_valid_time: "{{ add_repos | changed | ternary('0', cache_timeout) }}"
-  register: install_packages
-  until: install_packages|success
-  retries: 5
-  delay: 2
-  with_items: "{{ galera_server_mariadb_distro_packages }}"
-  notify: Restart mysql
-  tags:
-    - galera-apt-packages
+  with_items:
+    - "{{ galera_packages_list | selectattr('enabled') | rejectattr('local_pkg') | sum(attribute='packages', start=[]) }}"
 
-- name: Install percona-xtrabackup package from .deb
+- name: Install galera_server role local packages (apt)
   apt:
-    deb: "{{ percona_package_path }}"
+    deb: "{{ item }}"
     force: yes
-  when: not use_percona_upstream | bool
-  tags:
-    - percona-apt-packages
-
-- name: Install qpress package from .deb
-  apt:
-    deb: "{{ qpress_package_path }}"
-    force: yes
-  when: not use_percona_upstream | bool
-  tags:
-    - percona-apt-packages
-
-- name: Install percona packages
-  apt:
-    pkg: "{{ item }}"
-    state: installed
-  with_items: "{{ galera_server_percona_distro_packages }}"
-  when: use_percona_upstream | bool
-  tags:
-    - percona-apt-packages
+  with_items:
+    - "{{ galera_packages_list | selectattr('enabled') | selectattr('local_pkg') | sum(attribute='packages', start=[]) }}"
 
 - name: Remove policy-rc
   file:
