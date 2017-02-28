@@ -77,7 +77,7 @@
   apt_repository:
     repo: "{{ galera_percona_xtrabackup_repo.repo }}"
     filename: "{{ galera_percona_xtrabackup_repo.filename | default(omit) }}"
-    state: "{{ use_percona_upstream | bool | ternary('present','absent') }}"
+    state: "{{ (use_percona_upstream | bool) | ternary('present','absent') }}"
   register: add_repos
   until: add_repos|success
   retries: 5
