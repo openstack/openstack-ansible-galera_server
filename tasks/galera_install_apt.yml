@@ -72,7 +72,7 @@
   apt_repository:
     repo: "{{ galera_percona_xtrabackup_repo.repo }}"
     filename: "{{ galera_percona_xtrabackup_repo.filename | default(omit) }}"
-    state: "{{ use_percona_upstream | bool | ternary('present','absent') }}"
+    state: "{{ (use_percona_upstream | bool) | ternary('present','absent') }}"
   register: add_repos
   until: add_repos|success
   retries: 5
@@ -102,7 +102,7 @@
     name: "{{ item }}"
     state: "{{ galera_server_package_state }}"
     update_cache: yes
-    cache_valid_time: "{{ add_repos | changed | ternary('0', cache_timeout) }}"
+    cache_valid_time: "{{ (add_repos | changed) | ternary('0', cache_timeout) }}"
   with_items:
     - "{{ galera_packages_list | selectattr('enabled') | rejectattr('local_pkg') | sum(attribute='packages', start=[]) }}"
 
