@@ -15,7 +15,7 @@
 
 - name: Set fact for extra arguments in MySQL commands
   set_fact:
-    mysql_extra_args: "{{ ansible_os_family == 'Debian' | ternary('--defaults-file=/etc/mysql/debian.cnf', '') }}"
+    mysql_extra_args: "{{ (ansible_os_family == 'Debian') | ternary('--defaults-file=/etc/mysql/debian.cnf', '') }}"
   tags:
     - galera-cluster-state-check
     - galera-bootstrap
