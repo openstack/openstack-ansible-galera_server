@@ -71,7 +71,9 @@ galera_innodb_log_buffer_size: 128M
 galera_wsrep_address: "{{ ansible_host }}"
 galera_wsrep_cluster_address: "{% if galera_cluster_members | length > 1 %}{% for host in galera_cluster_members %}{{ hostvars[host]['ansible_host'] }}{% if not loop.last %},{% endif %}{% endfor %}{% endif %}"
 galera_wsrep_node_incoming_address: "{{ galera_wsrep_address }}"
-galera_wsrep_slave_threads: "{{ (ansible_processor_vcpus | int > 0) | ternary (ansible_processor_vcpus, 2) }}"
+## Cap the maximum number of threads / workers when a user value is unspecified.
+galera_wsrep_slave_threads_max: 16
+galera_wsrep_slave_threads: "{{ [[ansible_processor_vcpus|default(2), 2] | max, galera_wsrep_slave_threads_max] | min }}"
 galera_wsrep_retry_autocommit: 3
 galera_wsrep_debug: 0
 galera_wsrep_sst_method: xtrabackup-v2
@@ -99,9 +101,9 @@ galera_cluster_cnf_overrides: {}
 galera_debian_cnf_overrides: {}
 
 # Set the max connections value for galera. Set this value to override the
-# computed value which is (100 x vCPUs). If computed, the lowest value throughout
-# the cluster will be used which is something to note if deploying galera on different
-# hardware.
+# computed value which is (100 x vCPUs) with a cap of 1600. If computed, the
+# lowest value throughout the cluster will be used which is something to note
+# if deploying galera on different hardware.
 # galera_max_connections: 500
 
 # Settings for percona and qpress
