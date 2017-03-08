@@ -79,11 +79,7 @@
     name: "{{ item }}"
     state: absent
   with_items:
-    - "mariadb-galera-server*"
-    - "mariadb-server*"
-    - MariaDB-Galera-server
-    - MariaDB-server
-    - mysql-common
+    - "{{ galera_server_upgrade_packages_remove }}"
   tags:
     - galera-upgrade
     - galera-apt-packages
