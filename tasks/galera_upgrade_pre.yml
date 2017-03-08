@@ -65,6 +65,8 @@
   apt:
     pkg: "mariadb-galera-server*"
     state: absent
+  with_items:
+    - "{{ galera_server_upgrade_packages_remove }}"
   when:
     - ansible_pkg_mgr == 'apt'
   tags:

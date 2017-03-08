@@ -43,6 +43,11 @@ galera_server_mariadb_distro_packages:
   - rsync
   - socat
 
+# The packages to uninstall during an upgrade from a previous version
+galera_server_upgrade_packages_remove:
+  - MariaDB-Galera-server
+  - MariaDB-server
+
 galera_yum_repo_url: "http://yum.mariadb.org/10.0/centos/7/x86_64"
 galera_repo:
   state: "present"
