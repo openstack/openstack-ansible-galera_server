@@ -58,6 +58,11 @@ galera_server_mariadb_distro_packages:
   - rsync
   - socat
 
+# The packages to uninstall during an upgrade from a previous version
+galera_server_upgrade_packages_remove:
+  - mariadb-server
+  - mysql-common
+
 galera_debconf_items:
   - question: "mysql-server/root_password"
     name: "{{ galera_mariadb_server_package }}"
