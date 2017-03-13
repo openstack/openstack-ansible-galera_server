@@ -4,7 +4,7 @@
 wsrep_on = ON
 
 # Path to Galera library
-wsrep_provider = /usr/lib/galera/libgalera_smm.so
+wsrep_provider = {{ galera_wsrep_provider }}
 {% if galera_wsrep_provider_options is defined %}
 wsrep_provider_options = "
   {%- for item in galera_wsrep_provider_options -%}

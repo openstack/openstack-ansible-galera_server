@@ -138,30 +138,4 @@
   when:
     - systemd_mysql_service.stat.exists
 
-# NOTE(cloudnull): This is an idempotent shell task is it will only run once
-#  provided the "/etc/mysql/rhel_configured" exists. This tasks automates the
-#  MySQL secure setup which is done automatically in Ubuntu deployments.
-- name: "Update root user, connections, and grant options"
-  shell: |
-    service mysql start || true
-    # Reset the root password, at this time there is no password set
-    mysqladmin --no-defaults --port=3306 --socket=/var/run/mysqld/mysqld.sock --host=127.0.0.1 --user=root password "{{ galera_root_password }}"
-    # Setup the root user for MySQL
-    mysql -u root -h localhost -e "UPDATE mysql.user SET Password=PASSWORD('$rootpass') WHERE User='root';"
-    mysql -u root -h localhost -e "DELETE FROM mysql.user WHERE user='';"
-    mysql -u root -h localhost -e "DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('%', 'localhost', '127.0.0.1', '::1');"
-    mysql -u root -h localhost -e "DELETE FROM mysql.db WHERE Db='test' OR Db='test\_%';"
-    mysql -u root -h localhost -e "GRANT ALL PRIVILEGES ON *.* TO '{{ galera_root_user }}'@'localhost' IDENTIFIED BY '{{ galera_root_password }}' WITH GRANT OPTION;"
-    mysql -u root -h localhost -e "GRANT ALL PRIVILEGES ON *.* TO '{{ galera_root_user }}'@'127.0.0.1' IDENTIFIED BY '{{ galera_root_password }}' WITH GRANT OPTION;"
-    mysql -u root -h localhost -e "GRANT ALL PRIVILEGES ON *.* TO '{{ galera_root_user }}'@'::1' IDENTIFIED BY '{{ galera_root_password }}' WITH GRANT OPTION;"
-    mysql -u root -h localhost -e "GRANT ALL PRIVILEGES ON *.* TO '{{ galera_root_user }}'@'%' IDENTIFIED BY '{{ galera_root_password }}' WITH GRANT OPTION;"
-    mysql -u root -h localhost -e "FLUSH PRIVILEGES;"
-    # Create a marker file to ensure this script is not run again
-    touch /etc/mysql/rhel_configured
-    service mysql stop
-  args:
-    creates: /etc/mysql/rhel_configured
-  tags:
-    - galera_server-config
-    - galera-rhel-config
-    - skip_ansible_lint
+- include: galera_secure_mysql.yml mysql_securely_configured='/etc/mysql/rhel_configured'

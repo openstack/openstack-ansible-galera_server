@@ -20,3 +20,9 @@ galera_server_old_package:
   redhat:
     galera_mariadb_server_package: "MariaDB-Galera-server"
     galera_repo_url: "http://yum.mariadb.org/10.0/centos/7/x86_64"
+  # NOTE(hwoarang): On SUSE we only have one version in the
+  # repos so this will not actually test the upgrade path. As such
+  # the following dictionary is mostly a NOOP just to keep the tests happy.
+  suse:
+    galera_mariadb_server_package: "mariadb"
+    galera_repo_url: "http://download.opensuse.org/repositories/server:/database/openSUSE_Leap_{{ ansible_distribution_version }}"

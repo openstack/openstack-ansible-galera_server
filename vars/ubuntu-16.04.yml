@@ -41,6 +41,9 @@ galera_server_required_distro_packages:
   - python-software-properties
   - software-properties-common
 
+galera_etc_conf_file: "/etc/mysql/my.cnf"
+galera_etc_include_dir: "/etc/mysql/conf.d"
+
 # The package name for mariaDB is set as a variable
 # so that it can be used in debconf later in the
 # "galera_common" role.
@@ -62,6 +65,8 @@ galera_server_mariadb_distro_packages:
 galera_server_upgrade_packages_remove:
   - mariadb-server
   - mysql-common
+
+galera_mariadb_service_name: "mariadb"
 
 galera_debconf_items:
   - question: "mysql-server/root_password"
@@ -107,5 +112,7 @@ galera_repo:
   repo: "deb {{ galera_repo_url }} {{ ansible_distribution_release }} main"
   state: "present"
   filename: "MariaDB"
+
+galera_wsrep_provider: "/usr/lib/galera/libgalera_smm.so"
 
 use_percona_upstream: no

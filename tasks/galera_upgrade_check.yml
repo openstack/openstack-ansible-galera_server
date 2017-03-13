@@ -17,6 +17,7 @@
   tags:
     - install-apt
     - install-yum
+    - install-zypper
 
 - include: galera_upgrade_pre.yml
   static: no

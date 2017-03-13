@@ -21,6 +21,7 @@
   tags:
     - install-apt
     - install-yum
+    - install-zypper
 
 - name: Install pip packages
   pip:

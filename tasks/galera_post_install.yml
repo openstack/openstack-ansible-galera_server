@@ -47,18 +47,18 @@
     config_type: "{{ item.config_type }}"
   with_items:
     - src: my.cnf.j2
-      dest: /etc/mysql/my.cnf
+      dest: "{{ galera_etc_conf_file }}"
       config_overrides: "{{ galera_my_cnf_overrides }}"
       config_type: "ini"
     - src: cluster.cnf.j2
-      dest: /etc/mysql/conf.d/cluster.cnf
+      dest: "{{ galera_etc_include_dir }}/cluster.cnf"
       config_overrides: "{{ galera_cluster_cnf_overrides }}"
       config_type: "ini"
     - src: debian.cnf.j2
       dest: /etc/mysql/debian.cnf
       config_overrides: "{{ galera_debian_cnf_overrides }}"
       config_type: "ini"
-  notify: Restart mysql
+  notify: Restart all mysql
   tags:
     - galera-config
     - galera-client-user-config
@@ -72,6 +72,7 @@
     insertafter: '^export HOME=/etc/mysql/'
     line: '[ -r /etc/default/mariadb ] && . /etc/default/mariadb'
     backup: yes
+  when: ansible_pkg_mgr != 'zypper'
   tags:
     - galera-config
 
@@ -80,15 +81,16 @@
     src: "mysql_defaults.j2"
     dest: "/etc/default/mariadb"
     mode: "0644"
+  when: ansible_pkg_mgr != 'zypper'
   notify:
-    - Restart mysql
+    - Restart all mysql
     - Reload the systemd daemon
   tags:
     - galera-config
 
 - name: Create mariadb systemd service config dir
   file:
-    path: "/etc/systemd/system/mariadb.service.d"
+    path: "/etc/systemd/system/{{ galera_mariadb_service_name }}.service.d"
     state: "directory"
     group: "root"
     owner: "root"
@@ -99,7 +101,7 @@
 - name: Apply systemd options
   template:
     src: "{{ item.src }}"
-    dest: "/etc/systemd/system/mariadb.service.d/{{ item.dest }}"
+    dest: "/etc/systemd/system/{{ galera_mariadb_service_name }}.service.d/{{ item.dest }}"
     mode: "0644"
   with_items:
     - { src: "systemd.limits.conf.j2", dest: "limits.conf" }
@@ -109,7 +111,7 @@
     - ansible_service_mgr == 'systemd'
   notify:
     - Reload the systemd daemon
-    - Restart mysql
+    - Restart all mysql
   tags:
     - galera-config
 
