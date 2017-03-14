@@ -61,11 +61,23 @@
     gpgcheck: yes
     enabled: yes
   register: add_repos
-  until: add_repos|success
+  until: add_repos | success
   retries: 5
   delay: 2
   tags:
     - galera-repos
+
+# When changing the repo URL, the metadata does
+# not reliably update, resulting in the right
+# URL being used, but the wrong package list.
+# This is why we force the metadata to be
+# cleaned out whenever the repo config changes.
+- name: Force the expiry of the repo metadata
+  command: "yum clean metadata"
+  when: add_repos | changed
+  tags:
+    - galera-repos
+    - skip_ansible_lint
 
 - name: Install percona repo
   yum:
