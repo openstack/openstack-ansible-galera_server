@@ -29,7 +29,7 @@
 - include: test-galera-server-functional.yml
 
 # Install current version Galera server
-- include: common/test-install-galera.yml
+- include: test-install-galera-upgrade.yml
   vars:
     galera_upgrade: true
 

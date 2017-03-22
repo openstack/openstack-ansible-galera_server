@@ -52,7 +52,15 @@
   tags: galera_server-config
 
 - include: galera_bootstrap.yml
+  when:
+    - inventory_hostname == galera_server_bootstrap_node
   tags: galera_server-config
+
+- include: galera_upgrade_post.yml
+  static: no
+  tags: galera_server-upgrade
+  when:
+    - galera_upgrade | bool
 
 - name: Flush handlers
   meta: flush_handlers
