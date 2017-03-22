@@ -18,12 +18,26 @@
     num_retries: 2
     wait_delay: 3
 
+# If there is an existing cluster join it by starting mysql normally
+- name: Start mysql node normally
+  service:
+    name: mysql
+    state: started
+  environment:
+    MYSQLD_STARTUP_TIMEOUT: 180
+  until: mysql_started | success
+  retries: 3
+  delay: 5
+  when: mysql_running.rc != 0
+  register: mysql_started
+  ignore_errors: true
+
 - name: Start galera cluster
   command: galera_new_cluster
   when:
     - ansible_service_mgr == 'systemd'
-    - inventory_hostname == galera_server_bootstrap_node
     - mysql_running.rc != 0
+    - mysql_started | failed
   register: start_cluster
   failed_when: false
   tags:
@@ -34,8 +48,8 @@
   command: "/etc/init.d/mysql bootstrap"
   when:
     - ansible_service_mgr == 'systemd'
+    - mysql_started | failed
     - start_cluster | failed
-    - inventory_hostname == galera_server_bootstrap_node
     - mysql_running.rc != 0
   tags:
     - galera-bootstrap
@@ -48,7 +62,6 @@
   retries: 6
   delay: 5
   when:
-    - inventory_hostname == galera_server_bootstrap_node
     - mysql_running.rc != 0
   tags:
     - galera-operational
@@ -58,13 +71,7 @@
   set_fact:
     galera_running_and_bootstrapped: true
   when:
-    - inventory_hostname == galera_server_bootstrap_node
     - mysql_running.rc != 0
   tags:
     - galera-operational
     - galera-bootstrap
-
-- include: galera_upgrade_post.yml
-  static: no
-  when:
-    - galera_upgrade | bool
