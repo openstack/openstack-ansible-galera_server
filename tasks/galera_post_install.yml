@@ -22,9 +22,8 @@
     mode: "{{ item.mode|default('0755') }}"
     recurse: "{{ item.recurse|default('false') }}"
   with_items:
-    - { path: "/var/lib/mysql", owner: "mysql", mode: "2755" }
-    - { path: "/var/log/mysql", owner: "mysql", mode: "2755" }
-    - { path: "/var/log/mysql_logs", owner: "mysql", mode: "2755" }
+    - { path: "/var/lib/mysql", owner: "mysql", mode: "02755" }
+    - { path: "/var/log/mysql", owner: "mysql", mode: "02755" }
     - { path: "/etc/mysql/conf.d" }
   tags:
     - galera-config
@@ -35,6 +34,26 @@
   tags:
     - galera-config
     - galera-ssl
+
+- name: Behave properly if mysql_logs is a link
+  shell: |
+    if [ -h "/var/log/mysql_logs" ]; then
+      chown -h mysql "/var/log/mysql_logs"
+      chown -R mysql "$(readlink /var/log/mysql_logs)"
+    else
+      exit 1
+    fi
+  register: log_dir
+  failed_when: false
+  changed_when: log_dir.rc == 0
+
+- name: Create mysql log dir
+  file:
+    path: "/var/log/mysql_logs"
+    state: "directory"
+    owner: "mysql"
+    mode: "02755"
+  when: log_dir.rc == 1
 
 - name: Drop mariadb config(s)
   config_template:
