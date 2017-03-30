@@ -1,0 +1,54 @@
+---
+# Copyright 2015, Rackspace US, Inc., Mirantis Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+- name: Check if SSL bundle exists
+  stat:
+    path: "{{ item }}"
+  delegate_to: localhost
+  register: res
+  with_items:
+    - "{{ galera_user_ssl_ca_cert }}"
+    - "{{ galera_user_ssl_cert }}"
+    - "{{ galera_user_ssl_key }}"
+
+- include: galera_ssl_key_create.yml
+  when: >
+    ( not res.results[0].stat.exists or
+      not res.results[1].stat.exists or
+      not res.results[2].stat.exists )
+
+- name: Create ssl directory
+  file:
+    path: "/etc/mysql/ssl"
+    state: "directory"
+    owner: "mysql"
+    group: "mysql"
+    mode: "0750"
+
+- name: Copy CA cert and key
+  copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: "mysql"
+    group: "mysql"
+    mode: "{{ item.mode|default('0640') }}"
+  with_items:
+    - src: "{{ galera_user_ssl_ca_cert }}"
+      dest: "{{ galera_ssl_ca_cert }}"
+    - src: "{{ galera_user_ssl_cert }}"
+      dest: "{{ galera_ssl_cert }}"
+    - src: "{{ galera_user_ssl_key }}"
+      dest: "{{ galera_ssl_key }}"
+      mode: "0600"

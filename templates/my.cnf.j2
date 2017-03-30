@@ -33,6 +33,11 @@ bind-address = ::
 {% if galera_server_id is defined %}
 server-id = {{ galera_server_id }}
 {% endif %}
+{% if galera_use_ssl | bool %}
+ssl-ca = {{ galera_ssl_ca_cert }}
+ssl-cert = {{ galera_ssl_cert }}
+ssl-key = {{ galera_ssl_key }}
+{% endif %}
 
 # LOGGING #
 log-queries-not-using-indexes = {{ galera_unindexed_query_logging }}
