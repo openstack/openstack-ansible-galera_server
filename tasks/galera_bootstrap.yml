@@ -31,6 +31,8 @@
   when: mysql_running.rc != 0
   register: mysql_started
   ignore_errors: true
+  tags:
+    - galera-bootstrap
 
 - name: Start galera cluster
   command: galera_new_cluster
