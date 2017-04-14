@@ -69,7 +69,16 @@ galera_innodb_log_buffer_size: 128M
 
 ## wsrep configuration
 galera_wsrep_address: "{{ ansible_host }}"
-galera_wsrep_cluster_address: "{% if galera_cluster_members | length > 1 %}{% for host in galera_cluster_members %}{{ hostvars[host]['ansible_host'] }}{% if not loop.last %},{% endif %}{% endfor %}{% endif %}"
+galera_wsrep_cluster_address: >-
+  {% set _var = [] -%}
+  {% for cluster_host in galera_cluster_members -%}
+  {% set _addr = hostvars[cluster_host]['galera_wsrep_address']
+                 | default(hostvars[cluster_host]['ansible_host']) -%}
+  {% if _var.append(_addr) %}{% endif -%}
+  {% endfor -%}
+  {# If only 1 cluster member is present output an empty string so the
+     single-node member will re-bootstrap correctly upon restart #}
+  {{ _var | join(',') if galera_cluster_members | length > 1 else '' }}
 galera_wsrep_node_incoming_address: "{{ galera_wsrep_address }}"
 ## Cap the maximum number of threads / workers when a user value is unspecified.
 galera_wsrep_slave_threads_max: 16
