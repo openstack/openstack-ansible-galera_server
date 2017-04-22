@@ -114,11 +114,13 @@ galera_package_arch: "{{ hostvars[inventory_hostname]['ansible_architecture'] }}
 # May be set to "no" when proxy server is intercepting the certificates.
 percona_package_download_validate_certs: yes
 percona_package_url: "{{ percona_arch_url.get( galera_package_arch | lower ) }}"
+percona_package_fallback_url: "{{ percona_arch_fallback_url.get( galera_package_arch | lower ) }}"
 percona_package_sha256: "{{ percona_arch_sha256.get( galera_package_arch | lower ) }}"
 percona_package_path: "/opt/{{ percona_package_url | basename }}"
 
 qpress_package_download_validate_certs: yes
 qpress_package_url: "{{ qpress_arch_url.get( galera_package_arch | lower ) }}"
+qpress_package_fallback_url: "{{ qpress_arch_fallback_url.get( galera_package_arch | lower ) }}"
 qpress_package_sha256: "{{ qpress_arch_sha256.get( galera_package_arch | lower ) }}"
 qpress_package_path: "/opt/{{ qpress_package_url | basename }}"
 
