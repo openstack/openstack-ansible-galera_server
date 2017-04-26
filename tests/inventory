@@ -1,8 +1,8 @@
 [all]
-localhost ansible_become=True
-container1 ansible_host=10.1.0.2 ansible_become=True ansible_user=root
-container2 ansible_host=10.1.0.3 ansible_become=True ansible_user=root
-container3 ansible_host=10.1.0.4 ansible_become=True ansible_user=root
+localhost
+container1
+container2
+container3
 
 [galera_all]
 container1

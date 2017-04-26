@@ -1,0 +1,4 @@
+---
+ansible_host: 10.1.0.3
+ansible_become: True
+ansible_user: root
