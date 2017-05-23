@@ -13,6 +13,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+- name: Add percona external packages to the galera packages list
+  set_fact:
+    galera_install_packages_list: "{{ galera_packages_list | union(percona_packages_list) }}"
+
 - include: "galera_install_{{ ansible_pkg_mgr }}.yml"
   tags:
     - install-apt

@@ -23,6 +23,8 @@ galera_packages_list:
   - packages: "{{ galera_server_percona_distro_packages }}"
     enabled: "{{ use_percona_upstream }}"
     local_pkg: no
+
+percona_packages_list:
   - packages: "{{ [percona_package_path] }}"
     enabled: "{{ not use_percona_upstream }}"
     local_pkg: yes
