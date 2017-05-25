@@ -17,6 +17,13 @@
   service:
     name: mysql
     state: started
+  # NOTE (hwoarang) Sometimes the service fails to start on the first attempt
+  # so just try a few more times before giving up. Clearly this needs to be
+  # investigated at some point...
+  register: mysql_service_started
+  until: mysql_service_started | success
+  retries: "{{ num_retries }}"
+  delay: "{{ wait_delay }}"
   tags:
     - galera-upgrade
 

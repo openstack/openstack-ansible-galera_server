@@ -57,7 +57,9 @@
   tags: galera_server-config
 
 - include: galera_upgrade_post.yml
-  static: no
+  vars:
+    num_retries: 3
+    wait_delay: 3
   tags: galera_server-upgrade
   when:
     - galera_upgrade | bool
