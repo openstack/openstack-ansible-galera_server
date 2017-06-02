@@ -104,6 +104,7 @@
   with_items:
     - { src: "systemd.limits.conf.j2", dest: "limits.conf" }
     - { src: "systemd.timeout.conf.j2", dest: "timeout.conf" }
+    - { src: "systemd.restart.conf.j2", dest: "restart.conf" }
   when:
     - ansible_service_mgr == 'systemd'
   notify:
