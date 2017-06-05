@@ -13,18 +13,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- include: galera_upgrade_check_apt.yml
-  static: no
-  when:
-    - ansible_pkg_mgr == 'apt'
+- include: galera_upgrade_check_{{ ansible_pkg_mgr }}.yml
   tags:
     - install-apt
-
-- include: galera_upgrade_check_yum.yml
-  static: no
-  when:
-    - ansible_pkg_mgr == 'yum'
-  tags:
     - install-yum
 
 - include: galera_upgrade_pre.yml
