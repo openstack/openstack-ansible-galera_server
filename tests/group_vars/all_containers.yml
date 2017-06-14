@@ -24,3 +24,4 @@ container_networks:
 physical_host: localhost
 properties:
   service_name: "{{ inventory_hostname }}"
+galera_disable_privatedevices: yes

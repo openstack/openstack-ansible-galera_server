@@ -112,6 +112,21 @@
   tags:
     - galera-config
 
+# See comments above 'galera_disable_privatedevices' in defaults/main.yml for
+# links to relevant bugs and discussion.
+- name: Remove PrivateDevices systemd options when in container
+  template:
+    src: without-privatedevices.conf.j2
+    dest: "/etc/systemd/system/mariadb.service.d/without-privatedevices.conf"
+  when:
+    - ansible_pkg_mgr == 'yum'
+    - ansible_service_mgr == 'systemd'
+  notify:
+    - Reload the systemd daemon
+    - Restart mysql
+  tags:
+    - galera-config
+
 - name: remove default mysql_safe_syslog
   file:
     path: "/etc/mysql/conf.d/mysqld_safe_syslog.cnf"
