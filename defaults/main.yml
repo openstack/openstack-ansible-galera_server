@@ -141,3 +141,19 @@ galera_ssl_ca_self_signed_subject: "/C=US/ST=Texas/L=San Antonio/O=IT"
 # This option is used for creating the CA and overriding the Galera address on the clients side.
 # Should be set to either public VIP of VIP FQDN, depending on what is currently used in the env.
 galera_ssl_address: "{{ ansible_host }}"
+
+# MariaDB 10.1+ ships with 'PrivateDevices=True' in the systemd unit file. This
+# provides some additional security, but it causes problems with creating
+# mount namespaces on CentOS 7 with systemd 219. While the security
+# enhancements are helpful on bare metal hosts with multiple services running,
+# they are not as helpful when MariaDB is running in a container with its own
+# isolated namespaces.
+#
+# Related bugs:
+#   https://bugs.launchpad.net/openstack-ansible/+bug/1697531
+#   https://github.com/lxc/lxc/issues/1623
+#   https://github.com/systemd/systemd/issues/6121
+#
+# Setting the following variable to 'yes' will disable the PrivateDevices
+# setting in the systemd unit file for MariaDB on CentOS 7 hosts.
+galera_disable_privatedevices: no
