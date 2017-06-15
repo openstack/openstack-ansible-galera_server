@@ -106,6 +106,38 @@
     - galera_server-config
     - galera-enable
 
+# This glue to make the upgrade works. when testing the galera_server role we install version 10.0
+# of mariadb and so the path doesn't exist, let's clean it up when we do upgrade testing the way
+# we do for other roles.
+# TODO: cleanup when we change upgrade test.
+- name: Check if we are on systemd service
+  stat:
+    path: "/etc/systemd/system/mariadb.service.d/"
+  register: systemd_mysql_service
+
+# See comments above 'galera_disable_privatedevices' in defaults/main.yml for
+# links to relevant bugs and discussion.
+- name: Remove PrivateDevices systemd options when in container
+  template:
+    src: without-privatedevices.conf.j2
+    dest: "/etc/systemd/system/mariadb.service.d/without-privatedevices.conf"
+  when:
+    - ansible_pkg_mgr == 'yum'
+    - systemd_mysql_service.stat.exists
+  notify:
+    - Reload the systemd daemon
+    - Restart mysql
+  tags:
+    - galera-config
+
+# TODO: remove name argument when we upgrade to ansible 2.4
+- name: Reload the systemd daemon
+  systemd:
+    daemon_reload: yes
+    name: mysql
+  when:
+    - systemd_mysql_service.stat.exists
+
 # NOTE(cloudnull): This is an idempotent shell task is it will only run once
 #  provided the "/etc/mysql/rhel_configured" exists. This tasks automates the
 #  MySQL secure setup which is done automatically in Ubuntu deployments.
