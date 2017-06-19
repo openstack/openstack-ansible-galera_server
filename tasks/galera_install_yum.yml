@@ -96,7 +96,7 @@
     name: "{{ item }}"
     state: "{{ galera_server_package_state }}"
   with_items:
-    - "{{ galera_packages_list | selectattr('enabled') | sum(attribute='packages', start=[]) }}"
+    - "{{ galera_install_packages_list | selectattr('enabled') | sum(attribute='packages', start=[]) }}"
 
 - name: Enable mysql to start at boot
   service:
