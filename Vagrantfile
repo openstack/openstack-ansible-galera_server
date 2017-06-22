@@ -1,3 +1,11 @@
+# Verify whether required plugins are installed.
+required_plugins = [ "vagrant-disksize" ]
+required_plugins.each do |plugin|
+  if not Vagrant.has_plugin?(plugin)
+    raise "The vagrant plugin #{plugin} is required. Please run `vagrant plugin install #{plugin}`"
+  end
+end
+
 Vagrant.configure(2) do |config|
   config.vm.provider "virtualbox" do |v|
     v.memory = 2048
@@ -12,6 +20,7 @@ Vagrant.configure(2) do |config|
       SHELL
 
   config.vm.define "ubuntu1604" do |xenial|
+    xenial.disksize.size = "40GB"
     xenial.vm.box = "ubuntu/xenial64"
   end
 
