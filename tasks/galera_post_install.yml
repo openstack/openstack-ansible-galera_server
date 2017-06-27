@@ -45,6 +45,7 @@
     mode: "0644"
     config_overrides: "{{ item.config_overrides }}"
     config_type: "{{ item.config_type }}"
+    ignore_none_type: False
   with_items:
     - src: my.cnf.j2
       dest: /etc/mysql/my.cnf

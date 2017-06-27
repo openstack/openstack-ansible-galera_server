@@ -20,3 +20,8 @@ galera_server_old_package:
   redhat:
     galera_mariadb_server_package: "MariaDB-Galera-server"
     galera_repo_url: "http://yum.mariadb.org/10.0/centos/7/x86_64"
+
+# Testing my.cnf overrides
+galera_my_cnf_overrides:
+  sst:
+    sst-initial-timeout: 600
