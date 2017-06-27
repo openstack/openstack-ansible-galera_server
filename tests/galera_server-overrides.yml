@@ -26,3 +26,8 @@ galera_server_old_package:
   suse:
     galera_mariadb_server_package: "mariadb"
     galera_repo_url: "http://download.opensuse.org/repositories/server:/database/openSUSE_Leap_{{ ansible_distribution_version }}"
+
+# Testing my.cnf overrides
+galera_my_cnf_overrides:
+  sst:
+    sst-initial-timeout: 600
