@@ -22,7 +22,6 @@ galera_server_required_distro_packages:
   - gpg2
   - libaio-devel
   - libstdc++-devel
-  - libgcc_s1
   - libgcrypt-devel
   - libmysqlclient-devel
   - mariadb-client
