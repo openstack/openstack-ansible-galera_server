@@ -13,27 +13,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# NOTE(hwoarang): zypper_repository/auto_import_keys added in 2.2
-# so we need to manually refresh the repository and import the keys
-# in order to work with older ansible versions.
 - name: Add galera repo
   zypper_repository:
       refresh: yes
       name: "{{ item.name }}"
       repo: "{{ item.uri }}"
+      auto_import_keys: yes
   register: zypper_repository_added
   with_items: "{{ galera_server_zypper_repo }}"
   tags:
-    - galera-repos
-
-# NOTE(hwoarang): We need to run this right after we add the repos and
-# before we install any packages so it can't be a handler unless we
-# move everything to pre_tasks
-- name: Refresh galera zypper repository
-  command: zypper --gpg-auto-import-keys ref
-  when: zypper_repository_added.changed
-  tags:
-    - skip_ansible_lint
     - galera-repos
 
 - name: Install galera_server role remote packages (zypper)
