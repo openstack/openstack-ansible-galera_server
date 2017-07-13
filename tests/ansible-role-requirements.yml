@@ -22,3 +22,7 @@
   src: https://git.openstack.org/openstack/openstack-ansible-galera_client
   scm: git
   version: stable/pike
+- name: previous_galera_server
+  src: https://git.openstack.org/openstack/openstack-ansible-galera_server
+  scm: git
+  version: stable/ocata

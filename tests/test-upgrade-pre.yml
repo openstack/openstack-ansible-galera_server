@@ -19,8 +19,13 @@
 # Prepare the containers
 - include: common/test-prepare-containers.yml
 
-# Install previous version Galera server
-- include: common/test-install-galera.yml
-
-# Run functional tests
-- include: test-galera-server-functional.yml
+# Install previous version
+- name: Deploy previous galera version
+  hosts: galera_all
+  user: root
+  serial: 1
+  gather_facts: true
+  roles:
+    - role: "previous_galera_server"
+  vars_files:
+    - common/previous/test-vars.yml

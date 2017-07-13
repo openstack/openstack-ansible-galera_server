@@ -13,20 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-galera_server_old_package:
-  debian:
-    galera_mariadb_server_package: "mariadb-galera-server-10.0"
-    galera_repo_url: "http://mirror.rackspace.com/mariadb/repo/10.0/ubuntu"
-  redhat:
-    galera_mariadb_server_package: "MariaDB-Galera-server"
-    galera_repo_url: "http://yum.mariadb.org/10.0/centos/7/x86_64"
-  # NOTE(hwoarang): On SUSE we only have one version in the
-  # repos so this will not actually test the upgrade path. As such
-  # the following dictionary is mostly a NOOP just to keep the tests happy.
-  suse:
-    galera_mariadb_server_package: "mariadb"
-    galera_repo_url: "http://download.opensuse.org/repositories/server:/database/openSUSE_Leap_{{ ansible_distribution_version }}"
-
 # Testing my.cnf overrides
 galera_my_cnf_overrides:
   sst:

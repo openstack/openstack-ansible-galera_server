@@ -13,13 +13,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- name: Deploy galera
+# Install current version Galera server
+- name: Deploy current galera version
   hosts: galera_all
   user: root
   serial: 1
-  max_fail_percentage: 20
   gather_facts: true
   roles:
     - role: "galera_server"
+  vars:
+    galera_upgrade: true
   vars_files:
     - common/test-vars.yml
+
+# Re-run functional tests
+- include: test-galera-server-functional.yml
