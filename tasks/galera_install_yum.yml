@@ -73,14 +73,14 @@
 # This is why we force the metadata to be
 # cleaned out whenever the repo config changes.
 - name: Force the expiry of the repo metadata
-  command: "yum clean metadata"
+  command: "{{ ansible_pkg_mgr }} clean metadata"
   when: add_repos | changed
   tags:
     - galera-repos
     - skip_ansible_lint
 
 - name: Install percona repo
-  yum:
+  package:
     pkg: "{{ galera_percona_xtrabackup_repo.repo }}"
     state: "{{ galera_percona_xtrabackup_repo.state }}"
   register: install_packages
@@ -91,8 +91,8 @@
   tags:
     - galera-pre-yum-packages
 
-- name: Install galera_server role remote packages (yum)
-  yum:
+- name: Install galera_server role remote packages
+  package:
     name: "{{ item }}"
     state: "{{ galera_server_package_state }}"
   with_items:
@@ -122,7 +122,7 @@
     src: without-privatedevices.conf.j2
     dest: "/etc/systemd/system/mariadb.service.d/without-privatedevices.conf"
   when:
-    - ansible_pkg_mgr == 'yum'
+    - ansible_pkg_mgr in ['yum', 'dnf']
     - systemd_mysql_service.stat.exists
   notify:
     - Reload the systemd daemon
