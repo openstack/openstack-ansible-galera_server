@@ -99,12 +99,10 @@
 
 - name: Install galera_server role remote packages (apt)
   apt:
-    name: "{{ item }}"
+    name: "{{ galera_install_packages_list | selectattr('enabled') | rejectattr('local_pkg') | sum(attribute='packages', start=[]) }}"
     state: "{{ galera_server_package_state }}"
     update_cache: yes
     cache_valid_time: "{{ (add_repos | changed) | ternary('0', cache_timeout) }}"
-  with_items:
-    - "{{ galera_install_packages_list | selectattr('enabled') | rejectattr('local_pkg') | sum(attribute='packages', start=[]) }}"
 
 - name: Install galera_server role local packages (apt)
   apt:
