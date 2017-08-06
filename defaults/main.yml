@@ -168,3 +168,6 @@ galera_ssl_address: "{{ ansible_host }}"
 # Setting the following variable to 'yes' will disable the PrivateDevices
 # setting in the systemd unit file for MariaDB on CentOS 7 hosts.
 galera_disable_privatedevices: no
+
+# Allow the playbook to orchestrate service restart handlers
+galera_external_restart_handlers: no
