@@ -14,7 +14,7 @@
 # limitations under the License.
 
 # Galera GPG Keys
-galera_gpg_keys:
+_galera_gpg_keys:
   - key_name: 'RPM-GPG-KEY-MariaDB'
     keyserver: 'https://yum.mariadb.org'
     fallback_keyserver: 'https://yum.mariadb.org'
@@ -45,13 +45,13 @@ galera_server_upgrade_packages_remove:
   - MariaDB-server
 
 _galera_repo_url: "http://yum.mariadb.org/10.1/centos/7/x86_64"
-galera_repo:
+_galera_repo:
   name: MariaDB
   description: "MariaDB Repo"
   baseurl: "{{ galera_repo_url }}"
   gpgkey: "https://yum.mariadb.org/RPM-GPG-KEY-MariaDB"
 
-galera_percona_xtrabackup_repo:
+_galera_percona_xtrabackup_repo:
   repo: "http://www.percona.com/downloads/percona-release/redhat/0.1-4/percona-release-0.1-4.noarch.rpm"
   state: "present"
 
