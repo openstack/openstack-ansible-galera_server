@@ -43,8 +43,21 @@ galera_server_distro_package_pins: []
 galera_debconf_items: []
 galera_server_percona_distro_packages: []
 galera_mariadb_server_package: "{{ _galera_mariadb_server_package }}"
+
+# Set the URL for the MariaDB repository
 galera_repo_url: "{{ _galera_repo_url }}"
 
+# Set the repo information for the MariaDB repository
+galera_repo: "{{ _galera_repo }}"
+
+# Set the gpg keys needed to be imported
+galera_gpg_keys: "{{ _galera_gpg_keys | default([]) }}"
+
+# Set the URL for the Percona Xtrabackup repository
+galera_percona_xtrabackup_repo_url: "{{ _galera_percona_xtrabackup_repo_url | default('') }}"
+
+# Set the rpo information for the Percona Xtrabackup repository
+galera_percona_xtrabackup_repo: "{{ _galera_percona_xtrabackup_repo | default({}) }}"
 
 galera_existing_cluster: true
 galera_running_and_bootstrapped: false

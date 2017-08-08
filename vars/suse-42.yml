@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-galera_server_zypper_repo:
+_galera_repo:
   - name: "OBS:server_database"
     uri: "http://download.opensuse.org/repositories/server:/database/openSUSE_Leap_{{ ansible_distribution_version }}"
 

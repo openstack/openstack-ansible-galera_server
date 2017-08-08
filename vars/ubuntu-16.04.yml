@@ -19,7 +19,7 @@ cache_timeout: 600
 galera_server_distro_package_pins: [{ package: "*", release: MariaDB, priority: "1001" }]
 
 # Galera GPG Keys
-galera_gpg_keys:
+_galera_gpg_keys:
   - key_name: 'mariadb'
     keyserver: 'hkp://keyserver.ubuntu.com:80'
     fallback_keyserver: 'hkp://p80.pool.sks-keyservers.net:80'
@@ -101,14 +101,14 @@ qpress_arch_sha256:
   ppc64le: "a31d3e00dbcec9b3f98eae82b261d054d0b80a57f4a38967d0e953811cb082f3"
 
 # Repositories
-galera_percona_xtrabackup_repo_url: "http://repo.percona.com/apt"
-galera_percona_xtrabackup_repo:
+_galera_percona_xtrabackup_repo_url: "http://repo.percona.com/apt"
+_galera_percona_xtrabackup_repo:
   repo: "deb {{ galera_percona_xtrabackup_repo_url }} {{ ansible_distribution_release }} main"
   state: "present"
   filename: "Percona"
 
 _galera_repo_url: "http://mirror.rackspace.com/mariadb/repo/10.1/ubuntu"
-galera_repo:
+_galera_repo:
   repo: "deb {{ galera_repo_url }} {{ ansible_distribution_release }} main"
   state: "present"
   filename: "MariaDB"
