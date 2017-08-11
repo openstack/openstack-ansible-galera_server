@@ -30,36 +30,38 @@
   tags:
     - galera-apt-packages
 
-- name: Add galera apt-keys
-  apt_key:
-    id: "{{ item.hash_id }}"
-    keyserver: "{{ item.keyserver | default(omit) }}"
-    data: "{{ item.data | default(omit) }}"
-    url: "{{ item.url | default(omit) }}"
-    state: "present"
-  register: add_keys
-  until: add_keys|success
-  failed_when: false
-  retries: 5
-  delay: 2
-  with_items: "{{ galera_gpg_keys }}"
-  tags:
-    - galera-apt-keys
+- block:
+    - name: Add galera apt-keys (primary keyserver)
+      apt_key:
+        id: "{{ item.hash_id }}"
+        keyserver: "{{ item.keyserver | default(omit) }}"
+        data: "{{ item.data | default(omit) }}"
+        url: "{{ item.url | default(omit) }}"
+        state: "present"
+      register: add_keys
+      until: add_keys|success
+      retries: 5
+      delay: 2
+      with_items: "{{ galera_gpg_keys }}"
+      tags:
+        - galera-apt-keys
 
-- name: Add galera apt-keys using fallback keyserver
-  apt_key:
-    id: "{{ item.hash_id }}"
-    keyserver: "{{ item.fallback_keyserver | default(omit) }}"
-    url: "{{ item.fallback_url | default(omit) }}"
-    state: "present"
-  register: add_keys_fallback
-  until: add_keys_fallback|success
-  retries: 5
-  delay: 2
-  with_items: "{{ galera_gpg_keys }}"
-  when: add_keys|failed and (item.fallback_keyserver is defined or item.fallback_url is defined)
-  tags:
-    - galera-apt-keys
+  rescue:
+    - name: Add galera apt-keys (fallback keyserver)
+      apt_key:
+        id: "{{ item.hash_id }}"
+        keyserver: "{{ item.fallback_keyserver | default(omit) }}"
+        url: "{{ item.fallback_url | default(omit) }}"
+        state: "present"
+      register: add_keys_fallback
+      until: add_keys_fallback|success
+      retries: 5
+      delay: 2
+      with_items: "{{ galera_gpg_keys }}"
+      when:
+        - item.fallback_keyserver is defined or item.fallback_url is defined
+      tags:
+        - galera-apt-keys
 
 - name: Add galera repo
   apt_repository:
