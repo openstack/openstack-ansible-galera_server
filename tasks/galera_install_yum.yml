@@ -27,30 +27,32 @@
     - { src: "/etc/mysql/my.cnf", path: "/etc/my.cnf", state: "link", force: true }
 
 - name: Add galera gpg-keys
-  rpm_key:
-    state: present
-    key: "{{ item.keyserver }}/{{ item.key_name }}"
-  register: add_keys
-  until: add_keys|success
-  failed_when: false
-  retries: 5
-  delay: 2
-  with_items: "{{ galera_gpg_keys }}"
-  tags:
-    - galera-gpg-keys
+  block:
+    - name: Add keys (primary keyserver)
+      rpm_key:
+        state: present
+        key: "{{ item.keyserver }}/{{ item.key_name }}"
+      register: add_keys
+      until: add_keys|success
+      retries: 5
+      delay: 2
+      with_items: "{{ galera_gpg_keys }}"
+      tags:
+        - galera-gpg-keys
 
-- name: Add galera gpg-keys using fallback keyserver
-  rpm_key:
-    state: present
-    key: "{{ item.fallback_keyserver }}/{{ item.key_name }}"
-  register: add_keys
-  until: add_keys|success
-  retries: 5
-  delay: 2
-  with_items: "{{ galera_gpg_keys }}"
-  when: add_keys|failed and (item.fallback_keyserver is defined)
-  tags:
-    - galera-gpg-keys
+  rescue:
+    - name: Add keys (fallback keyserver)
+      rpm_key:
+        state: present
+        key: "{{ item.fallback_keyserver }}/{{ item.key_name }}"
+      register: add_keys
+      until: add_keys|success
+      retries: 5
+      delay: 2
+      with_items: "{{ galera_gpg_keys }}"
+      when: item.fallback_keyserver is defined
+      tags:
+        - galera-gpg-keys
 
 - name: Add galera repo
   yum_repository:
