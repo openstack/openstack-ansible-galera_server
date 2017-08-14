@@ -29,6 +29,7 @@
   when:
      - not galera_running_and_bootstrapped | bool
      - ansible_pkg_mgr != "zypper"
+     - not galera_external_restart_handlers | bool
   register: galera_restart
   until: galera_restart | success
   retries: 3
@@ -70,6 +71,7 @@
     - not galera_running_and_bootstrapped | bool
     - not galera_existing_cluster | bool and inventory_hostname == galera_server_bootstrap_node
     - ansible_pkg_mgr == "zypper"
+    - not galera_external_restart_handlers | bool
 
 - name: "Ensure node is not in bootstrap mode"
   lineinfile:
@@ -81,6 +83,7 @@
     - not galera_running_and_bootstrapped | bool
     - (not galera_existing_cluster | bool) or (not inventory_hostname == galera_server_bootstrap_node)
     - ansible_pkg_mgr == "zypper"
+    - not galera_external_restart_handlers | bool
 
 - name: Restart mysql on SUSE
   service:
@@ -89,6 +92,7 @@
   when:
     - not galera_running_and_bootstrapped | bool
     - ansible_pkg_mgr == "zypper"
+    - not galera_external_restart_handlers | bool
   register: galera_restart
   until: galera_restart | success
   retries: 3
