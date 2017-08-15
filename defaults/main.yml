@@ -59,6 +59,9 @@ galera_percona_xtrabackup_repo_url: "{{ _galera_percona_xtrabackup_repo_url }}"
 # Set the rpo information for the Percona Xtrabackup repository
 galera_percona_xtrabackup_repo: "{{ _galera_percona_xtrabackup_repo }}"
 
+# Enable the use of the upstream percona repo
+use_percona_upstream: "{{ _use_percona_upstream }}"
+
 galera_existing_cluster: true
 galera_running_and_bootstrapped: false
 

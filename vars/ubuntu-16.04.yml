@@ -104,4 +104,4 @@ _galera_repo:
   state: "present"
   filename: "MariaDB"
 
-use_percona_upstream: no
+_use_percona_upstream: no

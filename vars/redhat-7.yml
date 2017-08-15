@@ -69,4 +69,4 @@ qpress_arch_url:
 qpress_arch_sha256:
   x86_64: "d6b6b7ca3a5ad4baea34975743106ac54ac746b3e6497d59bce55765d604b697"
 
-use_percona_upstream: yes
+_use_percona_upstream: yes
