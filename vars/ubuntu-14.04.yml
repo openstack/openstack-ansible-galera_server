@@ -97,5 +97,5 @@ _galera_repo:
   repo: "deb {{ galera_repo_url }} {{ ansible_distribution_release }} main"
   state: "present"
 
-use_percona_upstream: no
+_use_percona_upstream: no
 using_mysql_init: no
