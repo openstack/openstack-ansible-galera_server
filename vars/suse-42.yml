@@ -48,7 +48,7 @@ galera_server_mariadb_distro_packages:
 
 galera_wsrep_provider: "/usr/lib64/galera-3/libgalera_smm.so"
 
-use_percona_upstream: true
+_use_percona_upstream: yes
 # NOTE(hwoarang): The default one provided in vars/main.yml depends on
 # variables defined in defaults/main.yml. However such defaults do not make
 # sense for SUSE distributions and as such we provide an empty list here since

@@ -115,4 +115,4 @@ _galera_repo:
 
 galera_wsrep_provider: "/usr/lib/galera/libgalera_smm.so"
 
-use_percona_upstream: no
+_use_percona_upstream: no

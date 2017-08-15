@@ -80,4 +80,4 @@ qpress_arch_sha256:
 
 galera_wsrep_provider: "/usr/lib/galera/libgalera_smm.so"
 
-use_percona_upstream: yes
+_use_percona_upstream: yes
