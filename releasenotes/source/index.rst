@@ -5,7 +5,8 @@
 .. toctree::
    :maxdepth: 1
 
-   mitaka
-   newton
    unreleased
+   pike
    ocata
+   newton
+   mitaka
