@@ -138,6 +138,9 @@ qpress_package_url: "{{ qpress_arch_url.get( galera_package_arch | lower ) }}"
 qpress_package_sha256: "{{ qpress_arch_sha256.get( galera_package_arch | lower ) }}"
 qpress_package_path: "/opt/{{ qpress_package_url | basename }}"
 
+# This is only applied if the ansible_pkg_mgr is 'apt'
+galera_server_distro_package_pins: [{ package: "*", release: MariaDB, priority: "1001" }]
+
 # Galera Server SSL functionality.
 
 galera_use_ssl: false
