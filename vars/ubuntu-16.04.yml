@@ -16,8 +16,6 @@
 ## APT Cache Options
 cache_timeout: 600
 
-galera_server_distro_package_pins: [{ package: "*", release: MariaDB, priority: "1001" }]
-
 # Galera GPG Keys
 _galera_gpg_keys:
   - key_name: 'mariadb'
