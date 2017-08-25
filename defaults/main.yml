@@ -39,7 +39,6 @@ galera_force_change_cluster_name: False
 # These are here to stub out the internal ROLE API.
 #  if these are used they should be set within the
 #  distro specific variable files found in vars/
-galera_server_distro_package_pins: []
 galera_debconf_items: []
 galera_server_percona_distro_packages: []
 galera_mariadb_server_package: "{{ _galera_mariadb_server_package }}"
