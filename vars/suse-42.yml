@@ -15,7 +15,7 @@
 
 _galera_repo:
   - name: "OBS:server_database"
-    uri: "http://download.opensuse.org/repositories/server:/database/openSUSE_Leap_{{ ansible_distribution_version }}"
+    uri: "{{ galera_server_opensuse_mirror_obs_url | default('http://download.opensuse.org') }}/repositories/server:/database/openSUSE_Leap_{{ ansible_distribution_version }}"
 
 galera_server_required_distro_packages:
   - galera-3
