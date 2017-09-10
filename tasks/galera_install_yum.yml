@@ -125,6 +125,7 @@
     - ansible_pkg_mgr in ['yum', 'dnf']
     - systemd_mysql_service.stat.exists
   notify:
+    - Manage LB
     - Reload the systemd daemon
     - Restart mysql
   tags:
