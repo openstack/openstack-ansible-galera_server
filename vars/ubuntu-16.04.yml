@@ -42,7 +42,7 @@ galera_server_required_distro_packages:
 # The package name for mariaDB is set as a variable
 # so that it can be used in debconf later in the
 # "galera_common" role.
-_galera_mariadb_server_package: "mariadb-server-10.1"
+_galera_mariadb_server_package: "mariadb-server-{{ galera_major_version }}"
 
 # NB This is specifically galera_server_mariadb_distro_packages as these
 # packages only get installed during the galera play - this is because of
@@ -96,7 +96,7 @@ _galera_percona_xtrabackup_repo:
   state: "present"
   filename: "Percona"
 
-_galera_repo_url: "http://mirror.rackspace.com/mariadb/repo/10.1/ubuntu"
+_galera_repo_url: "http://mirror.rackspace.com/mariadb/repo/{{ galera_major_version }}/ubuntu"
 _galera_repo:
   repo: "deb {{ galera_repo_url }} {{ ansible_distribution_release }} main"
   state: "present"
