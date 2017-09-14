@@ -43,6 +43,9 @@ galera_debconf_items: []
 galera_server_percona_distro_packages: []
 galera_mariadb_server_package: "{{ _galera_mariadb_server_package }}"
 
+# The major version used to select the repo URL path
+galera_major_version: 10.1
+
 # Set the URL for the MariaDB repository
 galera_repo_url: "{{ _galera_repo_url }}"
 
