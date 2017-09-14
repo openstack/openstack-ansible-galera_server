@@ -187,9 +187,6 @@ galera_ssl_address: "{{ ansible_host }}"
 # setting in the systemd unit file for MariaDB on CentOS 7 hosts.
 galera_disable_privatedevices: no
 
-# Allow the playbook to orchestrate service restart handlers
-galera_external_restart_handlers: no
-
 ## Set default mirror for openSUSE repositories
 # NOTE(hwoarang): Ensure that the full path to the 'opensuse' directory is used.
 #galera_server_opensuse_mirror_obs_url: "http://widehat.opensuse.org"

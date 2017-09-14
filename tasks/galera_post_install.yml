@@ -78,7 +78,9 @@
       dest: /etc/mysql/debian.cnf
       config_overrides: "{{ galera_debian_cnf_overrides }}"
       config_type: "ini"
-  notify: Restart all mysql
+  notify:
+    - Manage LB
+    - Restart all mysql
   tags:
     - galera-config
     - galera-client-user-config
@@ -103,6 +105,7 @@
     mode: "0644"
   when: ansible_pkg_mgr != 'zypper'
   notify:
+    - Manage LB
     - Restart all mysql
     - Reload the systemd daemon
   tags:
@@ -130,6 +133,7 @@
   when:
     - ansible_service_mgr == 'systemd'
   notify:
+    - Manage LB
     - Reload the systemd daemon
     - Restart all mysql
   tags:
