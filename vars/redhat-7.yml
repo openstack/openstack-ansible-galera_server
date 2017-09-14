@@ -49,7 +49,7 @@ galera_server_upgrade_packages_remove:
 
 galera_mariadb_service_name: "mariadb"
 
-_galera_repo_url: "http://yum.mariadb.org/10.1/centos/7/x86_64"
+_galera_repo_url: "http://yum.mariadb.org/{{ galera_major_version }}/centos/7/x86_64"
 _galera_repo:
   name: MariaDB
   description: "MariaDB Repo"
