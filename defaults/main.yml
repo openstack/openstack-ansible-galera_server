@@ -141,7 +141,15 @@ qpress_package_sha256: "{{ qpress_arch_sha256.get( galera_package_arch | lower )
 qpress_package_path: "/opt/{{ qpress_package_url | basename }}"
 
 # This is only applied if the ansible_pkg_mgr is 'apt'
-galera_server_distro_package_pins: [{ package: "*", release: MariaDB, priority: "1001" }]
+galera_server_distro_package_pins:
+  - package: '*'
+    release: MariaDB
+    priority: 1001
+  # Blacklist 10.1.27 release due to https://jira.mariadb.org/browse/MDEV-13908
+  # which causes MariaDB to segfault with galera enabled.
+  - package: mariadb-server
+    version: 10.1.27+maria-1~xenial
+    priority: -1
 
 # Galera Server SSL functionality.
 
