@@ -76,6 +76,8 @@
 # cleaned out whenever the repo config changes.
 - name: Force the expiry of the repo metadata
   command: "{{ ansible_pkg_mgr }} clean metadata"
+  args:
+    warn: no
   when: add_repos | changed
   tags:
     - galera-repos

@@ -36,6 +36,7 @@
     service mysql stop
   args:
     creates: "{{ mysql_securely_configured }}"
+    warn: no
   tags:
     - galera_server-config
     - galera-rhel-config

@@ -15,6 +15,8 @@
 
 - name: Check major galera install version
   command: "rpm -qi '{{ galera_mariadb_server_package }}'"
+  args:
+    warn: no
   failed_when: false
   register: installed_galera_specific
   when:
