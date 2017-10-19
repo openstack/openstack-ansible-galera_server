@@ -109,6 +109,8 @@ galera_wsrep_provider_options:
 galera_wsrep_sst_auth_user: "root"
 galera_wsrep_sst_auth_password: "{{ galera_root_password  }}"
 
+# Enable compression of backups
+galera_xtrabackup_compression: true
 # xtrabackup parallel/compression/sync threads
 galera_xtrabackup_threads: 4
 
