@@ -24,7 +24,6 @@
         - openstack-ansible-upgrade-ubuntu-xenial
         - openstack-ansible-ssl-ubuntu-xenial-nv
     gate:
-      queue: openstack-ansible
       jobs:
         - openstack-ansible-linters
         - openstack-ansible-functional-centos-7
