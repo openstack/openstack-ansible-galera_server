@@ -21,7 +21,6 @@
         - openstack-ansible-functional-ubuntu-trusty
         - openstack-ansible-functional-ubuntu-xenial
     gate:
-      queue: openstack-ansible
       jobs:
         - openstack-ansible-linters
         - openstack-ansible-functional-ubuntu-trusty
