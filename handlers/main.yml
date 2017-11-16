@@ -58,3 +58,8 @@
   until: galera_restart_fall_back | success
   retries: 3
   delay: 5
+
+- name: Restart xinetd
+  service:
+    name: xinetd
+    state: restarted

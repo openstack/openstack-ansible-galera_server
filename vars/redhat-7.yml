@@ -27,6 +27,7 @@ galera_server_required_distro_packages:
   - libgcrypt
   - MariaDB-client
   - MariaDB-devel
+  - xinetd
 
 # Validate SSL certificates when downloading the galera deb above
 # May be set to "no" when proxy server is intercepting the certificates.

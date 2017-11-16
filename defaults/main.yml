@@ -65,6 +65,18 @@ galera_running_and_bootstrapped: false
 
 galera_monitoring_user: monitoring
 galera_monitoring_user_password: ""
+
+# WARNING: Set this to open xinetd rules for galera monitoring.
+# This is REQUIRED to run a working openstack-ansible deployment.
+# If it's undefined the galera cluster state can't be reported,
+# and haproxy would fail to do proper load balancing on the cluster.
+# Because this opens connections to the cluster status, this
+# should be restricted, which we do in the integrated build.
+# Please override accordingly to your use case.
+# This can be replaced with other hostnames, cidr, ips, and ips + wildcards.
+#
+#galera_monitoring_allowed_source: "0.0.0.0/0"
+
 galera_root_user: root
 
 # WARNING: This option is deprecated and will be removed in v12.0

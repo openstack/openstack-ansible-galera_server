@@ -38,6 +38,7 @@ galera_server_required_distro_packages:
   - libstdc++6
   - python-software-properties
   - software-properties-common
+  - xinetd
 
 # The package name for mariaDB is set as a variable
 # so that it can be used in debconf later in the

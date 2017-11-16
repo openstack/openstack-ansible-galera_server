@@ -135,3 +135,31 @@
   static: no
   when:
     - galera_upgrade | bool
+
+- name: Create clustercheck script
+  template:
+    src: "clustercheck.j2"
+    dest: "/usr/local/bin/clustercheck"
+    mode: "0755"
+  tags:
+    - galera-config
+
+- name: Create mysqlchk config
+  template:
+    src: "mysqlchk.j2"
+    dest: "/etc/xinetd.d/mysqlchk"
+    mode: "0644"
+  notify:
+    - Restart xinetd
+  tags:
+    - galera-config
+
+- name: Add galera service check to services
+  lineinfile:
+    dest: /etc/services
+    state: present
+    regexp: '^mysqlchk'
+    line: 'mysqlchk    9200/tcp    # MySQL check'
+    backup: yes
+  tags:
+    - galera-config
