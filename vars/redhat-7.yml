@@ -27,6 +27,7 @@ galera_server_required_distro_packages:
   - libgcrypt
   - MariaDB-client
   - MariaDB-devel
+  - xinetd
 
 galera_etc_conf_file: "/etc/mysql/my.cnf"
 galera_etc_include_dir: "/etc/mysql/conf.d"

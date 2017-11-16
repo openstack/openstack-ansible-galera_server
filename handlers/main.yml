@@ -103,3 +103,8 @@
   notify:
     - "Remove stale .sst"
   listen: "Restart all mysql"
+
+- name: Restart xinetd
+  service:
+    name: xinetd
+    state: restarted

@@ -27,6 +27,8 @@
               --skip-column-names
       register: wsrep_incoming_addresses
       changed_when: false
+      tags:
+        - skip_ansible_lint
     - name: Check cluster local state
       command: |
         mysql -h {{ ansible_host }} \
@@ -36,6 +38,8 @@
               --skip-column-names
       register: wsrep_local_state_comment
       changed_when: false
+      tags:
+        - skip_ansible_lint
     - name: Check cluster evs state
       command: |
         mysql -h {{ ansible_host }} \
@@ -45,6 +49,8 @@
               --skip-column-names
       register: wsrep_evs_state
       changed_when: false
+      tags:
+        - skip_ansible_lint
     - name: Check contents
       assert:
         that:
