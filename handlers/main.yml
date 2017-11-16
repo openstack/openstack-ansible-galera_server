@@ -103,3 +103,8 @@
 - meta: noop
   listen: Manage LB
   when: false
+
+- name: Restart xinetd
+  service:
+    name: xinetd
+    state: restarted

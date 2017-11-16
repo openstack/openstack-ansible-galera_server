@@ -38,6 +38,7 @@ galera_server_required_distro_packages:
   - libstdc++6
   - python-software-properties
   - software-properties-common
+  - xinetd
 
 galera_etc_conf_file: "/etc/mysql/my.cnf"
 galera_etc_include_dir: "/etc/mysql/conf.d"

@@ -69,6 +69,17 @@ galera_running_and_bootstrapped: false
 
 galera_monitoring_user: monitoring
 galera_monitoring_user_password: ""
+# NOTE(cloudnull): Set an interface or CIDR to limit the traffic source when
+#                  monitoring the galera cluster status by default this is set
+#                  to the first network in the ansible_interfaces list (usually
+#                  default). From that information we pull the CIDR. To define
+#                  this in prod most users will simply need to set the variable
+#                  "galera_monitoring_default_network" to the interface used for
+#                  management traffic, IE: "eth1".
+galera_monitoring_default_network: "{{ 'ansible_' + (ansible_interfaces | difference(['lo']))[0] }}"
+galera_monitoring_network: "{{ hostvars[inventory_hostname][galera_monitoring_default_network]['ipv4']['network'] }}"
+galera_monitoring_netmask: "{{ (galera_monitoring_network + '/' + hostvars[inventory_hostname][galera_monitoring_default_network]['ipv4']['netmask']) | ipaddr('prefix') }}"
+galera_monitoring_allowed_source: "{{ galera_monitoring_network }}/{{ galera_monitoring_netmask }}"
 galera_root_user: root
 
 # WARNING: This option is deprecated and will be removed in v12.0

@@ -26,6 +26,7 @@ galera_server_required_distro_packages:
   - libmysqlclient-devel
   - mariadb-client
   - qpress
+  - xinetd
 
 galera_etc_conf_file: "/etc/my.cnf"
 galera_etc_include_dir: "/etc/my.cnf.d"
