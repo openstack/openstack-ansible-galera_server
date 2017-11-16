@@ -13,53 +13,72 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- name: Create ssl directory
-  file:
-    path: "{{ galera_user_ssl_ca_cert | dirname }}"
-    state: "directory"
-  delegate_to: localhost
-
 - name: Remove self signed cert for regen
   file:
     dest: "{{ item }}"
     state: "absent"
   with_items:
-    - "{{ galera_user_ssl_ca_cert }}"
-    - "{{ galera_user_ssl_cert }}"
-    - "{{ galera_user_ssl_key }}"
-    - "{{ galera_user_ssl_ca_cert | dirname }}/galera-ca.key "
-    - "{{ galera_user_ssl_ca_cert | dirname }}/galera-req.pem "
-  delegate_to: localhost
-  when: galera_ssl_self_signed_regen | bool
+    - "{{ galera_ssl_ca_cert }}"
+    - "{{ galera_ssl_cert }}"
+    - "{{ galera_ssl_key }}"
+  when:
+    - galera_ssl_self_signed_regen | bool
 
 - name: Create galera CA cert
   command: >
     openssl req -new -nodes -x509 -subj
     "{{ galera_ssl_ca_self_signed_subject }}"
-    -keyout {{ galera_user_ssl_ca_cert | dirname }}/galera-ca.key
-    -out {{ galera_user_ssl_ca_cert }}
-    creates={{ galera_user_ssl_ca_cert }}
-  delegate_to: localhost
+    -keyout {{ galera_ssl_ca_cert | dirname }}/galera-ca.key
+    -out {{ galera_ssl_ca_cert }}
+    creates={{ galera_ssl_ca_cert }}
+
+- name: Get CA key contents and store as var
+  slurp:
+    src: "{{ galera_ssl_ca_cert }}"
+  register: galera_ca
+  changed_when: false
+
+- name: Register a fact for the CA key
+  set_fact:
+     galera_server_ca_key: "{{ galera_ca.content }}"
 
 - name: Create galera ssl request
   command: >
     openssl req -new -nodes -sha256 -subj
     "{{ galera_ssl_self_signed_subject }}"
     -days 3650
-    -keyout {{ galera_user_ssl_key }}
-    -out {{ galera_user_ssl_ca_cert | dirname }}/galera-req.pem
+    -keyout {{ galera_ssl_key }}
+    -out {{ galera_ssl_ca_cert | dirname }}/galera-req.pem
     -extensions v3_ca
-    creates={{ galera_user_ssl_ca_cert | dirname }}/galera-req.pem
-  delegate_to: localhost
+    creates={{ galera_ssl_ca_cert | dirname }}/galera-req.pem
+
+- name: Get REQ key contents and store as var
+  slurp:
+    src: "{{ galera_ssl_ca_cert | dirname }}/galera-req.pem"
+  register: galera_req
+  changed_when: false
+
+- name: Register a fact for the REQ key
+  set_fact:
+     galera_server_req_key: "{{ galera_req.content }}"
 
 - name: Create galera ssl cert
   command: >
     openssl x509 -req
     -days 3650
-    -in {{ galera_user_ssl_ca_cert | dirname }}/galera-req.pem
-    -CA {{ galera_user_ssl_ca_cert }}
-    -CAkey {{ galera_user_ssl_ca_cert | dirname }}/galera-ca.key
-    -out {{ galera_user_ssl_cert }}
+    -in {{ galera_ssl_ca_cert | dirname }}/galera-req.pem
+    -CA {{ galera_ssl_ca_cert }}
+    -CAkey {{ galera_ssl_ca_cert | dirname }}/galera-ca.key
+    -out {{ galera_ssl_cert }}
     -set_serial 01
-    creates={{ galera_user_ssl_cert }}
-  delegate_to: localhost
+    creates={{ galera_ssl_cert }}
+
+- name: Get CERT key contents and store as var
+  slurp:
+    src: "{{ galera_ssl_cert }}"
+  register: galera_cert
+  changed_when: false
+
+- name: Register a fact for the CERT key
+  set_fact:
+     galera_server_cert_key: "{{ galera_cert.content }}"

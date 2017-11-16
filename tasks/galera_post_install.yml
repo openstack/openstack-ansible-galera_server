@@ -13,6 +13,28 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# NOTE(cloudnull): The secure task is not needed on Debian based systems
+#                  as all of these tasks will be run on Package install
+#                  and running them again will cause a conflict within
+#                  debian based deployments.
+- name: Create galera initial secure tool
+  template:
+    src: "galera_secure_node.j2"
+    dest: "/usr/local/bin/galera_secure_node"
+    mode: "0750"
+  when:
+    - ansible_pkg_mgr != "apt"
+
+- name: Run galera secure
+  command: "/usr/local/bin/galera_secure_node"
+  args:
+    creates: "/var/lib/mysql/osa_default_secured"
+    warn: no
+  when:
+    - ansible_pkg_mgr != "apt"
+  tags:
+    - skip_ansible_lint
+
 - name: Create the local directories
   file:
     path: "{{ item.path }}"
@@ -25,15 +47,6 @@
     - { path: "/var/lib/mysql", owner: "mysql", mode: "02755" }
     - { path: "/var/log/mysql", owner: "mysql", mode: "02755" }
     - { path: "/etc/mysql/conf.d" }
-  tags:
-    - galera-config
-
-- include: galera_ssl.yml
-  when:
-    - galera_use_ssl | bool
-  tags:
-    - galera-config
-    - galera-ssl
 
 - name: Behave properly if mysql_logs is a link
   shell: |
@@ -53,7 +66,12 @@
     state: "directory"
     owner: "mysql"
     mode: "02755"
-  when: log_dir.rc == 1
+  when:
+    - log_dir.rc == 1
+
+- include: galera_ssl.yml
+  when:
+    - galera_use_ssl | bool
 
 # NOTE: (hwoarang) mariadb packages may drop some default configuration files
 # in {{ galera_etc_include_dir }} so make sure they are gone if necessary in
@@ -90,35 +108,22 @@
   notify:
     - Manage LB
     - Restart all mysql
-  tags:
-    - galera-config
-    - galera-client-user-config
-
-# NOTE: (mancdaz) this should not be needed with mariadb-10.1 since its
-#       initscript sources /etc/default/mariadb
-- name: fix mysql startup timeout
-  lineinfile:
-    dest: /etc/init.d/mysql
-    state: present
-    insertafter: '^export HOME=/etc/mysql/'
-    line: '[ -r /etc/default/mariadb ] && . /etc/default/mariadb'
-    backup: yes
-  when: ansible_pkg_mgr != 'zypper'
-  tags:
-    - galera-config
 
 - name: Apply service defaults
   template:
     src: "mysql_defaults.j2"
     dest: "/etc/default/mariadb"
     mode: "0644"
-  when: ansible_pkg_mgr != 'zypper'
   notify:
     - Manage LB
     - Restart all mysql
     - Reload the systemd daemon
-  tags:
-    - galera-config
+
+- name: Link mysql and mariadb config files
+  file:
+    src: "/etc/default/mariadb"
+    dest: "/etc/default/mysql"
+    state: "link"
 
 - name: Create mariadb systemd service config dir
   file:
@@ -127,8 +132,6 @@
     group: "root"
     owner: "root"
     mode: "0755"
-  when:
-    - ansible_service_mgr == 'systemd'
 
 - name: Apply systemd options
   template:
@@ -140,34 +143,28 @@
     - { src: "systemd.limits.conf.j2", dest: "limits.conf" }
     - { src: "systemd.timeout.conf.j2", dest: "timeout.conf" }
     - { src: "systemd.restart.conf.j2", dest: "restart.conf" }
-  when:
-    - ansible_service_mgr == 'systemd'
+    - { src: "without-privatedevices.conf.j2", dest: "without-privatedevices.conf" }
   notify:
     - Manage LB
     - Reload the systemd daemon
     - Restart all mysql
-  tags:
-    - galera-config
 
 - name: remove default mysql_safe_syslog
   file:
     path: "/etc/mysql/conf.d/mysqld_safe_syslog.cnf"
     state: absent
-  tags:
-    - galera-config
 
-- name: Reload the systemd daemon
-  command: "systemctl daemon-reload"
-  when:
-    - ansible_service_mgr == 'systemd'
+- name: Create new cluster tool
+  copy:
+    src: "galera_new_cluster"
+    dest: "/usr/local/bin/galera_new_cluster"
+    mode: "0750"
 
 - name: Create clustercheck script
   template:
     src: "clustercheck.j2"
     dest: "/usr/local/bin/clustercheck"
     mode: "0755"
-  tags:
-    - galera-config
 
 - name: Create mysqlchk config
   template:
@@ -176,8 +173,6 @@
     mode: "0644"
   notify:
     - Restart xinetd
-  tags:
-    - galera-config
 
 - name: Add galera service check to services
   lineinfile:
@@ -186,5 +181,3 @@
     regexp: '^mysqlchk'
     line: 'mysqlchk    9200/tcp    # MySQL check'
     backup: yes
-  tags:
-    - galera-config

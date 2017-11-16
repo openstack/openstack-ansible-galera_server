@@ -13,15 +13,65 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+- name: Download xtrabackup
+  block:
+    - name: Download the percona-xtrabackup package
+      get_url:
+        url: "{{ percona_package_url }}"
+        dest: "{{ percona_package_path }}"
+        mode: "0644"
+        sha256sum: "{{ percona_package_sha256 }}"
+        validate_certs: "{{ percona_package_download_validate_certs }}"
+      register: package_download
+      retries: 3
+      delay: 10
+      until: package_download | success
+  rescue:
+    - name: Download the percona-xtrabackup package (fallback)
+      get_url:
+        url: "{{ percona_package_fallback_url }}"
+        dest: "{{ percona_package_path }}"
+        mode: "0644"
+        sha256sum: "{{ percona_package_sha256 }}"
+        validate_certs: "{{ percona_package_download_validate_certs }}"
+      register: package_download
+      retries: 3
+      delay: 10
+      until: package_download | success
+  when:
+    - not use_percona_upstream | bool
+
+- name: Download qpress
+  block:
+    - name: Download the qpress package
+      get_url:
+        url: "{{ qpress_package_url }}"
+        dest: "{{ qpress_package_path }}"
+        sha256sum: "{{ qpress_package_sha256 }}"
+        validate_certs: "{{ qpress_package_download_validate_certs }}"
+      register: package_download
+      retries: 3
+      delay: 10
+      until: package_download | success
+  rescue:
+    - name: Download the qpress package (fallback)
+      get_url:
+        url: "{{ qpress_package_fallback_url }}"
+        dest: "{{ qpress_package_path }}"
+        sha256sum: "{{ qpress_package_sha256 }}"
+        validate_certs: "{{ qpress_package_download_validate_certs }}"
+      register: package_download
+      retries: 3
+      delay: 10
+      until: package_download | success
+  when:
+    - not use_percona_upstream | bool
+
 - name: Add percona external packages to the galera packages list
   set_fact:
     galera_install_packages_list: "{{ galera_packages_list | union(percona_packages_list) }}"
 
 - include: "galera_install_{{ ansible_pkg_mgr }}.yml"
-  tags:
-    - install-apt
-    - install-yum
-    - install-zypper
 
 - name: Install pip packages
   pip:
@@ -34,5 +84,10 @@
   until: install_packages|success
   retries: 5
   delay: 2
-  tags:
-    - galera-server-pip-packages
+
+- name: Record galera has been deployed
+  ini_file:
+    dest: "/etc/ansible/facts.d/openstack_ansible.fact"
+    section: galera
+    option: deployed
+    value: true

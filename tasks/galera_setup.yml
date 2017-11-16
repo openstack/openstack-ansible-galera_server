@@ -30,10 +30,20 @@
       priv: "*.*:ALL,GRANT"
       state: present
     - name: "{{ galera_root_user }}"
+      host: "::1"
+      password: "{{ galera_root_password }}"
+      priv: "*.*:ALL,GRANT"
+      state: present
+    - name: "{{ galera_root_user }}"
+      host: "127.0.0.1"
+      password: "{{ galera_root_password }}"
+      priv: "*.*:ALL,GRANT"
+      state: present
+    - name: "{{ galera_root_user }}"
       host: "localhost"
       password: "{{ galera_root_password }}"
       priv: "*.*:ALL"
-      state: absent
+      state: present
     - name: "{{ galera_monitoring_user }}"
       host: '%'
       password: "{{ galera_monitoring_user_password }}"
@@ -46,7 +56,18 @@
       state: present
   register: galera_users
   until: galera_users | success
-  retries: 10
-  delay: 3
-  tags:
-    - galera-user-create
+  retries: 3
+  delay: 10
+  delegate_to: "{{ galera_server_bootstrap_node }}"
+  run_once: true
+
+- name: Run MySQL Upgrade
+  command: "/usr/bin/mysql_upgrade"
+  register: galera_mysql_upgrade
+  changed_when:
+    - not galera_mysql_upgrade.stdout | search("already upgraded")
+  until: galera_mysql_upgrade | success
+  retries: 3
+  delay: 10
+  delegate_to: "{{ galera_server_bootstrap_node }}"
+  run_once: true

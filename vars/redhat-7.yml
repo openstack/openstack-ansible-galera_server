@@ -19,6 +19,12 @@ _galera_gpg_keys:
     keyserver: 'https://yum.mariadb.org'
     fallback_keyserver: 'https://yum.mariadb.org'
 
+# Default private device setting
+# This provides some additional security, but it causes problems with creating
+# mount namespaces on CentOS 7 with systemd 219. Setting the following variable
+# to 'yes' will disable the PrivateDevices
+_galera_disable_privatedevices: yes
+
 galera_server_required_distro_packages:
   - gnupg2
   - libaio

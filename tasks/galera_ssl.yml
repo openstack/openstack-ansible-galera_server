@@ -13,22 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- name: Check if SSL bundle exists
-  stat:
-    path: "{{ item }}"
-  delegate_to: localhost
-  register: res
-  with_items:
-    - "{{ galera_user_ssl_ca_cert }}"
-    - "{{ galera_user_ssl_cert }}"
-    - "{{ galera_user_ssl_key }}"
-
-- include: galera_ssl_key_create.yml
-  when: >
-    ( not res.results[0].stat.exists or
-      not res.results[1].stat.exists or
-      not res.results[2].stat.exists )
-
 - name: Create ssl directory
   file:
     path: "/etc/mysql/ssl"
@@ -37,13 +21,42 @@
     group: "mysql"
     mode: "0750"
 
-- name: Copy CA cert and key
+- include: galera_ssl_key_create.yml
+  static: no
+  when:
+    - inventory_hostname == galera_server_bootstrap_node
+    - not galera_user_ssl_cert is defined
+    - not galera_user_ssl_key is defined
+    - not galera_user_ssl_ca_cert is defined
+
+- name: Copy CA cert and key (SELF)
+  copy:
+    content: "{{ hostvars[galera_server_bootstrap_node][item.key] | b64decode }}"
+    dest: "{{ item.dest }}"
+    owner: "mysql"
+    group: "mysql"
+    mode: "{{ item.mode | default('0640') }}"
+  with_items:
+    - key: "galera_server_ca_key"
+      dest: "{{ galera_ssl_ca_cert }}"
+    - key: "galera_user_ssl_cert"
+      dest: "{{ galera_ssl_cert }}"
+    - key: "galera_user_ssl_key"
+      dest: "{{ galera_ssl_key }}"
+      mode: "0600"
+  when:
+    - inventory_hostname != galera_server_bootstrap_node
+    - not galera_user_ssl_cert is defined
+    - not galera_user_ssl_key is defined
+    - not galera_user_ssl_ca_cert is defined
+
+- name: Copy CA cert and key (USER)
   copy:
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
     owner: "mysql"
     group: "mysql"
-    mode: "{{ item.mode|default('0640') }}"
+    mode: "{{ item.mode | default('0640') }}"
   with_items:
     - src: "{{ galera_user_ssl_ca_cert }}"
       dest: "{{ galera_ssl_ca_cert }}"
@@ -52,3 +65,7 @@
     - src: "{{ galera_user_ssl_key }}"
       dest: "{{ galera_ssl_key }}"
       mode: "0600"
+  when:
+    - galera_user_ssl_cert is defined
+    - galera_user_ssl_key is defined
+    - galera_user_ssl_ca_cert is defined

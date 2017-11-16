@@ -13,76 +13,39 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- include: galera_running_check.yml
-  vars:
-    num_retries: 1
-    wait_delay: 3
-
-- name: Check for cluster state failure
-  fail:
-    msg: |
-      The cluster may be broken, mysql is not running but appears to be
-      installed. Fix it before re-running the playbook or override with
-      'openstack-ansible -e galera_ignore_cluster_state=true galera-install.yml'.
-  when:
-    - not galera_ignore_cluster_state | bool
-    - mysql_running.rc == 1
-    - mysql_running.stderr | search("Check that mysqld is running and that the socket")
-  tags:
-    - galera-cluster-state-check
-
-- name: Gather mysql facts
-  mysql_status_facts:
+- name: Check node status
+  command: >
+    mysql --silent --skip-column-names --connect-timeout=10 -e 'SHOW STATUS LIKE "wsrep_local_state";'
   failed_when: false
-  tags:
-    - galera-cluster-state-check
+  changed_when: false
+  register: node_status
 
-- name: Check for cluster state failure
-  fail:
-    msg: |
-      The cluster may be broken, mysql is running but unable to gather mysql facts.
-      Fix it before re-running the playbook or override with
-      'openstack-ansible -e galera_ignore_cluster_state=true galera-install.yml'.
-  when:
-    - not galera_ignore_cluster_state | bool
-    - mysql_running.rc == 0
-    - mysql_status is not defined
-  tags:
-    - galera-cluster-state-check
-
-- name: Check for cluster state failure
-  fail:
-    msg: |
-      wsrep_incoming_addresses does not match across the cluster. Please fix before
-      re-running the playbooks or override with
-      'openstack-ansible -e galera_ignore_cluster_state=true galera-install.yml'.
-  with_items: "{{ play_hosts }}"
-  when:
-    - not galera_ignore_cluster_state | bool
-    - mysql_running.rc == 0
-    - mysql_status['wsrep_incoming_addresses'] != hostvars[item]['mysql_status']['wsrep_incoming_addresses']
-  tags:
-    - galera-cluster-state-check
-
-- name: Fail if galera_cluster_name doesnt match file value
+- name: Fail if cluster is out of sync
   fail:
     msg: >
-      "The galera_cluster_name variable does not match what is set in mysql.
-       Check your galera_cluster_name setting in your user_*.yml files in /etc/openstack_deploy
-       and compare to the current value in /etc/mysql/conf.d/cluster.cnf on the host, and
-       the wsrep_cluster_name value set in your running galera cluster.
-       If you are sure you want to change this variable you can force change your
-       galera_cluster_name variable by setting 'galera_force_change_cluster_name: True'"
+      The cluster may be broken, the cluster state is not known to be good.
+      Fix the cluster state before re-running the playbooks. To ignore the
+      cluster state set '-e galera_ignore_cluster_state=true'.
   when:
-    - mysql_running.rc == 0
-    - mysql_status['wsrep_cluster_name'] != galera_cluster_name
-    - not galera_force_change_cluster_name | bool
-  tags:
-    - galera-cluster-state-check
+    - node_status.rc != 0
+    - (node_status.stdout.split()[-1] | default(false)) in ["2", "4"]
 
-- name: Set the galera existing cluster fact
-  set_fact:
-    galera_existing_cluster: true
-  when: mysql_running.rc == 0
-  tags:
-    - galera-cluster-state-check
+- name: Check cluster name
+  command: >
+    mysql --silent --skip-column-names --connect-timeout=10 -e 'SHOW VARIABLES LIKE "wsrep_cluster_name";'
+  failed_when: false
+  changed_when: false
+  register: cluster_name
+
+- name: Fail if galera_cluster_name doesnt match provided value
+  fail:
+    msg: >
+      The galera_cluster_name variable does not match what is set in mysql.
+      Check your galera_cluster_name setting in your user_*.yml files in
+      "/etc/openstack_deploy" and compare to the current value in
+      "/etc/mysql/conf.d/cluster.cnf" on the host, and the "wsrep_cluster_name"
+      value set in your running galera cluster. To ignore the
+      cluster state set '-e galera_ignore_cluster_state=true'.
+  when:
+    - cluster_name.rc != 0
+    - (cluster_name.split()[-1] | default(false)) != galera_cluster_name

@@ -21,20 +21,8 @@
       auto_import_keys: yes
   register: zypper_repository_added
   with_items: "{{ galera_repo }}"
-  tags:
-    - galera-repos
 
 - name: Install galera_server role remote packages (zypper)
   zypper:
     name: "{{ galera_packages_list | selectattr('enabled') | sum(attribute='packages', start=[]) }}"
     state: "{{ galera_server_package_state }}"
-
-- name: Enable mysql to start at boot
-  service:
-    name: "mysql"
-    enabled: "yes"
-  tags:
-    - galera_server-config
-    - galera-enable
-
-- include: galera_secure_mysql.yml mysql_securely_configured='/etc/my.cnf.d/suse_configured'

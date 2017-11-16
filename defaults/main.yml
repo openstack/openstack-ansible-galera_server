@@ -21,13 +21,10 @@ galera_cluster_members: "{{ groups['galera_all'] }}"
 galera_server_bootstrap_node: "{{ galera_cluster_members[0] }}"
 galera_ignore_cluster_state: false
 galera_upgrade: false
+galera_force_bootstrap: false
 
 galera_wsrep_node_name: "{{ inventory_hostname }}"
 galera_cluster_name: openstack_galera_cluster
-
-# This variable will prevent the galera_cluster_name from changing unintentionally on a running cluster.
-# To intentionally change the galera_cluster_name set this variable to True
-galera_force_change_cluster_name: False
 
 # The galera server-id should be set on all cluster nodes to ensure
 #  that replication is handled correctly and the error
@@ -64,9 +61,6 @@ galera_percona_xtrabackup_repo: "{{ _galera_percona_xtrabackup_repo | default({}
 # Enable the use of the upstream percona repo
 use_percona_upstream: "{{ _use_percona_upstream }}"
 
-galera_existing_cluster: true
-galera_running_and_bootstrapped: false
-
 galera_monitoring_user: monitoring
 galera_monitoring_user_password: ""
 # NOTE(cloudnull): Set an interface or CIDR to limit the traffic source when
@@ -98,6 +92,7 @@ galera_innodb_log_buffer_size: 128M
 
 ## wsrep configuration
 galera_wsrep_address: "{{ ansible_host }}"
+galera_wsrep_address_port: "{{ galera_wsrep_address }}:3306"
 galera_wsrep_cluster_address: >-
   {% set _var = [] -%}
   {% for cluster_host in galera_cluster_members -%}
@@ -181,11 +176,12 @@ galera_use_ssl: false
 galera_ssl_cert: /etc/mysql/ssl/galera.pem
 galera_ssl_key: /etc/mysql/ssl/galera.key
 galera_ssl_ca_cert: /etc/mysql/ssl/galera-ca.pem
-# These options should be specified in user_variables if necessary, otherwise self-signed certs are used.
-galera_user_ssl_cert: /etc/openstack_deploy/self_signed_certs/galera.pem
-galera_user_ssl_key: /etc/openstack_deploy/self_signed_certs/galera.key
-galera_user_ssl_ca_cert: /etc/openstack_deploy/self_signed_certs/galera-ca.pem
-# Set galera_ssl_self_signed_regen to true if you want to generate a new
+## These options should be specified in user_variables if necessary, otherwise self-signed certs are used.
+# galera_user_ssl_cert: /etc/openstack_deploy/self_signed_certs/galera.pem
+# galera_user_ssl_key: /etc/openstack_deploy/self_signed_certs/galera.key
+# galera_user_ssl_ca_cert: /etc/openstack_deploy/self_signed_certs/galera-ca.pem
+
+## Set galera_ssl_self_signed_regen to true if you want to generate a new
 # SSL certificate for Galera when this playbook runs.  You can also change
 # the subject of the self-signed certificate here if you prefer.
 galera_ssl_self_signed_regen: false
@@ -196,11 +192,10 @@ galera_ssl_ca_self_signed_subject: "/C=US/ST=Texas/L=San Antonio/O=IT"
 galera_ssl_address: "{{ ansible_host }}"
 
 # MariaDB 10.1+ ships with 'PrivateDevices=True' in the systemd unit file. This
-# provides some additional security, but it causes problems with creating
-# mount namespaces on CentOS 7 with systemd 219. While the security
-# enhancements are helpful on bare metal hosts with multiple services running,
-# they are not as helpful when MariaDB is running in a container with its own
-# isolated namespaces.
+# provides some additional security, but it causes problems with systemd 219.
+# While the security enhancements are helpful on bare metal hosts with multiple
+# services running, they are not as helpful when MariaDB is running in a
+# container with its own isolated namespaces.
 #
 # Related bugs:
 #   https://bugs.launchpad.net/openstack-ansible/+bug/1697531
@@ -208,8 +203,7 @@ galera_ssl_address: "{{ ansible_host }}"
 #   https://github.com/systemd/systemd/issues/6121
 #
 # Setting the following variable to 'yes' will disable the PrivateDevices
-# setting in the systemd unit file for MariaDB on CentOS 7 hosts.
-galera_disable_privatedevices: no
+galera_disable_privatedevices: "{{ _galera_disable_privatedevices }}"
 
 ## Set default mirror for openSUSE repositories
 # NOTE(hwoarang): Ensure that the full path to the 'opensuse' directory is used.

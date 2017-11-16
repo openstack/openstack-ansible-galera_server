@@ -16,6 +16,9 @@
 ## APT Cache Options
 cache_timeout: 600
 
+# Default private device setting
+_galera_disable_privatedevices: yes
+
 # Galera GPG Keys
 _galera_gpg_keys:
   - key_name: 'mariadb'

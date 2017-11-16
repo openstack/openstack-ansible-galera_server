@@ -17,6 +17,9 @@ _galera_repo:
   - name: "OBS:server_database"
     uri: "{{ galera_server_opensuse_mirror_obs_url | default('http://download.opensuse.org') }}/repositories/server:/database/openSUSE_Leap_{{ ansible_distribution_version }}"
 
+# Default private device setting
+_galera_disable_privatedevices: yes
+
 galera_server_required_distro_packages:
   - galera-3
   - gpg2

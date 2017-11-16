@@ -37,8 +37,6 @@
       retries: 5
       delay: 2
       with_items: "{{ galera_gpg_keys }}"
-      tags:
-        - galera-gpg-keys
 
   rescue:
     - name: Add keys (fallback keyserver)
@@ -51,8 +49,6 @@
       delay: 2
       with_items: "{{ galera_gpg_keys }}"
       when: item.fallback_keyserver is defined
-      tags:
-        - galera-gpg-keys
 
 - name: Add galera repo
   yum_repository:
@@ -66,8 +62,6 @@
   until: add_repos | success
   retries: 5
   delay: 2
-  tags:
-    - galera-repos
 
 # When changing the repo URL, the metadata does
 # not reliably update, resulting in the right
@@ -80,7 +74,6 @@
     warn: no
   when: add_repos | changed
   tags:
-    - galera-repos
     - skip_ansible_lint
 
 - name: Install percona repo
@@ -92,53 +85,8 @@
   retries: 5
   delay: 2
   when: use_percona_upstream | bool
-  tags:
-    - galera-pre-yum-packages
 
 - name: Install galera_server role remote packages
   package:
     name: "{{ galera_install_packages_list | selectattr('enabled') | sum(attribute='packages', start=[]) }}"
     state: "{{ galera_server_package_state }}"
-
-- name: Enable mysql to start at boot
-  service:
-    name: "mysql"
-    enabled: "yes"
-  tags:
-    - galera_server-config
-    - galera-enable
-
-# This glue to make the upgrade works. when testing the galera_server role we install version 10.0
-# of mariadb and so the path doesn't exist, let's clean it up when we do upgrade testing the way
-# we do for other roles.
-# TODO: cleanup when we change upgrade test.
-- name: Check if we are on systemd service
-  stat:
-    path: "/etc/systemd/system/mariadb.service.d/"
-  register: systemd_mysql_service
-
-# See comments above 'galera_disable_privatedevices' in defaults/main.yml for
-# links to relevant bugs and discussion.
-- name: Remove PrivateDevices systemd options when in container
-  template:
-    src: without-privatedevices.conf.j2
-    dest: "/etc/systemd/system/mariadb.service.d/without-privatedevices.conf"
-  when:
-    - ansible_pkg_mgr in ['yum', 'dnf']
-    - systemd_mysql_service.stat.exists
-  notify:
-    - Manage LB
-    - Reload the systemd daemon
-    - Restart mysql
-  tags:
-    - galera-config
-
-# TODO: remove name argument when we upgrade to ansible 2.4
-- name: Reload the systemd daemon
-  systemd:
-    daemon_reload: yes
-    name: mysql
-  when:
-    - systemd_mysql_service.stat.exists
-
-- include: galera_secure_mysql.yml mysql_securely_configured='/etc/mysql/rhel_configured'

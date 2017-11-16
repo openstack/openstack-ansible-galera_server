@@ -13,12 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- name: Set fact to ignore cluster state
-  set_fact:
-    galera_ignore_cluster_state: true
-  tags:
-    - galera-upgrade
-
 - name: Stop MariaDB
   service:
     name: mysql
@@ -27,54 +21,6 @@
   until: galera_restart_fall_back | success
   retries: 3
   delay: 5
-  tags:
-    - galera-upgrade
-
-# Stop through the init script in case the service
-# was initially started outside of systemctl.
-- name: Stop mysql
-  command: /etc/init.d/mysql stop
-  changed_when: false
-  # SUSE always uses the systemd service
-  when: ansible_pkg_mgr != "zypper"
-  tags:
-    - galera-upgrade
-
-# TODO: Remove the following three tasks in Pike
-# They're only required during upgrades transitioning to a
-# statically named apt sources file.
-- name: Find old sources
-  command: >
-    grep -rnil maria /etc/apt/sources.list.d/ --exclude MariaDB.list
-  changed_when: false
-  failed_when: false
-  register: old_sources
-  tags:
-    - galera-upgrade
-    - galera-apt-packages
-
-- name: Remove old sources
-  file:
-    path: "{{ item }}"
-    state: absent
-  with_items: "{{ old_sources.stdout_lines | default([]) }}"
-  tags:
-   - galera-upgrade
-   - galera-apt-packages
-
-- name: Update apt sources (Forced)
-  apt:
-    update_cache: yes
-    cache_valid_time: 0
-  register: apt_update
-  until: apt_update|success
-  retries: 5
-  delay: 2
-  when:
-    - ansible_pkg_mgr == 'apt'
-  tags:
-    - galera-upgrade
-    - galera-apt-packages
 
 - name: UN-Install galera-server package
   package:
@@ -82,6 +28,32 @@
     state: absent
   with_items:
     - "{{ galera_server_upgrade_packages_remove }}"
-  tags:
-    - galera-upgrade
-    - galera-apt-packages
+
+- name: Remove old apt sources
+  block:
+    # TODO: Remove the following three tasks in Pike
+    # They're only required during upgrades transitioning to a
+    # statically named apt sources file.
+    - name: Find old sources
+      command: >
+        grep -rnil maria /etc/apt/sources.list.d/ --exclude MariaDB.list
+      changed_when: false
+      failed_when: false
+      register: old_sources
+
+    - name: Remove old sources
+      file:
+        path: "{{ item }}"
+        state: absent
+      with_items: "{{ old_sources.stdout_lines | default([]) }}"
+
+    - name: Update apt sources (Forced)
+      apt:
+        update_cache: yes
+        cache_valid_time: 0
+      register: apt_update
+      until: apt_update|success
+      retries: 5
+      delay: 2
+  when:
+    - ansible_pkg_mgr != "apt"
