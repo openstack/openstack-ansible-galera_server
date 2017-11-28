@@ -36,6 +36,15 @@
     - galera-config
     - galera-ssl
 
+# NOTE: (hwoarang) mariadb packages may drop some default configuration files
+# in {{ galera_etc_include_dir }} so make sure they are gone if necessary in
+# case they cause some conflicts with the ones we provide.
+- name: Remove existing mariadb configuration files
+  file:
+    state: absent
+    path: "{{ galera_etc_include_dir }}/{{ item }}"
+  with_items: "{{ mariadb_delete_etc_conf_files }}"
+
 - name: Drop mariadb config(s)
   config_template:
     src: "{{ item.src }}"
@@ -105,6 +114,7 @@
     dest: "/etc/systemd/system/{{ galera_mariadb_service_name }}.service.d/{{ item.dest }}"
     mode: "0644"
   with_items:
+    - { src: "systemd.environment.conf.j2", dest: "environment.conf" }
     - { src: "systemd.limits.conf.j2", dest: "limits.conf" }
     - { src: "systemd.timeout.conf.j2", dest: "timeout.conf" }
     - { src: "systemd.restart.conf.j2", dest: "restart.conf" }
