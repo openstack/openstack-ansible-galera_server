@@ -31,3 +31,5 @@ percona_packages_list:
   - packages: "{{ [qpress_package_path] }}"
     enabled: "{{ not use_percona_upstream }}"
     local_pkg: yes
+
+mariadb_delete_etc_conf_files: []

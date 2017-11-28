@@ -42,8 +42,8 @@ galera_mariadb_service_name: "mysql"
 galera_server_mariadb_distro_packages:
   - which
   - "{{ galera_mariadb_server_package }}"
+  - mariadb-galera
   - percona-toolkit
-  - xtrabackup
   - rsync
   - socat
 
@@ -55,3 +55,8 @@ _use_percona_upstream: yes
 # sense for SUSE distributions and as such we provide an empty list here since
 # we grab everything from the distro repositories.
 percona_packages_list: []
+
+mariadb_delete_etc_conf_files:
+  - default_plugins.cnf
+  - galera.cnf
+  - error_log.cnf
