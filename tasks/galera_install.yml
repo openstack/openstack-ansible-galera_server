@@ -91,3 +91,7 @@
     section: galera
     option: deployed
     value: true
+
+- name: Set the galera existing cluster fact
+  set_fact:
+    galera_deployed: true
