@@ -30,20 +30,10 @@
       priv: "*.*:ALL,GRANT"
       state: present
     - name: "{{ galera_root_user }}"
-      host: "::1"
-      password: "{{ galera_root_password }}"
-      priv: "*.*:ALL,GRANT"
-      state: present
-    - name: "{{ galera_root_user }}"
-      host: "127.0.0.1"
-      password: "{{ galera_root_password }}"
-      priv: "*.*:ALL,GRANT"
-      state: present
-    - name: "{{ galera_root_user }}"
       host: "localhost"
       password: "{{ galera_root_password }}"
       priv: "*.*:ALL"
-      state: present
+      state: absent
     - name: "{{ galera_monitoring_user }}"
       host: '%'
       password: "{{ galera_monitoring_user_password }}"
