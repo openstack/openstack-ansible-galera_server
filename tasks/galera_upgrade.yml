@@ -13,19 +13,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# NOTE(cloudnull): Check if mysqladmin is in the path. If it is, check the
+#                  version. If it is not assume it's nothing is installed.
 - name: Check mysql version
   shell: >
-    mysqladmin --version | grep -w "{{ galera_major_version }}"
+    if which mysqladmin; then
+      mysqladmin --version | grep -w "{{ galera_major_version }}"
+    fi
   register: mysqladmin_version
-  changed_when: false
-  failed_when: false
-  tags:
-    - skip_ansible_lint
-
-- name: Check mysql running
-  command: >
-    systemctl status mysql
-  register: mysql_running
   changed_when: false
   failed_when: false
   tags:
@@ -38,14 +33,13 @@
       '-e galera_upgrade=true'.
   when:
     - mysqladmin_version.rc != 0
-    - mysql_running.rc == 0
+    - not galera_upgrade | bool
   tags:
     - galera_server-upgrade
 
 - include: galera_upgrade_pre.yml
   static: no
   when:
-    - (mysqladmin_version.rc != 0 and mysql_running.rc != 0) or
-      galera_upgrade | bool
+    - galera_upgrade | bool
   tags:
     - galera_server-upgrade

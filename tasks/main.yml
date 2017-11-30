@@ -83,8 +83,6 @@
     - always
 
 - include: galera_upgrade.yml
-  when:
-    - galera_deployed | bool
   tags:
     - galera_server-upgrade
 
