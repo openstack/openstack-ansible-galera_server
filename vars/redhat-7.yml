@@ -73,11 +73,11 @@ galera_server_percona_distro_packages:
   - percona-xtrabackup
 
 percona_arch_url:
-  x86_64: "https://www.percona.com/downloads/XtraBackup/Percona-XtraBackup-2.4.5/binary/redhat/7/x86_64/percona-xtrabackup-24-2.4.5-1.el7.x86_64.rpm"
+  x86_64: "https://www.percona.com/downloads/XtraBackup/Percona-XtraBackup-2.4.8/binary/redhat/7/x86_64/percona-xtrabackup-24-2.4.8-1.el7.x86_64.rpm"
 percona_arch_fallback_url:
-  x86_64: "https://www.percona.com/downloads/XtraBackup/Percona-XtraBackup-2.4.5/binary/redhat/7/x86_64/percona-xtrabackup-24-2.4.5-1.el7.x86_64.rpm"
+  x86_64: "https://www.percona.com/downloads/XtraBackup/Percona-XtraBackup-2.4.8/binary/redhat/7/x86_64/percona-xtrabackup-24-2.4.8-1.el7.x86_64.rpm"
 percona_arch_sha256:
-  x86_64: "8cadff677dcb05b451a7e3217a0c47dc79323426c70e81791e1091bd927c1874"
+  x86_64: "868df0244045615da00687210474f879442227b1ac1a7e14cd5e6be55caa08ae"
 
 qpress_arch_url:
   x86_64: "https://repo.percona.com/centos/7/RPMS/x86_64/qpress-11-1.el7.x86_64.rpm"
