@@ -141,9 +141,10 @@
   with_items:
     - { src: "systemd.environment.conf.j2", dest: "environment.conf" }
     - { src: "systemd.limits.conf.j2", dest: "limits.conf" }
-    - { src: "systemd.timeout.conf.j2", dest: "timeout.conf" }
     - { src: "systemd.restart.conf.j2", dest: "restart.conf" }
-    - { src: "without-privatedevices.conf.j2", dest: "without-privatedevices.conf" }
+    - { src: "systemd.slice.conf.j2", dest: "slice.conf" }
+    - { src: "systemd.timeout.conf.j2", dest: "timeout.conf" }
+    - { src: "systemd.without-privatedevices.conf.j2", dest: "without-privatedevices.conf" }
   notify:
     - Manage LB
     - Reload the systemd daemon
