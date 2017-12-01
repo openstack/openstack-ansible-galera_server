@@ -81,6 +81,7 @@
   delegate_to: "{{ item }}"
   when:
     - hostvars[item]['galera_cluster_ready'] is defined
+    - hostvars[item]['galera_deployed'] | default(false) | bool
   with_items:
     - "{{ ansible_play_hosts }}"
   run_once: true
