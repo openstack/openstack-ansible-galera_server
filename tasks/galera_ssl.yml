@@ -21,31 +21,9 @@
     group: "mysql"
     mode: "0750"
 
-- include: galera_ssl_key_create.yml
+- include: galera_ssl_self_signed.yml
   static: no
   when:
-    - inventory_hostname == galera_server_bootstrap_node
-    - not galera_user_ssl_cert is defined
-    - not galera_user_ssl_key is defined
-    - not galera_user_ssl_ca_cert is defined
-
-- name: Copy CA cert and key (SELF)
-  copy:
-    content: "{{ hostvars[galera_server_bootstrap_node][item.key] | b64decode }}"
-    dest: "{{ item.dest }}"
-    owner: "mysql"
-    group: "mysql"
-    mode: "{{ item.mode | default('0640') }}"
-  with_items:
-    - key: "galera_server_ca_key"
-      dest: "{{ galera_ssl_ca_cert }}"
-    - key: "galera_user_ssl_cert"
-      dest: "{{ galera_ssl_cert }}"
-    - key: "galera_user_ssl_key"
-      dest: "{{ galera_ssl_key }}"
-      mode: "0600"
-  when:
-    - inventory_hostname != galera_server_bootstrap_node
     - not galera_user_ssl_cert is defined
     - not galera_user_ssl_key is defined
     - not galera_user_ssl_ca_cert is defined

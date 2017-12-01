@@ -23,6 +23,7 @@
     - "{{ galera_ssl_key }}"
   when:
     - galera_ssl_self_signed_regen | bool
+    - inventory_hostname == galera_server_bootstrap_node
 
 - name: Create galera CA cert
   command: >
@@ -31,16 +32,22 @@
     -keyout {{ galera_ssl_ca_cert | dirname }}/galera-ca.key
     -out {{ galera_ssl_ca_cert }}
     creates={{ galera_ssl_ca_cert }}
+  when:
+    - inventory_hostname == galera_server_bootstrap_node
 
 - name: Get CA key contents and store as var
   slurp:
     src: "{{ galera_ssl_ca_cert }}"
   register: galera_ca
   changed_when: false
+  when:
+    - inventory_hostname == galera_server_bootstrap_node
 
 - name: Register a fact for the CA key
   set_fact:
-     galera_server_ca_key: "{{ galera_ca.content }}"
+    galera_server_ca_key: "{{ galera_ca.content }}"
+  when:
+    - inventory_hostname == galera_server_bootstrap_node
 
 - name: Create galera ssl request
   command: >
@@ -51,16 +58,22 @@
     -out {{ galera_ssl_ca_cert | dirname }}/galera-req.pem
     -extensions v3_ca
     creates={{ galera_ssl_ca_cert | dirname }}/galera-req.pem
+  when:
+    - inventory_hostname == galera_server_bootstrap_node
 
 - name: Get REQ key contents and store as var
   slurp:
     src: "{{ galera_ssl_ca_cert | dirname }}/galera-req.pem"
   register: galera_req
   changed_when: false
+  when:
+    - inventory_hostname == galera_server_bootstrap_node
 
 - name: Register a fact for the REQ key
   set_fact:
-     galera_server_req_key: "{{ galera_req.content }}"
+    galera_server_req_key: "{{ galera_req.content }}"
+  when:
+    - inventory_hostname == galera_server_bootstrap_node
 
 - name: Create galera ssl cert
   command: >
@@ -72,13 +85,37 @@
     -out {{ galera_ssl_cert }}
     -set_serial 01
     creates={{ galera_ssl_cert }}
+  when:
+    - inventory_hostname == galera_server_bootstrap_node
 
 - name: Get CERT key contents and store as var
   slurp:
     src: "{{ galera_ssl_cert }}"
   register: galera_cert
   changed_when: false
+  when:
+    - inventory_hostname == galera_server_bootstrap_node
 
 - name: Register a fact for the CERT key
   set_fact:
-     galera_server_cert_key: "{{ galera_cert.content }}"
+    galera_server_cert_key: "{{ galera_cert.content }}"
+  when:
+    - inventory_hostname == galera_server_bootstrap_node
+
+- name: Copy CA cert and key (SELF)
+  copy:
+    content: "{{ hostvars[galera_server_bootstrap_node][item.key] | b64decode }}"
+    dest: "{{ item.dest }}"
+    owner: "mysql"
+    group: "mysql"
+    mode: "{{ item.mode | default('0640') }}"
+  with_items:
+    - key: "galera_server_ca_key"
+      dest: "{{ galera_ssl_ca_cert }}"
+    - key: "galera_server_req_key"
+      dest: "{{ galera_ssl_cert }}"
+    - key: "galera_server_cert_key"
+      dest: "{{ galera_ssl_key }}"
+      mode: "0600"
+  when:
+    - inventory_hostname != galera_server_bootstrap_node
