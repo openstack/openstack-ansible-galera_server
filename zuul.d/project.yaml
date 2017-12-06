@@ -23,6 +23,9 @@
         - openstack-ansible-functional-ubuntu-xenial
         - openstack-ansible-upgrade-ubuntu-xenial
         - openstack-ansible-ssl-ubuntu-xenial-nv
+    experimental:
+      jobs:
+        - openstack-ansible-integrated-deploy-aio
     gate:
       jobs:
         - openstack-ansible-linters
