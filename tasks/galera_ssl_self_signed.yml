@@ -29,11 +29,12 @@
   command: >
     openssl req -new -nodes -x509 -subj
     "{{ galera_ssl_ca_self_signed_subject }}"
-    -keyout {{ galera_ssl_ca_cert | dirname }}/galera-ca.key
+    -keyout {{ galera_ssl_key | dirname }}/galera-ca.key
     -out {{ galera_ssl_ca_cert }}
     creates={{ galera_ssl_ca_cert }}
   when:
     - inventory_hostname == galera_server_bootstrap_node
+  notify: Restart all mysql
 
 - name: Get CA key contents and store as var
   slurp:
@@ -60,6 +61,7 @@
     creates={{ galera_ssl_ca_cert | dirname }}/galera-req.pem
   when:
     - inventory_hostname == galera_server_bootstrap_node
+  notify: Restart all mysql
 
 - name: Get REQ key contents and store as var
   slurp:
@@ -81,12 +83,13 @@
     -days 3650
     -in {{ galera_ssl_ca_cert | dirname }}/galera-req.pem
     -CA {{ galera_ssl_ca_cert }}
-    -CAkey {{ galera_ssl_ca_cert | dirname }}/galera-ca.key
+    -CAkey {{ galera_ssl_key | dirname }}/galera-ca.key
     -out {{ galera_ssl_cert }}
     -set_serial 01
     creates={{ galera_ssl_cert }}
   when:
     - inventory_hostname == galera_server_bootstrap_node
+  notify: Restart all mysql
 
 - name: Get CERT key contents and store as var
   slurp:
@@ -119,3 +122,4 @@
       mode: "0600"
   when:
     - inventory_hostname != galera_server_bootstrap_node
+  notify: Restart all mysql

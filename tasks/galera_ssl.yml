@@ -47,3 +47,4 @@
     - galera_user_ssl_cert is defined
     - galera_user_ssl_key is defined
     - galera_user_ssl_ca_cert is defined
+  notify: Restart all mysql
