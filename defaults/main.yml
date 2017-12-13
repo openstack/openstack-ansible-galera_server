@@ -186,11 +186,11 @@ galera_ssl_ca_cert: /etc/ssl/certs/galera-ca.pem
 # SSL certificate for Galera when this playbook runs.  You can also change
 # the subject of the self-signed certificate here if you prefer.
 galera_ssl_self_signed_regen: false
-galera_ssl_self_signed_subject: "/C=US/ST=Texas/L=San Antonio/O=IT/CN={{ galera_ssl_address }}"
+galera_ssl_self_signed_subject: "/C=US/ST=Texas/L=San Antonio/O=IT/CN={{ galera_address }}"
 galera_ssl_ca_self_signed_subject: "/C=US/ST=Texas/L=San Antonio/O=IT"
 # This option is used for creating the CA and overriding the Galera address on the clients side.
 # Should be set to either public VIP of VIP FQDN, depending on what is currently used in the env.
-galera_ssl_address: "{{ ansible_host }}"
+galera_address: "{{ ansible_host }}"
 
 # MariaDB 10.1+ ships with 'PrivateDevices=True' in the systemd unit file. This
 # provides some additional security, but it causes problems with systemd 219.
