@@ -84,7 +84,6 @@
   until: install_packages|success
   retries: 5
   delay: 2
-  when: use_percona_upstream | bool
 
 # NOTE(mhayden): MariaDB/percona repositories are prioritized at 99 by default
 # and that allows yum to install galera from the RDO repos, which is not good.
@@ -102,5 +101,5 @@
 
 - name: Install galera_server role remote packages
   package:
-    name: "{{ galera_install_packages_list | selectattr('enabled') | sum(attribute='packages', start=[]) }}"
+    name: "{{ galera_packages_list }}"
     state: "{{ galera_server_package_state }}"

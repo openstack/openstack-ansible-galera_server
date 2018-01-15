@@ -37,7 +37,6 @@ galera_cluster_name: openstack_galera_cluster
 #  if these are used they should be set within the
 #  distro specific variable files found in vars/
 galera_debconf_items: []
-galera_server_percona_distro_packages: []
 galera_mariadb_server_package: "{{ _galera_mariadb_server_package }}"
 
 # The major version used to select the repo URL path
@@ -139,24 +138,6 @@ galera_debian_cnf_overrides: {}
 # lowest value throughout the cluster will be used which is something to note
 # if deploying galera on different hardware.
 # galera_max_connections: 500
-
-# Settings for percona and qpress
-# The [percona|qpress]_arch_[url|sha256] hashes can be found in the distro vars files.
-galera_package_arch: "{{ hostvars[inventory_hostname]['ansible_architecture'] }}"
-
-# Validate SSL certificates when downloading the galera deb above
-# May be set to "no" when proxy server is intercepting the certificates.
-percona_package_download_validate_certs: yes
-percona_package_url: "{{ percona_arch_url.get( galera_package_arch | lower ) }}"
-percona_package_fallback_url: "{{ percona_arch_fallback_url.get( galera_package_arch | lower ) }}"
-percona_package_sha256: "{{ percona_arch_sha256.get( galera_package_arch | lower ) }}"
-percona_package_path: "/opt/{{ percona_package_url | basename }}"
-
-qpress_package_download_validate_certs: yes
-qpress_package_url: "{{ qpress_arch_url.get( galera_package_arch | lower ) }}"
-qpress_package_fallback_url: "{{ qpress_arch_fallback_url.get( galera_package_arch | lower ) }}"
-qpress_package_sha256: "{{ qpress_arch_sha256.get( galera_package_arch | lower ) }}"
-qpress_package_path: "/opt/{{ qpress_package_url | basename }}"
 
 # This is only applied if the ansible_pkg_mgr is 'apt'
 galera_server_distro_package_pins:

@@ -86,28 +86,10 @@ galera_server_percona_distro_packages:
   - percona-xtrabackup
   - "{{ (galera_xtrabackup_compression | bool) | ternary('qpress', '') }}"
 
-percona_arch_url:
-  x86_64: "https://www.percona.com/downloads/XtraBackup/Percona-XtraBackup-2.4.8/binary/debian/xenial/x86_64/percona-xtrabackup-24_2.4.8-1.xenial_amd64.deb"
-  ppc64le: "http://public.dhe.ibm.com/systems/virtualization/Novalink/misc/percona-xtrabackup/percona-xtrabackup-24_2.4.5-1_ppc64el.deb"
-percona_arch_fallback_url:
-  x86_64: "http://mirrors.reflected.net/percona/apt/pool/main/p/percona-xtrabackup-24/percona-xtrabackup-24_2.4.8-1.xenial_amd64.deb"
-percona_arch_sha256:
-  x86_64: "00a4a00fb08c950008cc63afa230aac2c91066dc84df112f48dd64dcc811696c"
-  ppc64le: "3d4e4112f4c8020c9190a91d962dabed1dfaad307160a939e121208887eaee2a"
-
-qpress_arch_url:
-  x86_64: "https://repo.percona.com/apt/pool/main/q/qpress/qpress_11-1.xenial_amd64.deb"
-  ppc64le: "http://public.dhe.ibm.com/systems/virtualization/Novalink/misc/qpress/qpress_11-1_ppc64el.deb"
-qpress_arch_fallback_url:
-  x86_64: "http://mirrors.reflected.net/percona/apt/pool/testing/q/qpress/qpress_11-1.xenial_amd64.deb"
-qpress_arch_sha256:
-  x86_64: "c615ec08eb38a9cb59541ae1d7ed42db35e92513735834b48d30d4c485e01534"
-  ppc64le: "a31d3e00dbcec9b3f98eae82b261d054d0b80a57f4a38967d0e953811cb082f3"
-
 # Repositories
 _galera_percona_xtrabackup_repo:
   repo: "deb http://repo.percona.com/apt {{ ansible_distribution_release }} main"
-  state: "present"
+  state: "{{ (use_percona_upstream | bool) | ternary('present', 'absent') }}"
   filename: "Percona"
 
 # TODO(evrardjp): Unfreeze version to 10.1 branch when clustering issue is solved.
@@ -119,4 +101,4 @@ _galera_repo:
 
 galera_wsrep_provider: "/usr/lib/galera/libgalera_smm.so"
 
-_use_percona_upstream: no
+_use_percona_upstream: yes

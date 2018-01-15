@@ -73,26 +73,12 @@ _galera_repo:
 
 _galera_percona_xtrabackup_repo:
   repo: "http://www.percona.com/downloads/percona-release/redhat/0.1-4/percona-release-0.1-4.noarch.rpm"
-  state: "present"
+  state: "{{ (use_percona_upstream | bool) | ternary('present', 'absent') }}"
 
 galera_server_percona_distro_packages:
   - percona-toolkit
   - percona-xtrabackup
   - "{{ (galera_xtrabackup_compression | bool) | ternary('qpress', '') }}"
-
-percona_arch_url:
-  x86_64: "https://www.percona.com/downloads/XtraBackup/Percona-XtraBackup-2.4.8/binary/redhat/7/x86_64/percona-xtrabackup-24-2.4.8-1.el7.x86_64.rpm"
-percona_arch_fallback_url:
-  x86_64: "https://www.percona.com/downloads/XtraBackup/Percona-XtraBackup-2.4.8/binary/redhat/7/x86_64/percona-xtrabackup-24-2.4.8-1.el7.x86_64.rpm"
-percona_arch_sha256:
-  x86_64: "868df0244045615da00687210474f879442227b1ac1a7e14cd5e6be55caa08ae"
-
-qpress_arch_url:
-  x86_64: "https://repo.percona.com/centos/7/RPMS/x86_64/qpress-11-1.el7.x86_64.rpm"
-qpress_arch_fallback_url:
-  x86_64: "https://mirrors.mediatemple.net/percona/testing/centos/7/RPMS/x86_64/qpress-11-1.el7.x86_64.rpm"
-qpress_arch_sha256:
-  x86_64: "d6b6b7ca3a5ad4baea34975743106ac54ac746b3e6497d59bce55765d604b697"
 
 galera_wsrep_provider: "/usr/lib/galera/libgalera_smm.so"
 

@@ -110,7 +110,7 @@
   file:
     state: absent
     path: "{{ galera_etc_include_dir }}/{{ item }}"
-  with_items: "{{ mariadb_delete_etc_conf_files }}"
+  with_items: "{{ mariadb_delete_etc_conf_files | default([]) }}"
 
 - name: Drop mariadb config(s)
   config_template:

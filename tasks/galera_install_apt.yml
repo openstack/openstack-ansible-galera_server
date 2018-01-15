@@ -63,7 +63,7 @@
   apt_repository:
     repo: "{{ galera_percona_xtrabackup_repo.repo }}"
     filename: "{{ galera_percona_xtrabackup_repo.filename | default(omit) }}"
-    state: "{{ (use_percona_upstream | bool) | ternary('present','absent') }}"
+    state: "{{ galera_percona_xtrabackup_repo.state }}"
     update_cache: "no"
   register: add_percona_repo
 
@@ -85,7 +85,7 @@
 
 - name: Install galera_server role remote packages (apt)
   apt:
-    name: "{{ galera_install_packages_list | selectattr('enabled') | rejectattr('local_pkg') | sum(attribute='packages', start=[]) }}"
+    name: "{{ galera_packages_list }}"
     state: "{{ galera_server_package_state }}"
     update_cache: yes
     cache_valid_time: "{{ (add_galera_repo | changed or add_percona_repo | changed) | ternary('0', cache_timeout) }}"
@@ -93,13 +93,6 @@
   until: install_remote_apt_packages|success
   retries: 5
   delay: 2
-
-- name: Install galera_server role local packages (apt)
-  apt:
-    deb: "{{ item }}"
-    force: yes
-  with_items:
-    - "{{ galera_install_packages_list | selectattr('enabled') | selectattr('local_pkg') | sum(attribute='packages', start=[]) }}"
 
 - name: Remove policy-rc
   file:
