@@ -49,6 +49,11 @@
       with_items: "{{ galera_gpg_keys }}"
       when: item.fallback_keyserver is defined
 
+- name: Fail if upstream Percona is selected
+  fail:
+    msg: "Using upstream Percona packages is unsupported on SUSE"
+  when: use_percona_upstream
+
 - name: Add galera repo
   zypper_repository:
     name: "{{ galera_repo.name }}"
@@ -64,5 +69,5 @@
 
 - name: Install galera_server role remote packages (zypper)
   zypper:
-    name: "{{ galera_packages_list | selectattr('enabled') | sum(attribute='packages', start=[]) }}"
+    name: "{{ galera_packages_list }}"
     state: "{{ galera_server_package_state }}"
