@@ -71,6 +71,11 @@
   set_fact:
     galera_install_packages_list: "{{ galera_packages_list | union(percona_packages_list) }}"
 
+- name: Remove conflicting distro packages
+  package:
+    name: "{{ galera_server_mariadb_distro_packages_remove | default([]) }}"
+    state: absent
+
 - include: "galera_install_{{ ansible_pkg_mgr }}.yml"
 
 - name: Install pip packages
