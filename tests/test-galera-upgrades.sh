@@ -49,7 +49,8 @@ echo "TEST_IDEMPOTENCE: ${TEST_IDEMPOTENCE}"
 function execute_ansible_playbook {
 
   export ANSIBLE_CLI_PARAMETERS="${ANSIBLE_PARAMETERS} -e @${ANSIBLE_OVERRIDES}"
-  CMD_TO_EXECUTE="ansible-playbook ${TEST_PLAYBOOK} $@ ${ANSIBLE_CLI_PARAMETERS}"
+  export ANSIBLE_BIN=${ANSIBLE_BIN:-"ansible-playbook"}
+  CMD_TO_EXECUTE="${ANSIBLE_BIN} ${TEST_PLAYBOOK} $@ ${ANSIBLE_CLI_PARAMETERS}"
 
   echo "Executing: ${CMD_TO_EXECUTE}"
   echo "With:"
@@ -72,13 +73,29 @@ source "${COMMON_TESTS_PATH}/test-ansible-env-prep.sh"
 # Set gate job exit traps, this is run regardless of exit state when the job finishes.
 trap gate_job_exit_tasks EXIT
 
-# Prepare environment for the initial deploy of previous version
+# Prepare environment for the initial deploy of (previous and current) Galera
 # No upgrading or testing is done yet.
 export TEST_PLAYBOOK="${WORKING_DIR}/tests/test-upgrade-pre.yml"
 export ANSIBLE_LOG_PATH="${ANSIBLE_LOG_DIR}/ansible-execute-install.log"
 
 # Execute the setup of previous version
 execute_ansible_playbook
+
+# Create an ansible venv matching previous branch
+source ${WORKING_DIR}/tests/common/test-create-previous-venv.sh
+
+# Prepare environment for the deploy of previous Galera:
+# No upgrading or testing is done yet.
+export TEST_PLAYBOOK="${WORKING_DIR}/tests/test-install-previous-galera.yml"
+export ANSIBLE_LOG_PATH="${ANSIBLE_LOG_DIR}/ansible-execute-previous_galera-install.log"
+export PREVIOUS_VENV="ansible-previous"
+export ANSIBLE_BIN="${WORKING_DIR}/.tox/${PREVIOUS_VENV}/bin/ansible-playbook"
+
+# Execute the setup of previous Keystone
+execute_ansible_playbook
+# Unset previous branch overrides
+unset PREVIOUS_VENV
+unset ANSIBLE_BIN
 
 # Prepare environment for the upgrade
 export TEST_PLAYBOOK="${WORKING_DIR}/tests/test-upgrade-post.yml"
