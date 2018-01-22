@@ -76,6 +76,13 @@
     name: "{{ galera_server_mariadb_distro_packages_remove | default([]) }}"
     state: absent
 
+- name: Fail if compression is enabled on unsupported architecture
+  fail:
+    msg: "qpress compression is only available on x86_64 architectures"
+  when:
+    - galera_xtrabackup_compression | bool
+    - ansible_architecture != 'x86_64'
+
 - include: "galera_install_{{ ansible_pkg_mgr }}.yml"
 
 - name: Install pip packages

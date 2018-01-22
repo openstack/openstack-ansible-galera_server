@@ -49,7 +49,7 @@ wsrep_retry_autocommit = {{ galera_wsrep_retry_autocommit }}
 [xtrabackup]
 {% if galera_xtrabackup_compression | bool %}
 compress
+compress-threads = {{ galera_xtrabackup_threads }}
 {% endif %}
 parallel = {{ galera_xtrabackup_threads }}
-compress-threads = {{ galera_xtrabackup_threads }}
 rebuild-threads = {{ galera_xtrabackup_threads }}
