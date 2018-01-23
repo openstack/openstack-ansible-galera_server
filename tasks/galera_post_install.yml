@@ -13,6 +13,35 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+- name: Create mariadb systemd service config dir
+  file:
+    path: "/etc/systemd/system/{{ galera_mariadb_service_name }}.service.d"
+    state: "directory"
+    group: "root"
+    owner: "root"
+    mode: "0755"
+
+- name: Apply systemd options
+  template:
+    src: "{{ item.src }}"
+    dest: "/etc/systemd/system/{{ galera_mariadb_service_name }}.service.d/{{ item.dest }}"
+    mode: "0644"
+  with_items:
+    - { src: "systemd.environment.conf.j2", dest: "environment.conf" }
+    - { src: "systemd.limits.conf.j2", dest: "limits.conf" }
+    - { src: "systemd.restart.conf.j2", dest: "restart.conf" }
+    - { src: "systemd.slice.conf.j2", dest: "slice.conf" }
+    - { src: "systemd.timeout.conf.j2", dest: "timeout.conf" }
+    - { src: "systemd.without-privatedevices.conf.j2", dest: "without-privatedevices.conf" }
+  notify:
+    - Manage LB
+    - Reload the systemd daemon
+    - Restart all mysql
+
+- name: Reload systemd service files
+  systemd:
+    daemon_reload: yes
+
 # NOTE(cloudnull): The secure task is not needed on Debian based systems
 #                  as all of these tasks will be run on Package install
 #                  and running them again will cause a conflict within
@@ -124,31 +153,6 @@
     src: "/etc/default/mariadb"
     dest: "/etc/default/mysql"
     state: "link"
-
-- name: Create mariadb systemd service config dir
-  file:
-    path: "/etc/systemd/system/{{ galera_mariadb_service_name }}.service.d"
-    state: "directory"
-    group: "root"
-    owner: "root"
-    mode: "0755"
-
-- name: Apply systemd options
-  template:
-    src: "{{ item.src }}"
-    dest: "/etc/systemd/system/{{ galera_mariadb_service_name }}.service.d/{{ item.dest }}"
-    mode: "0644"
-  with_items:
-    - { src: "systemd.environment.conf.j2", dest: "environment.conf" }
-    - { src: "systemd.limits.conf.j2", dest: "limits.conf" }
-    - { src: "systemd.restart.conf.j2", dest: "restart.conf" }
-    - { src: "systemd.slice.conf.j2", dest: "slice.conf" }
-    - { src: "systemd.timeout.conf.j2", dest: "timeout.conf" }
-    - { src: "systemd.without-privatedevices.conf.j2", dest: "without-privatedevices.conf" }
-  notify:
-    - Manage LB
-    - Reload the systemd daemon
-    - Restart all mysql
 
 - name: remove default mysql_safe_syslog
   file:
