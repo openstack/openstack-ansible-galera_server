@@ -13,50 +13,65 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-_galera_repo:
-  - name: "OBS:server_database"
-    uri: "{{ galera_server_opensuse_mirror_obs_url | default('http://download.opensuse.org') }}/repositories/server:/database/openSUSE_Leap_{{ ansible_distribution_version }}"
+# Galera GPG Keys
+_galera_gpg_keys:
+  - key_name: 'RPM-GPG-KEY-MariaDB'
+    keyserver: 'https://yum.mariadb.org'
+    fallback_keyserver: 'https://yum.mariadb.org'
 
 # Default private device setting
 _galera_disable_privatedevices: yes
 
 galera_server_required_distro_packages:
-  - galera-3
+  - galera
   - gpg2
   - libaio-devel
   - libstdc++-devel
   - libgcrypt-devel
-  - libmysqlclient-devel
-  - mariadb-client
-  - qpress
+  - MariaDB-client
+  - MariaDB-devel
   - xinetd
 
-galera_etc_conf_file: "/etc/my.cnf"
-galera_etc_include_dir: "/etc/my.cnf.d"
-galera_var_run_socket: "/var/run/mysql/mysql.sock"
+galera_etc_conf_file: "/etc/mysql/my.cnf"
+galera_etc_include_dir: "/etc/mysql/conf.d"
+galera_var_run_socket: "/var/lib/mysql/mysql.sock"
 
-_galera_mariadb_server_package: "mariadb"
-
-galera_server_upgrade_packages_remove:
-  - "{{ galera_mariadb_server_package }}"
-  - galera-3
-
-galera_mariadb_service_name: "mysql"
+_galera_mariadb_server_package: "MariaDB-server"
 
 galera_server_mariadb_distro_packages:
   - which
   - "{{ galera_mariadb_server_package }}"
-  - mariadb-galera
-  - percona-toolkit
+  - MariaDB-shared
   - rsync
   - socat
+
+# Conflicting packages with those from the MariaDB repository
+galera_server_mariadb_distro_packages_remove:
+  - libmariadb-devel
+  - mariadb
+  - mariadb-client
+  - mariadb-tools
+
+# The packages to uninstall during an upgrade from a previous version
+galera_server_upgrade_packages_remove:
+  - MariaDB-Galera-server
+  - MariaDB-server
+
+galera_mariadb_service_name: "mariadb"
+
+_galera_repo_url: "http://yum.mariadb.org/{{ galera_major_version }}/sles/12/x86_64"
+_galera_repo:
+  name: MariaDB
+  description: "MariaDB Repo"
+  baseurl: "{{ galera_repo_url }}"
+  gpgkey: "https://yum.mariadb.org/RPM-GPG-KEY-MariaDB"
 
 galera_server_percona_distro_packages:
   - qpress
   - percona-toolkit
   - percona-xtrabackup
 
-galera_wsrep_provider: "/usr/lib64/galera-3/libgalera_smm.so"
+galera_wsrep_provider: "/usr/lib64/galera/libgalera_smm.so"
 
 _use_percona_upstream: yes
 # NOTE(hwoarang): The default one provided in vars/main.yml depends on
