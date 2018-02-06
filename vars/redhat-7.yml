@@ -45,7 +45,7 @@ galera_server_upgrade_packages_remove:
   - MariaDB-Galera-server
   - MariaDB-server
 
-_galera_repo_url: "http://yum.mariadb.org/{{ galera_major_version }}/centos/7/x86_64"
+_galera_repo_url: "http://yum.mariadb.org/{{ galera_major_version }}/centos7-amd64/"
 _galera_repo:
   name: MariaDB
   description: "MariaDB Repo"
