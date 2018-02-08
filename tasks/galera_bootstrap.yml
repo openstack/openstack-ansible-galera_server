@@ -40,8 +40,6 @@
     - ansible_service_mgr == 'systemd'
     - mysql_running.rc != 0
     - mysql_started | failed
-    # galera_new_cluster is not applicable for SUSE
-    - ansible_pkg_mgr != 'zypper'
   register: start_cluster
   failed_when: false
   tags:
@@ -55,7 +53,6 @@
     - mysql_started | failed
     - start_cluster | failed
     - mysql_running.rc != 0
-    - ansible_pkg_mgr != 'zypper'
   tags:
     - galera-bootstrap
 
@@ -74,8 +71,6 @@
   when:
     - mysql_running.rc != 0
     - mysql_started | failed
-    # galera_new_cluster is not applicable for SUSE
-    - ansible_pkg_mgr == 'zypper'
 
 - name: Wait for operational state
   command: mysql --silent --skip-column-names -e 'SHOW STATUS LIKE "wsrep_evs_state"'

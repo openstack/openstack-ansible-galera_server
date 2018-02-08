@@ -28,7 +28,6 @@
     MYSQLD_STARTUP_TIMEOUT: 180
   when:
      - not galera_running_and_bootstrapped | bool
-     - ansible_pkg_mgr != "zypper"
      - not galera_external_restart_handlers | bool
   register: galera_restart
   until: galera_restart | success
@@ -59,50 +58,6 @@
   until: galera_restart_fall_back | success
   retries: 3
   delay: 5
-
-- name: "Set wsrep-new-cluster"
-  lineinfile:
-    line: 'wsrep-new-cluster'
-    insertafter: 'wsrep_cluster_name'
-    state: present
-    dest: "{{ galera_etc_include_dir }}/cluster.cnf"
-  listen: "Restart all mysql"
-  when:
-    - not galera_running_and_bootstrapped | bool
-    - not galera_existing_cluster | bool and inventory_hostname == galera_server_bootstrap_node
-    - ansible_pkg_mgr == "zypper"
-    - not galera_external_restart_handlers | bool
-
-- name: "Ensure node is not in bootstrap mode"
-  lineinfile:
-    line: 'wsrep-new-cluster'
-    state: absent
-    dest: "{{ galera_etc_include_dir }}/cluster.cnf"
-  listen: "Restart all mysql"
-  when:
-    - not galera_running_and_bootstrapped | bool
-    - (not galera_existing_cluster | bool) or (not inventory_hostname == galera_server_bootstrap_node)
-    - ansible_pkg_mgr == "zypper"
-    - not galera_external_restart_handlers | bool
-
-- name: Restart mysql on SUSE
-  service:
-    name: mysql
-    state: restarted
-  when:
-    - not galera_running_and_bootstrapped | bool
-    - ansible_pkg_mgr == "zypper"
-    - not galera_external_restart_handlers | bool
-  register: galera_restart
-  until: galera_restart | success
-  retries: 3
-  delay: 5
-  # notifies are only fired when status is "changed"
-  changed_when: galera_restart | failed
-  failed_when: false
-  notify:
-    - "Remove stale .sst"
-  listen: "Restart all mysql"
 
 - name: Restart xinetd
   service:

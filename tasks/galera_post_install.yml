@@ -82,7 +82,6 @@
     insertafter: '^export HOME=/etc/mysql/'
     line: '[ -r /etc/default/mariadb ] && . /etc/default/mariadb'
     backup: yes
-  when: ansible_pkg_mgr != 'zypper'
   tags:
     - galera-config
 
@@ -91,7 +90,6 @@
     src: "mysql_defaults.j2"
     dest: "/etc/default/mariadb"
     mode: "0644"
-  when: ansible_pkg_mgr != 'zypper'
   notify:
     - Restart all mysql
     - Reload the systemd daemon

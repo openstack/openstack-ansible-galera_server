@@ -35,8 +35,6 @@
 - name: Stop mysql
   command: /etc/init.d/mysql stop
   changed_when: false
-  # SUSE always uses the systemd service
-  when: ansible_pkg_mgr != "zypper"
   tags:
     - galera-upgrade
 

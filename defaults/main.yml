@@ -45,6 +45,7 @@ galera_mariadb_server_package: "{{ _galera_mariadb_server_package }}"
 
 # The major version used to select the repo URL path
 galera_major_version: 10.1
+galera_minor_version: 30
 
 # Set the URL for the MariaDB repository
 galera_repo_url: "{{ _galera_repo_url }}"
@@ -172,6 +173,11 @@ galera_server_distro_package_pins:
   # which causes MariaDB to segfault with galera enabled.
   - package: mariadb-server
     version: 10.1.27+maria-1~xenial
+    priority: -1
+  # TODO(evrardjp): Remove pin when clustering issue is figured out
+  # Clustering issue
+  - package: mariadb-server
+    version: 10.1.31+maria-1~xenial
     priority: -1
 
 # Galera Server SSL functionality.
