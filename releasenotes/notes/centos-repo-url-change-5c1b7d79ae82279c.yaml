@@ -1,7 +1,0 @@
----
-fixes:
-  - |
-    The upstream yum mirrors for MariaDB have changed their directory
-    structure from ``/10.1/centos/7`` to ``/10.1/centos7-amd64/``. The URL
-    has been changed, but deployers with an older OpenStack-Ansible deployment
-    may need to set ``galera_repo_url`` to match the new directory structure.
