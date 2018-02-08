@@ -95,6 +95,20 @@
   tags:
     - galera-pre-yum-packages
 
+# NOTE(mhayden): MariaDB/percona repositories are prioritized at 99 by default
+# and that allows yum to install galera from the RDO repos, which is not good.
+# This task ensures that the following task will choose MariaDB/percona repos
+# as the highest priority.
+- name: Ensure MariaDB/percona repositories take highest priority
+  command: |
+    yum-config-manager
+      --enable {{ item }}
+      --setopt="{{ item }}.priority=25"
+  with_items:
+    - MariaDB
+    - percona-release-noarch
+    - percona-release-x86_64
+
 - name: Install galera_server role remote packages
   package:
     name: "{{ galera_install_packages_list | selectattr('enabled') | sum(attribute='packages', start=[]) }}"
