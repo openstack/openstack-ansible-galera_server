@@ -29,6 +29,7 @@ galera_server_required_distro_packages:
   - MariaDB-devel
   - xinetd
 
+galera_var_run_socket: "/var/lib/mysql/mysql.sock"
 _galera_mariadb_server_package: "MariaDB-server"
 
 galera_server_mariadb_distro_packages:

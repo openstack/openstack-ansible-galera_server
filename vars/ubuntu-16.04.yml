@@ -40,6 +40,7 @@ galera_server_required_distro_packages:
   - software-properties-common
   - xinetd
 
+galera_var_run_socket: "/var/run/mysqld/mysqld.sock"
 # The package name for mariaDB is set as a variable
 # so that it can be used in debconf later in the
 # "galera_common" role.
