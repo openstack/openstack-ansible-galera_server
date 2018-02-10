@@ -16,9 +16,6 @@
 # Setup the host
 - include: common/test-setup-host.yml
 
-# Prepare the containers
-- include: common/test-prepare-containers.yml
-
 # Install previous version Galera server
 - include: common/test-install-galera.yml
 
