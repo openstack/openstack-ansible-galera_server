@@ -19,17 +19,11 @@
         - openstack-ansible-functional-centos-7
         - openstack-ansible-functional-opensuse-423
         - openstack-ansible-functional-ubuntu-xenial
-        # TODO(evrardjp): Reinstate this when all the 10.1.31
-        # issues patches have been merged in galera_server
-        # and galera_client
-        # - openstack-ansible-upgrade-ubuntu-xenial
+        - openstack-ansible-upgrade-ubuntu-xenial
     gate:
       jobs:
         - openstack-ansible-linters
         - openstack-ansible-functional-centos-7
         - openstack-ansible-functional-opensuse-423
         - openstack-ansible-functional-ubuntu-xenial
-        # TODO(evrardjp): Reinstate this when all the 10.1.31
-        # issues patches have been merged in galera_server
-        # and galera_client
-        # - openstack-ansible-upgrade-ubuntu-xenial
+        - openstack-ansible-upgrade-ubuntu-xenial
