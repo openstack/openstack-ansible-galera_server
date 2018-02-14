@@ -94,6 +94,7 @@
     path: "/var/log/mysql_logs"
     state: "directory"
     owner: "mysql"
+    group: "adm"
     mode: "02755"
   when:
     - log_dir.rc == 1
