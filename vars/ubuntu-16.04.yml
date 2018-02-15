@@ -82,8 +82,9 @@ galera_debconf_items:
     vtype: "string"
 
 galera_server_percona_distro_packages:
-  - qpress
+  - percona-toolkit
   - percona-xtrabackup
+  - "{{ (galera_xtrabackup_compression | bool) | ternary('qpress', '') }}"
 
 percona_arch_url:
   x86_64: "https://www.percona.com/downloads/XtraBackup/Percona-XtraBackup-2.4.8/binary/debian/xenial/x86_64/percona-xtrabackup-24_2.4.8-1.xenial_amd64.deb"

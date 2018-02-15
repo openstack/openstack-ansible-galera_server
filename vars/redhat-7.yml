@@ -45,8 +45,6 @@ galera_server_mariadb_distro_packages:
   - which
   - "{{ galera_mariadb_server_package }}"
   - MariaDB-shared
-  - percona-xtrabackup
-  - percona-toolkit
   - rsync
   - socat
 
@@ -56,6 +54,7 @@ galera_server_mariadb_distro_packages_remove:
   - mariadb-config
   - mariadb-server
   - mariadb-libs
+  - percona-xtrabackup
 
 # The packages to uninstall during an upgrade from a previous version
 galera_server_upgrade_packages_remove:
@@ -77,8 +76,9 @@ _galera_percona_xtrabackup_repo:
   state: "present"
 
 galera_server_percona_distro_packages:
-  - qpress
+  - percona-toolkit
   - percona-xtrabackup
+  - "{{ (galera_xtrabackup_compression | bool) | ternary('qpress', '') }}"
 
 percona_arch_url:
   x86_64: "https://www.percona.com/downloads/XtraBackup/Percona-XtraBackup-2.4.8/binary/redhat/7/x86_64/percona-xtrabackup-24-2.4.8-1.el7.x86_64.rpm"
