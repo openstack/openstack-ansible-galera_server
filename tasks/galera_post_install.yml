@@ -99,7 +99,7 @@
   when:
     - log_dir.rc == 1
 
-- include: galera_ssl.yml
+- include_tasks: galera_ssl.yml
   when:
     - galera_use_ssl | bool
 
