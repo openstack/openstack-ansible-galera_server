@@ -75,28 +75,28 @@
   tags:
     - always
 
-- include: galera_cluster_state.yml
+- include_tasks: galera_cluster_state.yml
   when:
     - galera_deployed | bool
     - not galera_ignore_cluster_state | bool
   tags:
     - always
 
-- include: galera_upgrade.yml
+- include_tasks: galera_upgrade.yml
   tags:
     - galera_server-upgrade
 
-- include: galera_install.yml
+- include_tasks: galera_install.yml
   tags:
     - galera_server-install
 
-- include: galera_post_install.yml
+- include_tasks: galera_post_install.yml
   tags:
     - galera_server-config
 
 - name: Flush handlers
   meta: flush_handlers
 
-- include: galera_setup.yml
+- include_tasks: galera_setup.yml
   tags:
     - galera_server-config

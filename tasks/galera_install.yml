@@ -83,7 +83,7 @@
     - galera_xtrabackup_compression | bool
     - ansible_architecture != 'x86_64'
 
-- include: "galera_install_{{ ansible_pkg_mgr }}.yml"
+- include_tasks: "galera_install_{{ ansible_pkg_mgr }}.yml"
 
 - name: Install pip packages
   pip:
