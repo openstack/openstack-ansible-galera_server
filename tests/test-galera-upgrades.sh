@@ -77,6 +77,13 @@ execute_ansible_playbook
 # Create an ansible venv matching previous branch
 source ${WORKING_DIR}/tests/common/test-create-previous-venv.sh
 
+# NOTE(hwoarang): Ansible 2.4+ is broken in terms of task inclusion and relative
+# files are preferred over those belonging to the actual role. As such, we need to
+# change the current directory to something that doesn't look like a role directory
+# structure when executing the previous role
+# https://github.com/ansible/ansible/pull/34790
+cd ${WORKING_DIR}/tests
+
 # Prepare environment for the deploy of previous Galera:
 # No upgrading or testing is done yet.
 export TEST_PLAYBOOK="${WORKING_DIR}/tests/test-install-previous-galera.yml"
@@ -89,6 +96,8 @@ execute_ansible_playbook
 # Unset previous branch overrides
 unset PREVIOUS_VENV
 unset ANSIBLE_BIN
+
+cd -
 
 # Prepare environment for the upgrade
 export TEST_PLAYBOOK="${WORKING_DIR}/tests/test-upgrade-post.yml"
