@@ -68,8 +68,8 @@
     repo: "{{ galera_repo.repo }}"
     filename: "{{ galera_repo.filename | default(omit) }}"
     state: "{{ galera_repo.state }}"
-  register: add_repos
-  until: add_repos|success
+  register: add_galera_repo
+  until: add_galera_repo|success
   retries: 5
   delay: 2
   tags:
@@ -80,8 +80,8 @@
     repo: "{{ galera_percona_xtrabackup_repo.repo }}"
     filename: "{{ galera_percona_xtrabackup_repo.filename | default(omit) }}"
     state: "{{ (use_percona_upstream | bool) | ternary('present','absent') }}"
-  register: add_repos
-  until: add_repos|success
+  register: add_percona_repo
+  until: add_percona_repo|success
   retries: 5
   delay: 2
   tags:
@@ -119,7 +119,7 @@
     update_cache: yes
   when: >
     "ansible_date_time.epoch|float - apt_cache_stat.stat.mtime > {{cache_timeout}}" or
-    add_repos | changed
+    add_galera_repo | changed or add_percona_repo | changed
   tags:
     - galera-apt-packages
 
