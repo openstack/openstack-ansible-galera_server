@@ -94,7 +94,7 @@
   retries: 5
   delay: 2
 
-- name: Remove policy-rc
+- name: Remove policy-rc now that the package install is complete
   file:
     path: "/usr/sbin/policy-rc.d"
     state: absent

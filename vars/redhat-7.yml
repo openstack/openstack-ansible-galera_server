@@ -82,4 +82,4 @@ galera_server_percona_distro_packages:
 
 galera_wsrep_provider: "/usr/lib/galera/libgalera_smm.so"
 
-_use_percona_upstream: yes
+_use_percona_upstream: "{{ ansible_architecture == 'x86_64' }}"

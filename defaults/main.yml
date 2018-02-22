@@ -113,8 +113,8 @@ galera_wsrep_provider_options:
 galera_wsrep_sst_auth_user: "root"
 galera_wsrep_sst_auth_password: "{{ galera_root_password  }}"
 
-# Enable compression of backups. Qpress is only availabe for x86_64
-galera_xtrabackup_compression: "{{ (ansible_architecture == 'x86_64') | ternary(true, false) }}"
+# Enable compression of backups.
+galera_xtrabackup_compression: "{{ (ansible_architecture == 'x86_64') or (ansible_architecture == 'ppc64le' and ansible_distribution == 'Ubuntu') }}"
 # xtrabackup parallel/compression/sync threads
 galera_xtrabackup_threads: 4
 
@@ -193,3 +193,13 @@ galera_disable_privatedevices: "{{ _galera_disable_privatedevices }}"
 ## Set default mirror for openSUSE repositories
 # NOTE(hwoarang): Ensure that the full path to the 'opensuse' directory is used.
 #galera_server_opensuse_mirror_obs_url: "http://widehat.opensuse.org"
+
+# Where the extra package download is executed from.
+# Options are ['deployment-host', 'target-host']
+galera_server_extra_package_downloader: "deployment-host"
+
+# The location where the extra packages are downloaded to
+galera_server_extra_package_path: "/opt/cache/files"
+
+# Toggle whether certificate validation should be enabled/disabled
+galera_server_extra_package_validate_certs: yes
