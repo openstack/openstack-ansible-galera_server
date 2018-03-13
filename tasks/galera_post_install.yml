@@ -53,6 +53,7 @@
     mode: "0750"
   when:
     - ansible_pkg_mgr != "apt"
+    - not galera_upgrade
 
 - name: Run galera secure
   command: "/usr/local/bin/galera_secure_node"
@@ -61,6 +62,7 @@
     warn: no
   when:
     - ansible_pkg_mgr != "apt"
+    - not galera_upgrade
   tags:
     - skip_ansible_lint
 
