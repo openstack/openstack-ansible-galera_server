@@ -74,6 +74,7 @@
     value: "{{ item.value }}"
     vtype: "{{ item.vtype }}"
   with_items: "{{ galera_debconf_items }}"
+  no_log: yes
 
 - name: Prevent galera from starting on install
   copy:
