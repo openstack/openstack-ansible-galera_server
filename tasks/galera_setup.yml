@@ -50,6 +50,7 @@
   delay: 10
   delegate_to: "{{ galera_server_bootstrap_node }}"
   run_once: true
+  no_log: True
 
 - name: Run MySQL Upgrade
   command: "/usr/bin/mysql_upgrade"
