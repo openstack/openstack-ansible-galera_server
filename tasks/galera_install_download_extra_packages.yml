@@ -18,7 +18,7 @@
     path: "{{ galera_server_extra_package_path }}/{{ item.key }}"
     state: directory
   with_dict: "{{ galera_server_percona_distro_packages_alt_arch }}"
-  delegate_to: "{{ (galera_server_extra_package_downloader == 'deployment-host') | ternary('localhost', omit) }}"
+  delegate_to: "{{ (galera_server_extra_package_downloader == 'deployment-host') | ternary('localhost', inventory_hostname) }}"
 
 - name: Download extra packages
   get_url:
@@ -32,7 +32,7 @@
   until: fetch_url | success
   retries: 3
   delay: 10
-  delegate_to: "{{ (galera_server_extra_package_downloader == 'deployment-host') | ternary('localhost', omit) }}"
+  delegate_to: "{{ (galera_server_extra_package_downloader == 'deployment-host') | ternary('localhost', inventory_hostname) }}"
 
 - name: Copy downloaded packages from deployment-host to target-host
   copy:
