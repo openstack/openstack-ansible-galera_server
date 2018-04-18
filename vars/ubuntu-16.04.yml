@@ -35,7 +35,6 @@ galera_server_required_distro_packages:
   - debconf-utils
   - libaio1
   - libc6
-  - libdbd-mysql-perl
   - libgcc1
   - libgcrypt20
   - libstdc++6
