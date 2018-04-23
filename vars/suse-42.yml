@@ -30,6 +30,8 @@ galera_server_required_distro_packages:
   - libgcrypt-devel
   - MariaDB-client
   - MariaDB-devel
+  - python-MySQL-python # needed by mysql_user
+  - python2-pycrypto # needed for ssl
   - xinetd
 
 galera_etc_conf_file: "/etc/mysql/my.cnf"
