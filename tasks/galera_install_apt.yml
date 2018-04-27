@@ -84,12 +84,22 @@
     backup: yes
   changed_when: false
 
+- name: Update Apt cache
+  apt:
+    update_cache: yes
+  when:
+    - add_galera_repo | changed or add_percona_repo | changed
+  register: update_apt_cache
+  until: update_apt_cache | success
+  retries: 5
+  delay: 2
+
 - name: Install galera_server role remote packages (apt)
   apt:
     name: "{{ galera_packages_list }}"
     state: "{{ galera_server_package_state }}"
     update_cache: yes
-    cache_valid_time: "{{ (add_galera_repo | changed or add_percona_repo | changed) | ternary('0', cache_timeout) }}"
+    cache_valid_time: "{{ cache_timeout }}"
   register: install_remote_apt_packages
   until: install_remote_apt_packages|success
   retries: 5
