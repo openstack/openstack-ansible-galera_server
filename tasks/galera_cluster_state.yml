@@ -48,4 +48,4 @@
       cluster state set '-e galera_ignore_cluster_state=true'.
   when:
     - cluster_name.rc != 0
-    - (cluster_name.split()[-1] | default(false)) != galera_cluster_name
+    - (cluster_name.stdout.split()[-1] | default(false)) != galera_cluster_name
