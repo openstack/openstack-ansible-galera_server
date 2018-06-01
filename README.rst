@@ -14,5 +14,8 @@ OpenStack-Ansible Galera server
 Documentation for the project can be found at:
   https://docs.openstack.org/openstack-ansible-galera_server/latest
 
+Release notes for the project can be found at:
+  https://docs.openstack.org/releasenotes/openstack-ansible-galera_server/
+
 The project home is at:
   https://launchpad.net/openstack-ansible
