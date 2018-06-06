@@ -21,9 +21,11 @@
       jobs:
         - openstack-ansible-linters
         - openstack-ansible-functional-centos-7
+        - openstack-ansible-functional-centos-7-ssl
         - openstack-ansible-functional-opensuse-423
+        - openstack-ansible-functional-opensuse-423-ssl
         - openstack-ansible-functional-ubuntu-xenial
-        - openstack-ansible-ssl-ubuntu-xenial-nv
+        - openstack-ansible-functional-ubuntu-xenial-ssl
     experimental:
       jobs:
         - openstack-ansible-integrated-deploy-aio
@@ -31,5 +33,8 @@
       jobs:
         - openstack-ansible-linters
         - openstack-ansible-functional-centos-7
+        - openstack-ansible-functional-centos-7-ssl
         - openstack-ansible-functional-opensuse-423
+        - openstack-ansible-functional-opensuse-423-ssl
         - openstack-ansible-functional-ubuntu-xenial
+        - openstack-ansible-functional-ubuntu-xenial-ssl

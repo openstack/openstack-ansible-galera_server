@@ -14,8 +14,19 @@
 # limitations under the License.
 
 - job:
-    name: openstack-ansible-ssl-ubuntu-xenial-nv
+    name: openstack-ansible-functional-centos-7-ssl
+    parent: openstack-ansible-functional-centos-7
+    vars:
+      tox_env: ssl
+
+- job:
+    name: openstack-ansible-functional-opensuse-423-ssl
+    parent: openstack-ansible-functional-opensuse-423
+    vars:
+      tox_env: ssl
+
+- job:
+    name: openstack-ansible-functional-ubuntu-xenial-ssl
     parent: openstack-ansible-functional-ubuntu-xenial
-    voting: false
     vars:
       tox_env: ssl
