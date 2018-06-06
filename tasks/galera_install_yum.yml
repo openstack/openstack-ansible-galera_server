@@ -77,8 +77,13 @@
     - skip_ansible_lint
 
 - name: Install percona repo
-  package:
-    pkg: "{{ galera_percona_xtrabackup_repo.repo }}"
+  yum_repository:
+    name: 'percona-release-$basearch'
+    description: 'Percona-Release YUM repository - $basearch'
+    baseurl: "{{ galera_percona_xtrabackup_repo.repo }}"
+    enabled: true
+    gpgcheck: true
+    gpgkey: 'https://www.percona.com/downloads/RPM-GPG-KEY-percona'
     state: "{{ galera_percona_xtrabackup_repo.state }}"
   register: install_packages
   until: install_packages|success
