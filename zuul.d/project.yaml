@@ -19,7 +19,7 @@
         - openstack-ansible-functional-centos-7
         - openstack-ansible-functional-opensuse-423
         - openstack-ansible-functional-ubuntu-xenial
-        - openstack-ansible-functional-ubuntu-bionic-nv
+        - openstack-ansible-functional-ubuntu-bionic
         - openstack-ansible-upgrade-ubuntu-xenial
         - openstack-ansible-upgrade-opensuse-423
         - openstack-ansible-ssl-ubuntu-xenial-nv
@@ -32,5 +32,6 @@
         - openstack-ansible-functional-centos-7
         - openstack-ansible-functional-opensuse-423
         - openstack-ansible-functional-ubuntu-xenial
+        - openstack-ansible-functional-ubuntu-bionic
         - openstack-ansible-upgrade-ubuntu-xenial
         - openstack-ansible-upgrade-opensuse-423
