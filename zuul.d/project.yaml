@@ -20,8 +20,13 @@
         - openstack-ansible-functional-opensuse-423
         - openstack-ansible-functional-ubuntu-xenial
         - openstack-ansible-functional-ubuntu-bionic
-        - openstack-ansible-upgrade-ubuntu-xenial
+        - openstack-ansible-upgrade-centos-7
         - openstack-ansible-upgrade-opensuse-423
+        - openstack-ansible-upgrade-ubuntu-xenial
+        # TODO(mnaser): Make this voting in the in the S release because OSA
+        #               did not support Bionic in the Q cycle.
+        - openstack-ansible-upgrade-ubuntu-bionic:
+            voting: false
         - openstack-ansible-ssl-ubuntu-xenial-nv
     experimental:
       jobs:
@@ -33,5 +38,10 @@
         - openstack-ansible-functional-opensuse-423
         - openstack-ansible-functional-ubuntu-xenial
         - openstack-ansible-functional-ubuntu-bionic
-        - openstack-ansible-upgrade-ubuntu-xenial
+        - openstack-ansible-upgrade-centos-7
         - openstack-ansible-upgrade-opensuse-423
+        - openstack-ansible-upgrade-ubuntu-xenial
+        # TODO(mnaser): Make this voting in the in the S release because OSA
+        #               did not support Bionic in the Q cycle.
+        - openstack-ansible-upgrade-ubuntu-bionic:
+            voting: false
