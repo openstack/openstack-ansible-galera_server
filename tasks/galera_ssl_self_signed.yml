@@ -59,7 +59,18 @@
     -out {{ galera_ssl_ca_cert | dirname }}/galera-req.pem
     -extensions v3_ca
     creates={{ galera_ssl_ca_cert | dirname }}/galera-req.pem
+  register: create_galera_ssl_request
   when:
+    - inventory_hostname == galera_server_bootstrap_node
+  notify: Restart all mysql
+
+- name: Convert generated SSL key to valid format for Galera
+  command: >
+    openssl rsa
+    -in {{ galera_ssl_key }}
+    -out {{ galera_ssl_key }}
+  when:
+    - create_galera_ssl_request | changed
     - inventory_hostname == galera_server_bootstrap_node
   notify: Restart all mysql
 
