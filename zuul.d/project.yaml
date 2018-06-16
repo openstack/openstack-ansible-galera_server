@@ -13,42 +13,21 @@
 # limitations under the License.
 
 - project:
+    templates:
+      - openstack-ansible-role-jobs
+      - openstack-ansible-upgrade
     check:
       jobs:
-        - openstack-ansible-linters
-        - openstack-ansible-functional-centos-7
         - openstack-ansible-functional-centos-7-ssl
-        - openstack-ansible-functional-opensuse-423
         - openstack-ansible-functional-opensuse-423-ssl
-        - openstack-ansible-functional-ubuntu-xenial
         - openstack-ansible-functional-ubuntu-xenial-ssl
-        - openstack-ansible-functional-ubuntu-bionic
         - openstack-ansible-functional-ubuntu-bionic-ssl
-        - openstack-ansible-upgrade-centos-7
-        - openstack-ansible-upgrade-opensuse-423
-        - openstack-ansible-upgrade-ubuntu-xenial
-        # TODO(mnaser): Make this voting in the in the S release because OSA
-        #               did not support Bionic in the Q cycle.
-        - openstack-ansible-upgrade-ubuntu-bionic:
-            voting: false
     experimental:
       jobs:
         - openstack-ansible-integrated-deploy-aio
     gate:
       jobs:
-        - openstack-ansible-linters
-        - openstack-ansible-functional-centos-7
         - openstack-ansible-functional-centos-7-ssl
-        - openstack-ansible-functional-opensuse-423
         - openstack-ansible-functional-opensuse-423-ssl
-        - openstack-ansible-functional-ubuntu-xenial
         - openstack-ansible-functional-ubuntu-xenial-ssl
-        - openstack-ansible-functional-ubuntu-bionic
         - openstack-ansible-functional-ubuntu-bionic-ssl
-        - openstack-ansible-upgrade-centos-7
-        - openstack-ansible-upgrade-opensuse-423
-        - openstack-ansible-upgrade-ubuntu-xenial
-        # TODO(mnaser): Make this voting in the in the S release because OSA
-        #               did not support Bionic in the Q cycle.
-        - openstack-ansible-upgrade-ubuntu-bionic:
-            voting: false
