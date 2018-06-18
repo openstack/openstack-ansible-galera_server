@@ -89,7 +89,7 @@ galera_server_percona_distro_packages:
 
 # Repositories
 _galera_percona_xtrabackup_repo:
-  repo: "deb http://repo.percona.com/apt {{ ansible_distribution_release }} main"
+  repo: "deb http://{{ galera_percona_xtrabackup_repo_host | default('repo.percona.com') }}/apt {{ ansible_distribution_release }} main"
   state: "{{ (use_percona_upstream | bool) | ternary('present', 'absent') }}"
   filename: "Percona"
 
