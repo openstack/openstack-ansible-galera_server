@@ -74,7 +74,7 @@ _galera_repo:
   gpgkey: "https://yum.mariadb.org/RPM-GPG-KEY-MariaDB"
 
 _galera_percona_xtrabackup_repo:
-  repo: "http://repo.percona.com/release/$releasever/RPMS/$basearch"
+  repo: "http://{{ galera_percona_xtrabackup_repo_host | default('repo.percona.com') }}/release/$releasever/RPMS/$basearch"
   state: "{{ (use_percona_upstream | bool) | ternary('present', 'absent') }}"
 
 galera_server_percona_distro_packages:
