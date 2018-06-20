@@ -26,36 +26,32 @@
     - { src: "/etc/mysql/conf.d", path: "/etc/my.cnf.d", state: "link", force: true }
     - { src: "/etc/mysql/my.cnf", path: "/etc/my.cnf", state: "link", force: true }
 
-- name: Add galera gpg-keys
-  block:
-    - name: Add keys (primary keyserver)
-      rpm_key:
-        state: present
-        key: "{{ item.keyserver }}/{{ item.key_name }}"
-      register: add_keys
-      until: add_keys|success
-      retries: 5
-      delay: 2
-      with_items: "{{ galera_gpg_keys }}"
+- name: If a keyfile is provided, copy the gpg keyfile to the key location
+  copy:
+    src: "{{ item.keyfile }}"
+    dest: "{{ item.key }}"
+    mode: '0644'
+  with_items: "{{ galera_gpg_keys | selectattr('keyfile','defined') | list }}"
 
-  rescue:
-    - name: Add keys (fallback keyserver)
-      rpm_key:
-        state: present
-        key: "{{ item.fallback_keyserver }}/{{ item.key_name }}"
-      register: add_keys
-      until: add_keys|success
-      retries: 5
-      delay: 2
-      with_items: "{{ galera_gpg_keys }}"
-      when: item.fallback_keyserver is defined
+- name: Install gpg keys
+  rpm_key:
+    key: "{{ key.key }}"
+    validate_certs: "{{ key.validate_certs | default(omit) }}"
+    state: "{{ key.state | default('present') }}"
+  with_items: "{{ galera_gpg_keys }}"
+  loop_control:
+    loop_var: key
+  register: _add_yum_keys
+  until: _add_yum_keys | success
+  retries: 5
+  delay: 2
 
 - name: Add galera repo
   yum_repository:
     name: "{{ galera_repo.name }}"
     description: "{{ galera_repo.description }}"
     baseurl: "{{ galera_repo.baseurl }}"
-    gpgkey: "{{ galera_repo.gpgkey }}"
+    gpgkey: "{{ galera_repo.gpgkey | default(omit) }}"
     gpgcheck: yes
     enabled: yes
   register: add_repos
@@ -83,7 +79,6 @@
     baseurl: "{{ galera_percona_xtrabackup_repo.repo }}"
     enabled: true
     gpgcheck: true
-    gpgkey: 'https://www.percona.com/downloads/RPM-GPG-KEY-percona'
     state: "{{ galera_percona_xtrabackup_repo.state }}"
   register: install_packages
   until: install_packages|success

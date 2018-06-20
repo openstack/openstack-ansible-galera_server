@@ -21,14 +21,16 @@ _galera_disable_privatedevices: yes
 
 # Galera GPG Keys
 _galera_gpg_keys:
-  - key_name: 'mariadb'
-    keyserver: 'hkp://keyserver.ubuntu.com:80'
-    fallback_keyserver: 'hkp://p80.pool.sks-keyservers.net:80'
-    hash_id: '0xF1656F24C74CD1D8'
-  - key_name: 'percona-xtrabackup'
-    keyserver: 'hkp://keyserver.ubuntu.com:80'
-    fallback_keyserver: 'hkp://p80.pool.sks-keyservers.net:80'
-    hash_id: '0x9334a25f8507efa5'
+  # MariaDB Signing Key <signing-key@mariadb.org>
+  - name: mariadb
+    id: C74CD1D8
+    key: /etc/ssl/mariadb-key
+    keyfile: 'gpg/C74CD1D8'
+  # Percona MySQL Development Team (Packaging key) <mysql-dev@percona.com>
+  - key_name: percona
+    id: 8507EFA5
+    key: /etc/ssl/percona-pkg-key
+    keyfile: 'gpg/8507EFA5'
 
 galera_server_required_distro_packages:
   - apt-transport-https
@@ -39,7 +41,6 @@ galera_server_required_distro_packages:
   - libgcrypt20
   - libstdc++6
   - python-mysqldb # needed by mysql_user
-  - python-crypto # needed for ssl
   - python-software-properties
   - software-properties-common
   - xinetd

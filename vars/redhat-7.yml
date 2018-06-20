@@ -15,9 +15,14 @@
 
 # Galera GPG Keys
 _galera_gpg_keys:
-  - key_name: 'RPM-GPG-KEY-MariaDB'
-    keyserver: 'https://yum.mariadb.org'
-    fallback_keyserver: 'https://yum.mariadb.org'
+  # MariaDB Package Signing Key <package-signing-key@mariadb.org>
+  - name: mariadb
+    key: /etc/pki/rpm-gpg/RPM-GPG-KEY-MariaDB
+    keyfile: 'gpg/1BB943DB'
+  # Percona MySQL Development Team <mysql-dev@percona.com>
+  - key_name: percona
+    key: /etc/pki/rpm-gpg/RPM-GPG-KEY-percona
+    keyfile: 'gpg/CD2EFD2A'
 
 # Default private device setting
 # This provides some additional security, but it causes problems with creating
@@ -34,7 +39,6 @@ galera_server_required_distro_packages:
   - MariaDB-client
   - MariaDB-devel
   - MySQL-python # needed by mysql_user
-  - python-crypto # needed for ssl
   - xinetd
 
 galera_etc_conf_file: "/etc/mysql/my.cnf"
@@ -71,7 +75,6 @@ _galera_repo:
   name: MariaDB
   description: "MariaDB Repo"
   baseurl: "{{ galera_repo_url }}"
-  gpgkey: "https://yum.mariadb.org/RPM-GPG-KEY-MariaDB"
 
 _galera_percona_xtrabackup_repo:
   repo: "http://{{ galera_percona_xtrabackup_repo_host | default('repo.percona.com') }}/release/$releasever/RPMS/$basearch"

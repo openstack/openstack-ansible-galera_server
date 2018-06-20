@@ -13,34 +13,25 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- name: Add galera apt-keys
-  block:
-    - name: Add keys (primary keyserver)
-      apt_key:
-        id: "{{ item.hash_id }}"
-        keyserver: "{{ item.keyserver | default(omit) }}"
-        data: "{{ item.data | default(omit) }}"
-        url: "{{ item.url | default(omit) }}"
-        state: "present"
-      register: add_keys
-      until: add_keys | success
-      retries: 5
-      delay: 2
-      with_items: "{{ galera_gpg_keys }}"
-  rescue:
-    - name: Add keys (fallback keyserver)
-      apt_key:
-        id: "{{ item.hash_id }}"
-        keyserver: "{{ item.fallback_keyserver | default(omit) }}"
-        url: "{{ item.fallback_url | default(omit) }}"
-        state: "present"
-      register: add_keys_fallback
-      until: add_keys_fallback | success
-      retries: 5
-      delay: 2
-      with_items: "{{ galera_gpg_keys }}"
-      when:
-        - item.fallback_keyserver is defined or item.fallback_url is defined
+- name: If a keyfile is provided, copy the gpg keyfile to the key location
+  copy:
+    src: "{{ item.keyfile }}"
+    dest: "{{ item.key }}"
+    mode: '0644'
+  with_items: "{{ galera_gpg_keys | selectattr('keyfile','defined') | list }}"
+
+- name: Install gpg keys
+  apt_key:
+    id: "{{ key.id }}"
+    file: "{{ key.key | default(omit) }}"
+    state: "{{ key.state | default('present') }}"
+  with_items: "{{ galera_gpg_keys }}"
+  loop_control:
+    loop_var: key
+  register: _add_apt_keys
+  until: _add_apt_keys | success
+  retries: 5
+  delay: 2
 
 - name: Remove old repos
   lineinfile:

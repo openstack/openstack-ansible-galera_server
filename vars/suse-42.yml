@@ -15,9 +15,9 @@
 
 # Galera GPG Keys
 _galera_gpg_keys:
-  - key_name: 'RPM-GPG-KEY-MariaDB'
-    keyserver: 'https://yum.mariadb.org'
-    fallback_keyserver: 'https://yum.mariadb.org'
+  - name: mariadb
+    key: /etc/pki/RPM-GPG-KEY-MariaDB
+    keyfile: 'gpg/1BB943DB'
 
 # Default private device setting
 _galera_disable_privatedevices: yes
@@ -67,7 +67,6 @@ _galera_repo:
   name: MariaDB
   description: "MariaDB Repo"
   baseurl: "{{ galera_repo_url }}"
-  gpgkey: "https://yum.mariadb.org/RPM-GPG-KEY-MariaDB"
 
 galera_server_percona_distro_packages:
   - percona-toolkit

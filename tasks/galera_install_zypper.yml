@@ -25,29 +25,25 @@
     - { src: "/etc/mysql/conf.d", path: "/etc/my.cnf.d", state: "link", force: true }
     - { src: "/etc/mysql/my.cnf", path: "/etc/my.cnf", state: "link", force: true }
 
-- name: Add galera gpg-keys
-  block:
-    - name: Add keys (primary keyserver)
-      rpm_key:
-        state: present
-        key: "{{ item.keyserver }}/{{ item.key_name }}"
-      register: add_keys
-      until: add_keys|success
-      retries: 5
-      delay: 2
-      with_items: "{{ galera_gpg_keys }}"
+- name: If a keyfile is provided, copy the gpg keyfile to the key location
+  copy:
+    src: "{{ item.keyfile }}"
+    dest: "{{ item.key }}"
+    mode: '0644'
+  with_items: "{{ galera_gpg_keys | selectattr('keyfile','defined') | list }}"
 
-  rescue:
-    - name: Add keys (fallback keyserver)
-      rpm_key:
-        state: present
-        key: "{{ item.fallback_keyserver }}/{{ item.key_name }}"
-      register: add_keys
-      until: add_keys|success
-      retries: 5
-      delay: 2
-      with_items: "{{ galera_gpg_keys }}"
-      when: item.fallback_keyserver is defined
+- name: Install gpg keys
+  rpm_key:
+    key: "{{ key.key }}"
+    validate_certs: "{{ key.validate_certs | default(omit) }}"
+    state: "{{ key.state | default('present') }}"
+  with_items: "{{ galera_gpg_keys }}"
+  loop_control:
+    loop_var: key
+  register: _add_yum_keys
+  until: _add_yum_keys | success
+  retries: 5
+  delay: 2
 
 - name: Fail if upstream Percona is selected
   fail:
