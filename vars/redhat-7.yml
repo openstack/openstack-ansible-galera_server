@@ -52,7 +52,7 @@ galera_server_upgrade_packages_remove:
 galera_mariadb_service_name: "mariadb"
 
 # TODO(evrardjp): Unfreeze version to 10.1 branch when clustering issue is solved.
-_galera_repo_url: "http://downloads.mariadb.com/MariaDB/mariadb-{{ galera_major_version }}.{{ galera_minor_version }}/yum/centos7-amd64"
+_galera_repo_url: "http://{{ galera_repo_host }}/MariaDB/mariadb-{{ galera_major_version }}.{{ galera_minor_version }}/yum/centos7-amd64"
 _galera_repo:
   name: MariaDB
   description: "MariaDB Repo"
