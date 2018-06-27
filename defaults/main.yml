@@ -44,6 +44,7 @@ galera_major_version: 10.1
 galera_minor_version: 30
 
 # Set the URL for the MariaDB repository
+galera_repo_host: "downloads.mariadb.com"
 galera_repo_url: "{{ _galera_repo_url }}"
 
 # Set the repo information for the MariaDB repository
