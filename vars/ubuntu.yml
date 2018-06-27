@@ -95,7 +95,7 @@ _galera_percona_xtrabackup_repo:
   filename: "Percona"
 
 # TODO(evrardjp): Unfreeze version to 10.1 branch when clustering issue is solved.
-_galera_repo_url: "http://downloads.mariadb.com/MariaDB/mariadb-{{ galera_major_version }}.{{ galera_minor_version }}/repo/ubuntu"
+_galera_repo_url: "http://{{ galera_repo_host }}/MariaDB/mariadb-{{ galera_major_version }}.{{ galera_minor_version }}/repo/ubuntu"
 _galera_repo:
   repo: "deb {{ galera_repo_url }} {{ ansible_distribution_release }} main"
   state: "present"
