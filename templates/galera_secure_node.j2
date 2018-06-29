@@ -19,6 +19,7 @@ STOP_MYSQL=false
 
 if ! systemctl status mysql; then
   STOP_MYSQL=true
+  systemctl set-environment MYSQLD_OPTS="--bind-address=127.0.0.1"
   systemctl start mysql
   sleep 10
   systemctl status mysql
@@ -41,4 +42,5 @@ if [ "${STOP_MYSQL}" = true ]; then
 fi
 
 # Create a marker file to ensure this script is not run again
+systemctl unset-environment MYSQLD_OPTS
 touch "/var/lib/mysql/osa_default_secured"
