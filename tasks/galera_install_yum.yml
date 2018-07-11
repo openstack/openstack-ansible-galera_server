@@ -103,3 +103,7 @@
   package:
     name: "{{ galera_packages_list }}"
     state: "{{ galera_server_package_state }}"
+  register: install_remote_packages
+  until: install_remote_packages is success
+  retries: 5
+  delay: 2
