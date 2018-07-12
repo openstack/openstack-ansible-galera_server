@@ -42,7 +42,7 @@
   loop_control:
     loop_var: key
   register: _add_yum_keys
-  until: _add_yum_keys | success
+  until: _add_yum_keys  is success
   retries: 5
   delay: 2
 
@@ -55,7 +55,7 @@
     gpgcheck: yes
     enabled: yes
   register: add_repos
-  until: add_repos | success
+  until: add_repos  is success
   retries: 5
   delay: 2
 
@@ -68,7 +68,7 @@
   command: "{{ ansible_pkg_mgr }} clean metadata"
   args:
     warn: no
-  when: add_repos | changed
+  when: add_repos  is changed
   tags:
     - skip_ansible_lint
 
@@ -81,7 +81,7 @@
     gpgcheck: true
     state: "{{ galera_percona_xtrabackup_repo.state }}"
   register: install_packages
-  until: install_packages|success
+  until: install_packages is success
   retries: 5
   delay: 2
 

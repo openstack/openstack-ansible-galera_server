@@ -48,7 +48,7 @@
       priv: "*.*:USAGE"
       state: present
   register: galera_users
-  until: galera_users | success
+  until: galera_users  is success
   retries: 3
   delay: 10
   delegate_to: "{{ galera_server_bootstrap_node }}"
@@ -60,7 +60,7 @@
   register: galera_mysql_upgrade
   changed_when:
     - not galera_mysql_upgrade.stdout | search("already upgraded")
-  until: galera_mysql_upgrade | success
+  until: galera_mysql_upgrade  is success
   retries: 3
   delay: 10
   delegate_to: "{{ galera_server_bootstrap_node }}"

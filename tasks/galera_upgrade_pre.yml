@@ -18,7 +18,7 @@
     name: mysql
     state: stopped
   register: galera_restart_fall_back
-  until: galera_restart_fall_back | success
+  until: galera_restart_fall_back  is success
   retries: 3
   delay: 5
 
@@ -52,7 +52,7 @@
         update_cache: yes
         cache_valid_time: 0
       register: apt_update
-      until: apt_update|success
+      until: apt_update is success
       retries: 5
       delay: 2
   when:

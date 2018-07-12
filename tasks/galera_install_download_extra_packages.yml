@@ -29,7 +29,7 @@
     validate_certs: "{{ galera_server_extra_package_validate_certs }}"
   with_dict: "{{ galera_server_percona_distro_packages_alt_arch }}"
   register: fetch_url
-  until: fetch_url | success
+  until: fetch_url  is success
   retries: 3
   delay: 10
   delegate_to: "{{ (galera_server_extra_package_downloader == 'deployment-host') | ternary('localhost', inventory_hostname) }}"
@@ -42,6 +42,6 @@
   when:
     - galera_server_extra_package_downloader == "deployment-host"
   register: file_copy
-  until: file_copy | success
+  until: file_copy  is success
   retries: 5
   delay: 10
