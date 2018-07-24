@@ -27,4 +27,4 @@
     - common/test-vars.yml
 
 # Re-run functional tests
-- include: test-galera-server-functional.yml
+- import_playbook: test-galera-server-functional.yml
