@@ -18,7 +18,7 @@
     name: mysql
     state: stopped
   register: galera_restart_fall_back
-  until: galera_restart_fall_back  is success
+  until: galera_restart_fall_back is success
   retries: 3
   delay: 5
 

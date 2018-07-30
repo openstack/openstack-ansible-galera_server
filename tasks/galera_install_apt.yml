@@ -29,7 +29,7 @@
   loop_control:
     loop_var: key
   register: _add_apt_keys
-  until: _add_apt_keys  is success
+  until: _add_apt_keys is success
   retries: 5
   delay: 2
 
@@ -81,7 +81,7 @@
   when:
     - add_galera_repo | changed or add_percona_repo  is changed
   register: update_apt_cache
-  until: update_apt_cache  is success
+  until: update_apt_cache is success
   retries: 5
   delay: 2
 

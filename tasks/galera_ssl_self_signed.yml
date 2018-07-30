@@ -70,7 +70,7 @@
     -in {{ galera_ssl_key }}
     -out {{ galera_ssl_key }}
   when:
-    - create_galera_ssl_request  is changed
+    - create_galera_ssl_request is changed
     - inventory_hostname == galera_server_bootstrap_node
   notify: Restart all mysql
 

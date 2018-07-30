@@ -75,7 +75,7 @@
   environment:
     MYSQLD_STARTUP_TIMEOUT: 180
   register: galera_restart
-  until: galera_restart  is success
+  until: galera_restart is success
   retries: 6
   delay: 5
   delegate_to: "{{ item }}"
