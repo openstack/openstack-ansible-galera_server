@@ -41,7 +41,6 @@ galera_server_required_distro_packages:
   - libgcrypt20
   - libstdc++6
   - python-mysqldb # needed by mysql_user
-  - python-software-properties
   - software-properties-common
   - xinetd
 
