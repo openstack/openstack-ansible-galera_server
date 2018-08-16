@@ -14,10 +14,10 @@
 # limitations under the License.
 
 # Setup the host
-- include: common/test-setup-host.yml
+- import_playbook: common/test-setup-host.yml
 
 # Install previous version Galera server
-- include: common/test-install-galera.yml
+- import_playbook: common/test-install-galera.yml
 
 # Run functional tests
-- include: test-galera-server-functional.yml
+- import_playbook: test-galera-server-functional.yml
