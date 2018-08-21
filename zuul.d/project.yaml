@@ -16,6 +16,9 @@
     templates:
       - openstack-ansible-role-jobs
       - openstack-ansible-upgrade
+      - check-requirements
+      - publish-openstack-sphinx-docs
+      - release-notes-jobs
     check:
       jobs:
         - openstack-ansible-functional-centos-7-ssl
