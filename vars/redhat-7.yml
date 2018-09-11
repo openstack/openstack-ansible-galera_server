@@ -61,7 +61,6 @@ galera_server_upgrade_packages_remove:
 
 galera_mariadb_service_name: "mariadb"
 
-# TODO(evrardjp): Unfreeze version to 10.1 branch when clustering issue is solved.
 _galera_repo_url: "http://{{ galera_repo_host }}/MariaDB/mariadb-{{ galera_major_version }}.{{ galera_minor_version }}/yum/centos7-amd64"
 _galera_repo:
   name: MariaDB
@@ -74,7 +73,7 @@ _galera_percona_xtrabackup_repo:
 
 galera_server_percona_distro_packages:
   - percona-toolkit
-  - percona-xtrabackup
+  - percona-xtrabackup-24
   - "{{ (galera_xtrabackup_compression | bool) | ternary('qpress', '') }}"
 
 galera_wsrep_provider: "/usr/lib/galera/libgalera_smm.so"

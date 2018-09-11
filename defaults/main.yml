@@ -40,8 +40,8 @@ galera_debconf_items: []
 galera_mariadb_server_package: "{{ _galera_mariadb_server_package }}"
 
 # The major version used to select the repo URL path
-galera_major_version: 10.1
-galera_minor_version: 34
+galera_major_version: 10.2
+galera_minor_version: 17
 
 # Set the URL for the MariaDB repository
 galera_repo_host: "downloads.mariadb.com"

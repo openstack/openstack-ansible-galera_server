@@ -63,6 +63,19 @@
   retries: 5
   delay: 2
 
+- name: Install percona repo
+  zypper_repository:
+    name: "{{ galera_percona_xtrabackup_repo.name }}"
+    description: "{{ galera_percona_xtrabackup_repo.description }}"
+    repo: "{{ galera_percona_xtrabackup_repo.repo }}"
+    autorefresh: yes
+    auto_import_keys: yes
+    state: "{{ galera_percona_xtrabackup_repo.state }}"
+  register: add_repos
+  until: add_repos is success
+  retries: 5
+  delay: 2
+
 - name: Install galera_server role remote packages (zypper)
   zypper:
     name: "{{ galera_packages_list }}"

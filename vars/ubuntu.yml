@@ -58,7 +58,7 @@ _galera_mariadb_server_package: "mariadb-server-{{ galera_major_version }}"
 # the preseed task and the service startup control used when installing
 # mariadb-galera-server and galera.
 galera_server_mariadb_distro_packages:
-  - libmariadbclient-dev
+  - libmariadb-dev
   - mariadb-client
   - "{{ galera_mariadb_server_package }}"
   - galera-3
@@ -84,7 +84,7 @@ galera_debconf_items:
 
 galera_server_percona_distro_packages:
   - percona-toolkit
-  - percona-xtrabackup
+  - percona-xtrabackup-24
   - "{{ (galera_xtrabackup_compression | bool) | ternary('qpress', '') }}"
 
 # Repositories
@@ -93,7 +93,6 @@ _galera_percona_xtrabackup_repo:
   state: "{{ (use_percona_upstream | bool) | ternary('present', 'absent') }}"
   filename: "Percona"
 
-# TODO(evrardjp): Unfreeze version to 10.1 branch when clustering issue is solved.
 _galera_repo_url: "http://{{ galera_repo_host }}/MariaDB/mariadb-{{ galera_major_version }}.{{ galera_minor_version }}/repo/ubuntu"
 _galera_repo:
   repo: "deb {{ galera_repo_url }} {{ ansible_distribution_release }} main"

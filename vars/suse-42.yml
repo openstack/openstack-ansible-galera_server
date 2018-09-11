@@ -60,12 +60,19 @@ galera_server_upgrade_packages_remove:
 
 galera_mariadb_service_name: "mariadb"
 
-# TODO(evrardjp): Unfreeze version to 10.1 branch when clustering issue is solved.
 _galera_repo_url: "http://{{ galera_repo_host }}/MariaDB/mariadb-{{ galera_major_version }}.{{ galera_minor_version }}/yum/opensuse42-amd64"
 _galera_repo:
   name: MariaDB
   description: "MariaDB Repo"
   baseurl: "{{ galera_repo_url }}"
+
+# NOTE(hwoarang): Extra repository is only needed for 42.3. If this starts failig due to network issues we should
+# simply pin 10.1.31 to Leap 42.3
+_galera_percona_xtrabackup_repo:
+  name: "OBS:home:markoschandras:osa"
+  description: "OBS OpenStack Ansible repository"
+  repo: "https://download.opensuse.org/repositories/home:/markoschandras:/osa/openSUSE_Leap_{{ ansible_distribution_version }}"
+  state: "{{ (ansible_distribution_major_version == '42') | ternary('present', 'absent') }}"
 
 galera_server_percona_distro_packages:
   - percona-toolkit
