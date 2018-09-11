@@ -91,6 +91,12 @@
   failed_when: false
   changed_when: log_dir.rc == 0
 
+- name: create the system group
+  group:
+    name: "adm"
+    state: "present"
+    system: "yes"
+
 - name: Create mysql log dir
   file:
     path: "/var/log/mysql_logs"
