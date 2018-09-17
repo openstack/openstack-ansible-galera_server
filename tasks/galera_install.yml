@@ -33,11 +33,6 @@
   when:
     - ansible_architecture == 'ppc64le'
 
-- name: Remove conflicting distro packages
-  package:
-    name: "{{ galera_server_mariadb_distro_packages_remove | default([]) }}"
-    state: absent
-
 - include_tasks: "galera_install_{{ ansible_pkg_mgr }}.yml"
 
 - name: Record galera has been deployed

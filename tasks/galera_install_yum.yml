@@ -13,6 +13,29 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# Unfortunately yum is case-insensitive, and RDO has mariadb-* packages,
+# while the MariaDB repo has MariaDB-* packages and they conflict.
+# To work around this we have to query for any installed RDO/CentOS
+# packages using rpm, then remove them. We have to remove them without
+# dependencies, otherwise for distro package installation types on shared
+# hosts it removes far too many packages.
+- name: Remove conflicting packages
+  shell: |
+    exit_code=0
+    for pkg in {{ galera_server_mariadb_distro_packages_remove | join(' ') }}; do
+      if rpm --query --quiet ${pkg}; then
+        rpm -ev --nodeps ${pkg}
+        exit_code=2
+      fi
+    done
+    exit ${exit_code}
+  register: _remove_existing_mariadb_packages
+  changed_when: _remove_existing_mariadb_packages.rc == 2
+  failed_when: _remove_existing_mariadb_packages.rc not in [0, 2]
+  args:
+    warn: no
+    executable: /bin/bash
+
 - name: Update the local file system CRUD
   file:
     src: "{{ item.src|default(omit) }}"

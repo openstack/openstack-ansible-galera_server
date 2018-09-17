@@ -54,6 +54,12 @@ galera_server_mariadb_distro_packages:
   - rsync
   - socat
 
+# Conflicting packages with those from the MariaDB repository
+galera_server_mariadb_distro_packages_remove:
+  - mariadb-common
+  - mariadb-config
+  - mariadb-server
+
 # The packages to uninstall during an upgrade from a previous version
 galera_server_upgrade_packages_remove:
   - MariaDB-Galera-server
