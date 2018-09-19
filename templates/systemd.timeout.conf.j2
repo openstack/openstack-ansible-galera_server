@@ -3,4 +3,4 @@
 [Service]
 # How long to wait for successful mysql startup
 # Startup can take a while if it requires a galera state transfer.
-TimeoutStartSec=1800
+TimeoutStartSec={{ galera_startup_timeout }}
