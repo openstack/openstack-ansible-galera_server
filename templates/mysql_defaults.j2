@@ -10,7 +10,7 @@
 
 # How long to wait for successful mysql startup
 # Startup can take a while if it requires a galera state transfer.
-MYSQLD_STARTUP_TIMEOUT=1800
+MYSQLD_STARTUP_TIMEOUT={{ galera_startup_timeout }}
 
 ulimit -n  {{ calculated_max_connections }}
 ulimit -Hn  {{ calculated_max_connections }}
