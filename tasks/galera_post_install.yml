@@ -181,6 +181,15 @@
     dest: "/usr/local/bin/clustercheck"
     mode: "0755"
 
+# TODO: (nicolasbock) This task can be removed in T but is necessary
+# for S and earlier because deployments prior to this change will not
+# have the xinetd service enabled because the handler task runs only
+# for new deployments.
+- name: Enable xinetd service
+  service:
+    name: xinetd
+    enabled: yes
+
 - name: Create mysqlchk config
   template:
     src: "mysqlchk.j2"
