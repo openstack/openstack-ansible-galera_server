@@ -94,3 +94,4 @@
   service:
     name: xinetd
     state: restarted
+    enabled: true
