@@ -14,9 +14,10 @@
 # limitations under the License.
 
 - name: Stop MariaDB
-  service:
+  systemd:
     name: mysql
     state: stopped
+  failed_when: "{{ (not galera_ignore_cluster_state | bool) | default(omit, false) }}"
   register: galera_restart_fall_back
   until: galera_restart_fall_back is success
   retries: 3
