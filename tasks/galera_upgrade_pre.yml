@@ -13,14 +13,30 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# When doing a rolling replacement of an existing cluster,
+# a service may not yet exist on the target host. This will
+# cause the service stop task to fail. To cater for this
+# we only try to stop the service is it exists.
+- name: Check whether a mysql service exists yet
+  shell: >-
+    systemctl list-unit-files --state=enabled --type=service | grep "^mysql.service .* enabled$"
+  args:
+    executable: /bin/bash
+    warn: no
+  changed_when: false
+  failed_when: false
+  register: _mysql_service_exists
+
 - name: Stop MariaDB
-  service:
+  systemd:
     name: mysql
     state: stopped
   register: galera_restart_fall_back
   until: galera_restart_fall_back | success
   retries: 3
   delay: 5
+  when:
+    - _mysql_service_exists.rc == 0
 
 - name: UN-Install galera-server package
   package:
