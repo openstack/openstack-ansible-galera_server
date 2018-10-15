@@ -93,3 +93,9 @@
   tags:
     - galera-operational
     - galera-bootstrap
+
+- name: Remove wsrep-new-cluster from configuration file once bootstrapped
+  lineinfile:
+    regexp: '^wsrep-new-cluster'
+    state: absent
+    dest: "{{ galera_etc_include_dir }}/cluster.cnf"
