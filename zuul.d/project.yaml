@@ -15,7 +15,6 @@
 - project:
     templates:
       - openstack-ansible-role-jobs
-      - openstack-ansible-upgrade
       - check-requirements
       - publish-openstack-docs-pti
       - release-notes-jobs-python3

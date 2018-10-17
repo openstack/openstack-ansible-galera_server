@@ -16,7 +16,7 @@
 # Setup the host
 - import_playbook: common/test-setup-host.yml
 
-# Install previous version Galera server
+# Install Galera server
 - import_playbook: common/test-install-galera.yml
 
 # Run functional tests
