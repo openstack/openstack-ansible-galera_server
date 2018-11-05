@@ -22,7 +22,6 @@
     mode: "0750"
 
 - include_tasks: galera_ssl_self_signed.yml
-  static: no
   when:
     - not galera_user_ssl_cert is defined
     - not galera_user_ssl_key is defined
