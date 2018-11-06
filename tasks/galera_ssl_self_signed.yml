@@ -21,11 +21,12 @@
     - "{{ galera_ssl_ca_cert }}"
     - "{{ galera_ssl_cert }}"
     - "{{ galera_ssl_key }}"
+    - "{{ galera_ssl_ca_cert | dirname }}/galera-csr.pem"
   when:
     - galera_ssl_self_signed_regen | bool
     - inventory_hostname == galera_server_bootstrap_node
 
-- name: Create galera CA cert
+- name: Create Galera CA cert
   command: >
     openssl req -new -nodes -x509 -subj
     "{{ galera_ssl_ca_self_signed_subject }}"
@@ -36,7 +37,7 @@
     - inventory_hostname == galera_server_bootstrap_node
   notify: Restart all mysql
 
-- name: Get CA key contents and store as var
+- name: Get CA cert contents and store as var
   slurp:
     src: "{{ galera_ssl_ca_cert }}"
   register: galera_ca
@@ -44,21 +45,21 @@
   when:
     - inventory_hostname == galera_server_bootstrap_node
 
-- name: Register a fact for the CA key
+- name: Register a fact for the CA cert
   set_fact:
-    galera_server_ca_key: "{{ galera_ca.content }}"
+    galera_server_ca_cert: "{{ galera_ca.content }}"
   when:
     - inventory_hostname == galera_server_bootstrap_node
 
-- name: Create galera ssl request
+- name: Create Galera SSL CSR
   command: >
     openssl req -new -nodes -sha256 -subj
     "{{ galera_ssl_self_signed_subject }}"
     -days 3650
     -keyout {{ galera_ssl_key }}
-    -out {{ galera_ssl_ca_cert | dirname }}/galera-req.pem
+    -out {{ galera_ssl_ca_cert | dirname }}/galera-csr.pem
     -extensions v3_ca
-    creates={{ galera_ssl_ca_cert | dirname }}/galera-req.pem
+    creates={{ galera_ssl_ca_cert | dirname }}/galera-csr.pem
   register: create_galera_ssl_request
   when:
     - inventory_hostname == galera_server_bootstrap_node
@@ -74,25 +75,25 @@
     - inventory_hostname == galera_server_bootstrap_node
   notify: Restart all mysql
 
-- name: Get REQ key contents and store as var
+- name: Get CSR private key contents and store as var
   slurp:
-    src: "{{ galera_ssl_ca_cert | dirname }}/galera-req.pem"
-  register: galera_req
+    src: "{{ galera_ssl_key }}"
+  register: galera_private_key
   changed_when: false
   when:
     - inventory_hostname == galera_server_bootstrap_node
 
-- name: Register a fact for the REQ key
+- name: Register a fact for the CSR private key
   set_fact:
-    galera_server_req_key: "{{ galera_req.content }}"
+    galera_server_private_key: "{{ galera_private_key.content }}"
   when:
     - inventory_hostname == galera_server_bootstrap_node
 
-- name: Create galera ssl cert
+- name: Create Galera SSL signed cert
   command: >
     openssl x509 -req
     -days 3650
-    -in {{ galera_ssl_ca_cert | dirname }}/galera-req.pem
+    -in {{ galera_ssl_ca_cert | dirname }}/galera-csr.pem
     -CA {{ galera_ssl_ca_cert }}
     -CAkey {{ galera_ssl_key | dirname }}/galera-ca.key
     -out {{ galera_ssl_cert }}
@@ -102,7 +103,7 @@
     - inventory_hostname == galera_server_bootstrap_node
   notify: Restart all mysql
 
-- name: Get CERT key contents and store as var
+- name: Get signed cert contents and store as var
   slurp:
     src: "{{ galera_ssl_cert }}"
   register: galera_cert
@@ -110,13 +111,13 @@
   when:
     - inventory_hostname == galera_server_bootstrap_node
 
-- name: Register a fact for the CERT key
+- name: Register a fact for the signed cert contents
   set_fact:
-    galera_server_cert_key: "{{ galera_cert.content }}"
+    galera_server_cert: "{{ galera_cert.content }}"
   when:
     - inventory_hostname == galera_server_bootstrap_node
 
-- name: Copy CA cert and key (SELF)
+- name: Copy CA cert, private key, and signed cert (SELF)
   copy:
     content: "{{ hostvars[galera_server_bootstrap_node][item.key] | b64decode }}"
     dest: "{{ item.dest }}"
@@ -124,12 +125,12 @@
     group: "mysql"
     mode: "{{ item.mode | default('0640') }}"
   with_items:
-    - key: "galera_server_ca_key"
+    - key: "galera_server_ca_cert"
       dest: "{{ galera_ssl_ca_cert }}"
-    - key: "galera_server_req_key"
-      dest: "{{ galera_ssl_cert }}"
-    - key: "galera_server_cert_key"
+    - key: "galera_server_private_key"
       dest: "{{ galera_ssl_key }}"
+    - key: "galera_server_cert"
+      dest: "{{ galera_ssl_cert }}"
       mode: "0600"
   when:
     - inventory_hostname != galera_server_bootstrap_node
