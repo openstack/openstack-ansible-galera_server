@@ -84,7 +84,7 @@
   apt:
     update_cache: yes
   when:
-    - add_galera_repo | changed or add_percona_repo  is changed
+    - add_galera_repo is changed or add_percona_repo is changed
   register: update_apt_cache
   until: update_apt_cache is success
   retries: 5
