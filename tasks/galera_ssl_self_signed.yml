@@ -30,6 +30,7 @@
   command: >
     openssl req -new -nodes -x509 -subj
     "{{ galera_ssl_ca_self_signed_subject }}"
+    -days 3650
     -keyout {{ galera_ssl_key | dirname }}/galera-ca.key
     -out {{ galera_ssl_ca_cert }}
     creates={{ galera_ssl_ca_cert }}
