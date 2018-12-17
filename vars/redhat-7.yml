@@ -16,13 +16,9 @@
 # Galera GPG Keys
 _galera_gpg_keys:
   # MariaDB Package Signing Key <package-signing-key@mariadb.org>
-  - name: mariadb
-    key: /etc/pki/rpm-gpg/RPM-GPG-KEY-MariaDB
-    keyfile: 'gpg/1BB943DB'
+  - key: /etc/pki/rpm-gpg/RPM-GPG-KEY-MariaDB
   # Percona MySQL Development Team <mysql-dev@percona.com>
-  - key_name: percona
-    key: /etc/pki/rpm-gpg/RPM-GPG-KEY-percona
-    keyfile: 'gpg/CD2EFD2A'
+  - key: /etc/pki/rpm-gpg/RPM-GPG-KEY-percona
 
 # Default private device setting
 # This provides some additional security, but it causes problems with creating
