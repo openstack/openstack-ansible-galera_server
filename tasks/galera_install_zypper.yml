@@ -32,21 +32,18 @@
 
 - name: If a keyfile is provided, copy the gpg keyfile to the key location
   copy:
-    src: "{{ item.keyfile }}"
+    src: "gpg/{{ item.key | basename }}"
     dest: "{{ item.key }}"
     mode: '0644'
-  with_items: "{{ galera_gpg_keys | selectattr('keyfile','defined') | list }}"
+  with_items: "{{ galera_gpg_keys }}"
 
 - name: Install gpg keys
-  rpm_key:
-    key: "{{ key.key }}"
-    validate_certs: "{{ key.validate_certs | default(omit) }}"
-    state: "{{ key.state | default('present') }}"
+  rpm_key: "{{ key }}"
   with_items: "{{ galera_gpg_keys }}"
   loop_control:
     loop_var: key
-  register: _add_yum_keys
-  until: _add_yum_keys is success
+  register: _add_zypper_keys
+  until: _add_zypper_keys is success
   retries: 5
   delay: 2
 

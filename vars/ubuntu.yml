@@ -22,15 +22,11 @@ _galera_disable_privatedevices: yes
 # Galera GPG Keys
 _galera_gpg_keys:
   # MariaDB Signing Key <signing-key@mariadb.org>
-  - name: mariadb
-    id: C74CD1D8
-    key: /etc/ssl/mariadb-key
-    keyfile: 'gpg/C74CD1D8'
+  - id: C74CD1D8
+    file: /etc/ssl/mariadb-key
   # Percona MySQL Development Team (Packaging key) <mysql-dev@percona.com>
-  - key_name: percona
-    id: 8507EFA5
-    key: /etc/ssl/percona-pkg-key
-    keyfile: 'gpg/8507EFA5'
+  - id: 8507EFA5
+    file: /etc/ssl/percona-pkg-key
 
 galera_server_required_distro_packages:
   - apt-transport-https
