@@ -15,9 +15,8 @@
 
 # Galera GPG Keys
 _galera_gpg_keys:
-  - name: mariadb
-    key: /etc/pki/RPM-GPG-KEY-MariaDB
-    keyfile: 'gpg/1BB943DB'
+  # MariaDB Package Signing Key <package-signing-key@mariadb.org>
+  - key: /etc/pki/RPM-GPG-KEY-MariaDB
 
 # Default private device setting
 _galera_disable_privatedevices: yes

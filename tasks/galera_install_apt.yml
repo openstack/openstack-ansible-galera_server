@@ -20,16 +20,13 @@
 
 - name: If a keyfile is provided, copy the gpg keyfile to the key location
   copy:
-    src: "{{ item.keyfile }}"
-    dest: "{{ item.key }}"
+    src: "gpg/{{ item.id }}"
+    dest: "{{ item.file }}"
     mode: '0644'
-  with_items: "{{ galera_gpg_keys | selectattr('keyfile','defined') | list }}"
+  with_items: "{{ galera_gpg_keys | selectattr('file','defined') | list }}"
 
 - name: Install gpg keys
-  apt_key:
-    id: "{{ key.id }}"
-    file: "{{ key.key | default(omit) }}"
-    state: "{{ key.state | default('present') }}"
+  apt_key: "{{ key }}"
   with_items: "{{ galera_gpg_keys }}"
   loop_control:
     loop_var: key

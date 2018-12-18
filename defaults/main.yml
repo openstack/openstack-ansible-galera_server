@@ -51,6 +51,14 @@ galera_repo_url: "{{ _galera_repo_url }}"
 galera_repo: "{{ _galera_repo }}"
 
 # Set the gpg keys needed to be imported
+# This should be a list of dicts, with each dict
+# giving a set of arguments to the applicable
+# package module. The following is an example for
+# systems using the apt package manager.
+# galera_gpg_keys:
+#   - id: '0xF1656F24C74CD1D8'
+#     keyserver: 'hkp://keyserver.ubuntu.com:80'
+#     validate_certs: no
 galera_gpg_keys: "{{ _galera_gpg_keys | default([]) }}"
 
 # Set the rpo information for the Percona Xtrabackup repository
