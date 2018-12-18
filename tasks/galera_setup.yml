@@ -59,7 +59,7 @@
   command: "/usr/bin/mysql_upgrade"
   register: galera_mysql_upgrade
   changed_when:
-    - not galera_mysql_upgrade.stdout | search("already upgraded")
+    - not galera_mysql_upgrade.stdout is search("already upgraded")
   until: galera_mysql_upgrade is success
   retries: 3
   delay: 10
