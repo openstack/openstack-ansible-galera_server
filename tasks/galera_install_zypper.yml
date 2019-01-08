@@ -18,6 +18,30 @@
     name: "{{ galera_server_mariadb_distro_packages_remove }}"
     state: absent
 
+# In SUSE/CentOS systems, /etc/my.cnf.d may already exist on the
+# system. We need to ensure that it is removed if that is true so
+# that we can replace it with symlinks to the directories expected
+# to be used by the MariaDB packages instead.
+- name: Stat /etc/my.cnf.d
+  stat:
+    path: /etc/my.cnf.d
+    get_attributes: no
+    get_checksum: no
+    get_mime: no
+  register: mycnfd_stat
+
+- name: Destroy my.cnf.d dir if is dir
+  file:
+    path: /etc/my.cnf.d
+    state: absent
+    force: true
+  when:
+    - mycnfd_stat.stat.isdir is defined
+    - mycnfd_stat.stat.isdir == True
+
+# We replace the default paths for the system with symlinks to
+# the paths used by the MariaDB packages so ensure that any other
+# system expectations are still met.
 - name: Update the local file system CRUD
   file:
     src: "{{ item.src|default(omit) }}"
