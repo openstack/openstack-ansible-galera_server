@@ -74,8 +74,23 @@
     gpgkey: "{{ galera_repo.gpgkey | default(omit) }}"
     gpgcheck: yes
     enabled: yes
-  register: add_repos
-  until: add_repos is success
+    priority: 25
+  register: add_galera_repos
+  until: add_galera_repos is success
+  retries: 5
+  delay: 2
+
+- name: Install percona repo
+  yum_repository:
+    name: 'percona-release-$basearch'
+    description: 'Percona-Release YUM repository - $basearch'
+    baseurl: "{{ galera_percona_xtrabackup_repo.repo }}"
+    enabled: true
+    gpgcheck: true
+    state: "{{ galera_percona_xtrabackup_repo.state }}"
+    priority: 25
+  register: add_percona_repos
+  until: add_percona_repos is success
   retries: 5
   delay: 2
 
@@ -88,36 +103,9 @@
   command: "{{ ansible_pkg_mgr }} clean metadata"
   args:
     warn: no
-  when: add_repos is changed
+  when: (add_galera_repos is changed) or (add_percona_repos is changed)
   tags:
     - skip_ansible_lint
-
-- name: Install percona repo
-  yum_repository:
-    name: 'percona-release-$basearch'
-    description: 'Percona-Release YUM repository - $basearch'
-    baseurl: "{{ galera_percona_xtrabackup_repo.repo }}"
-    enabled: true
-    gpgcheck: true
-    state: "{{ galera_percona_xtrabackup_repo.state }}"
-  register: install_packages
-  until: install_packages is success
-  retries: 5
-  delay: 2
-
-# NOTE(mhayden): MariaDB/percona repositories are prioritized at 99 by default
-# and that allows yum to install galera from the RDO repos, which is not good.
-# This task ensures that the following task will choose MariaDB/percona repos
-# as the highest priority.
-- name: Ensure MariaDB/percona repositories take highest priority
-  command: |
-    yum-config-manager
-      --enable {{ item }}
-      --setopt="{{ item }}.priority=25"
-  with_items:
-    - MariaDB
-    - percona-release-noarch
-    - percona-release-x86_64
 
 - name: Install galera_server role remote packages
   package:
