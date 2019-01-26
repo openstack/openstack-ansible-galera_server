@@ -6,7 +6,7 @@ service mysqlchk
         disable = no
         flags = REUSE
         socket_type = stream
-        port = 9200
+        port = {{ galera_monitoring_check_port }}
         wait = no
         user = nobody
         server = /usr/local/bin/clustercheck

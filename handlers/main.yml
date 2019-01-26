@@ -93,5 +93,5 @@
 - name: Restart xinetd
   service:
     name: xinetd
-    state: restarted
-    enabled: true
+    state: "{{ (galera_monitoring_check_enabled | bool) | ternary('restarted', 'stopped') }}"
+    enabled: "{{ galera_monitoring_check_enabled | bool }}"

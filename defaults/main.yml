@@ -81,6 +81,12 @@ galera_monitoring_user_password: ""
 #
 #galera_monitoring_allowed_source: "0.0.0.0/0"
 
+# Enable or disable the galera monitoring check capability
+galera_monitoring_check_enabled: true
+
+# Set the monitoring port used with the galera monitoring check.
+galera_monitoring_check_port: 9200
+
 galera_root_user: root
 
 # WARNING: This option is deprecated and will be removed in v12.0
