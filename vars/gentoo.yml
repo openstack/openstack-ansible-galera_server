@@ -1,0 +1,58 @@
+---
+# Copyright 2019, Matthew Thode
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+## APT Cache Options
+cache_timeout: 600
+
+# Default private device setting
+_galera_disable_privatedevices: yes
+
+galera_server_required_distro_packages:
+  - sys-apps/xinetd
+
+galera_etc_conf_file: "/etc/mysql/my.cnf"
+galera_etc_include_dir: "/etc/mysql/conf.d"
+galera_var_run_socket: "/var/run/mysqld/mysqld.sock"
+
+# The package name for mariaDB is set as a variable
+# so that it can be used in debconf later in the
+# "galera_common" role.
+_galera_mariadb_server_package: "dev-db/mariadb"
+
+# NB This is specifically galera_server_mariadb_distro_packages as these
+# packages only get installed during the galera play - this is because of
+# the preseed task and the service startup control used when installing
+# mariadb-galera-server and galera.
+galera_server_mariadb_distro_packages:
+  - "{{ galera_mariadb_server_package }}"
+  - sys-cluster/galera
+  - net-misc/rsync
+  - net-misc/socat
+  - dev-python/mysql-python
+
+# The packages to uninstall during an upgrade from a previous version
+galera_server_upgrade_packages_remove:
+
+galera_mariadb_service_name: "mariadb"
+
+galera_server_percona_distro_packages:
+  - dev-db/percona-toolkit
+  - dev-db/percona-xtrabackup-bin
+  - "{{ (galera_xtrabackup_compression | bool) | ternary('app-arch/qpress', '') }}"
+
+galera_wsrep_provider: "/usr/lib64/galera/libgalera_smm.so"
+
+_use_percona_upstream: no
+mysql_service_name: mariadb

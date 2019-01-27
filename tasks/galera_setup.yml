@@ -56,7 +56,7 @@
   no_log: True
 
 - name: Run MySQL Upgrade
-  command: "/usr/bin/mysql_upgrade"
+  command: "/usr/bin/mysql_upgrade -h 127.0.0.1"
   register: galera_mysql_upgrade
   changed_when:
     - not galera_mysql_upgrade.stdout | search("already upgraded")
