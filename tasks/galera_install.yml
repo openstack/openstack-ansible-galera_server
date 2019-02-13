@@ -21,7 +21,7 @@
       {%   set _ = packages.extend(galera_server_percona_distro_packages) %}
       {% endif %}
       {% if ansible_architecture == 'ppc64le' and ansible_distribution == 'Ubuntu' %}
-      {%   for extra_package in galera_server_percona_distro_packages_alt_arch['ansible_architecture'] %}
+      {%   for extra_package in galera_server_percona_distro_packages_alt_arch[ansible_architecture] %}
       {%     set _package_path = galera_server_extra_package_path ~ '/' ~ ansible_architecture %}
       {%     set _ = packages.append(_package_path ~ '/' ~ extra_package['url'] | basename) %}
       {%   endfor %}
