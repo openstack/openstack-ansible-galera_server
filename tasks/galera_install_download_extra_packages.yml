@@ -22,12 +22,12 @@
 
 - name: Download extra packages
   get_url:
-    url: "{{ item.value.url }}"
-    dest: "{{ galera_server_extra_package_path }}/{{ item.key }}/"
-    checksum: "{{ item.value.checksum | default(omit) }}"
-    force: "{{ item.value.checksum is not defined }}"
+    url: "{{ item.url }}"
+    dest: "{{ galera_server_extra_package_path }}/{{ galera_server_percona_distro_packages_alt_arch.keys()[0] }}/"
+    checksum: "{{ item.checksum | default(omit) }}"
+    force: "{{ item.checksum is not defined }}"
     validate_certs: "{{ galera_server_extra_package_validate_certs }}"
-  with_dict: "{{ galera_server_percona_distro_packages_alt_arch }}"
+  with_items: "{{ galera_server_percona_distro_packages_alt_arch.values() | flatten | list }}"
   register: fetch_url
   until: fetch_url is success
   retries: 3
