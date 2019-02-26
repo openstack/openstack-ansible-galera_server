@@ -17,12 +17,12 @@ set -ev
 
 STOP_MYSQL=false
 
-if ! systemctl status mysql; then
+if ! systemctl status {{ mysql_service_name }}; then
   STOP_MYSQL=true
   systemctl set-environment MYSQLD_OPTS="--bind-address=127.0.0.1"
-  systemctl start mysql
+  systemctl start {{ mysql_service_name }}
   sleep 10
-  systemctl status mysql
+  systemctl status {{ mysql_service_name }}
 fi
 
 if mysqladmin --no-defaults --port=3306 --socket=/var/run/mysqld/mysqld.sock --host=127.0.0.1 --user=root password "{{ galera_root_password }}"; then
@@ -38,7 +38,7 @@ if mysqladmin --no-defaults --port=3306 --socket=/var/run/mysqld/mysqld.sock --h
 fi
 
 if [ "${STOP_MYSQL}" = true ]; then
-  systemctl stop mysql
+  systemctl stop {{ mysql_service_name }}
 fi
 
 # Create a marker file to ensure this script is not run again
