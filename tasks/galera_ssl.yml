@@ -19,7 +19,7 @@
     state: "directory"
     owner: "mysql"
     group: "mysql"
-    mode: "0750"
+    mode: "0755"
 
 - include_tasks: galera_ssl_self_signed.yml
   when:
@@ -37,6 +37,7 @@
   with_items:
     - src: "{{ galera_user_ssl_ca_cert }}"
       dest: "{{ galera_ssl_ca_cert }}"
+      mode: "0644"
     - src: "{{ galera_user_ssl_cert }}"
       dest: "{{ galera_ssl_cert }}"
     - src: "{{ galera_user_ssl_key }}"

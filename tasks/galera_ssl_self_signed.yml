@@ -128,6 +128,7 @@
   with_items:
     - key: "galera_server_ca_cert"
       dest: "{{ galera_ssl_ca_cert }}"
+      mode: "0644"
     - key: "galera_server_private_key"
       dest: "{{ galera_ssl_key }}"
     - key: "galera_server_cert"
