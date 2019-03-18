@@ -40,8 +40,8 @@ galera_debconf_items: []
 galera_mariadb_server_package: "{{ _galera_mariadb_server_package }}"
 
 # The major version used to select the repo URL path
-galera_major_version: 10.2
-galera_minor_version: 17
+galera_major_version: 10.3
+galera_minor_version: 13
 
 # Set the URL for the MariaDB repository
 galera_repo_host: "downloads.mariadb.com"
@@ -60,12 +60,6 @@ galera_repo: "{{ _galera_repo }}"
 #     keyserver: 'hkp://keyserver.ubuntu.com:80'
 #     validate_certs: no
 galera_gpg_keys: "{{ _galera_gpg_keys | default([]) }}"
-
-# Set the rpo information for the Percona Xtrabackup repository
-galera_percona_xtrabackup_repo: "{{ _galera_percona_xtrabackup_repo | default({}) }}"
-
-# Enable the use of the upstream percona repo
-use_percona_upstream: "{{ _use_percona_upstream }}"
 
 galera_monitoring_user: monitoring
 galera_monitoring_user_password: ""
@@ -125,16 +119,14 @@ galera_wsrep_slave_threads_max: 16
 galera_wsrep_slave_threads: "{{ [[ansible_processor_vcpus|default(2), 2] | max, galera_wsrep_slave_threads_max] | min }}"
 galera_wsrep_retry_autocommit: 3
 galera_wsrep_debug: 0
-galera_wsrep_sst_method: xtrabackup-v2
+galera_wsrep_sst_method: mariabackup
 galera_wsrep_provider_options:
   - { option: "gcache.size", value: "{{ galera_gcache_size }}" }
 galera_wsrep_sst_auth_user: "root"
 galera_wsrep_sst_auth_password: "{{ galera_root_password  }}"
 
-# Enable compression of backups.
-galera_xtrabackup_compression: "{{ (ansible_architecture == 'x86_64') or (ansible_architecture == 'ppc64le' and ansible_distribution == 'Ubuntu') }}"
-# xtrabackup parallel/compression/sync threads
-galera_xtrabackup_threads: 4
+# mariabackup parallel/sync threads
+galera_mariabackup_threads: 4
 
 # Galera slow/unindexed query logging
 galera_slow_query_logging: 0
@@ -156,16 +148,6 @@ galera_server_distro_package_pins:
   - package: '*'
     release: MariaDB
     priority: 1001
-  # Blacklist 10.1.27 release due to https://jira.mariadb.org/browse/MDEV-13908
-  # which causes MariaDB to segfault with galera enabled.
-  - package: mariadb-server
-    version: 10.1.27+maria-1~xenial
-    priority: -1
-  # TODO(evrardjp): Remove pin when clustering issue is figured out
-  # Clustering issue
-  - package: mariadb-server
-    version: 10.1.31+maria-1~xenial
-    priority: -1
 
 # Galera Server SSL functionality.
 

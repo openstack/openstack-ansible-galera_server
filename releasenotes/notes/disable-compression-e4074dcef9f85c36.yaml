@@ -1,0 +1,5 @@
+---
+deprecations:
+  - The compression option has been removed due to the fact that it's not
+    recommended by MariaDB anymore.  This means that all the dependencies from
+    Percona such as QPress are no longer necessary.

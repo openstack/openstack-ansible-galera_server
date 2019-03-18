@@ -17,9 +17,6 @@
 _galera_gpg_keys:
   # MariaDB Package Signing Key <package-signing-key@mariadb.org>
   - key: /etc/pki/rpm-gpg/RPM-GPG-KEY-MariaDB
-  # Percona MySQL Development Team <mysql-dev@percona.com>
-  - key: /etc/pki/rpm-gpg/RPM-GPG-KEY-Percona
-  - key: /etc/pki/rpm-gpg/PERCONA-PACKAGING-KEY
 
 # Default private device setting
 # This provides some additional security, but it causes problems with creating
@@ -47,6 +44,7 @@ _galera_mariadb_server_package: "MariaDB-server"
 galera_server_mariadb_distro_packages:
   - which
   - "{{ galera_mariadb_server_package }}"
+  - MariaDB-backup
   - MariaDB-shared
   - rsync
   - socat
@@ -70,15 +68,4 @@ _galera_repo:
   description: "MariaDB Repo"
   baseurl: "{{ galera_repo_url }}"
 
-_galera_percona_xtrabackup_repo:
-  repo: "http://{{ galera_percona_xtrabackup_repo_host | default('repo.percona.com') }}/release/$releasever/RPMS/$basearch"
-  state: "{{ (use_percona_upstream | bool) | ternary('present', 'absent') }}"
-
-galera_server_percona_distro_packages:
-  - percona-toolkit
-  - percona-xtrabackup-24
-  - "{{ (galera_xtrabackup_compression | bool) | ternary('qpress', '') }}"
-
 galera_wsrep_provider: "/usr/lib/galera/libgalera_smm.so"
-
-_use_percona_upstream: "{{ ansible_architecture == 'x86_64' }}"

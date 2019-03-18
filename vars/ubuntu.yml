@@ -24,9 +24,6 @@ _galera_gpg_keys:
   # MariaDB Signing Key <signing-key@mariadb.org>
   - id: C74CD1D8
     file: /etc/ssl/mariadb-key
-  # Percona MySQL Development Team (Packaging key) <mysql-dev@percona.com>
-  - id: 8507EFA5
-    file: /etc/ssl/percona-pkg-key
 
 galera_server_required_distro_packages:
   - apt-transport-https
@@ -56,6 +53,7 @@ _galera_mariadb_server_package: "mariadb-server-{{ galera_major_version }}"
 galera_server_mariadb_distro_packages:
   - libmariadb-dev
   - mariadb-client
+  - mariadb-backup
   - "{{ galera_mariadb_server_package }}"
   - galera-3
   - rsync
@@ -78,17 +76,7 @@ galera_debconf_items:
     value: "{{ galera_root_password }}"
     vtype: "string"
 
-galera_server_percona_distro_packages:
-  - percona-toolkit
-  - percona-xtrabackup-24
-  - "{{ (galera_xtrabackup_compression | bool) | ternary('qpress', '') }}"
-
 # Repositories
-_galera_percona_xtrabackup_repo:
-  repo: "deb http://{{ galera_percona_xtrabackup_repo_host | default('repo.percona.com') }}/apt {{ ansible_distribution_release }} main"
-  state: "{{ (use_percona_upstream | bool) | ternary('present', 'absent') }}"
-  filename: "Percona"
-
 _galera_repo_url: "http://{{ galera_repo_host }}/MariaDB/mariadb-{{ galera_major_version }}.{{ galera_minor_version }}/repo/ubuntu"
 _galera_repo:
   repo: "deb {{ galera_repo_url }} {{ ansible_distribution_release }} main"
@@ -96,12 +84,3 @@ _galera_repo:
   filename: "MariaDB"
 
 galera_wsrep_provider: "/usr/lib/galera/libgalera_smm.so"
-
-_use_percona_upstream: "{{ ansible_architecture == 'x86_64' }}"
-
-galera_server_percona_distro_packages_alt_arch:
-  ppc64le:
-    - url: "http://public.dhe.ibm.com/systems/virtualization/Novalink/misc/percona-xtrabackup/percona-xtrabackup-24_2.4.5-1_ppc64el.deb"
-      checksum: "sha256:3d4e4112f4c8020c9190a91d962dabed1dfaad307160a939e121208887eaee2a"
-    - url: "http://public.dhe.ibm.com/systems/virtualization/Novalink/misc/qpress/qpress_11-1_ppc64el.deb"
-      checksum: "sha256:a31d3e00dbcec9b3f98eae82b261d054d0b80a57f4a38967d0e953811cb082f3"

@@ -46,10 +46,5 @@ wsrep_cluster_name = "{{ galera_cluster_name }}"
 # how many times to retry deadlocked autocommits
 wsrep_retry_autocommit = {{ galera_wsrep_retry_autocommit }}
 
-[xtrabackup]
-{% if galera_xtrabackup_compression | bool %}
-compress
-compress-threads = {{ galera_xtrabackup_threads }}
-{% endif %}
-parallel = {{ galera_xtrabackup_threads }}
-rebuild-threads = {{ galera_xtrabackup_threads }}
+[mariabackup]
+parallel = {{ galera_mariabackup_threads }}

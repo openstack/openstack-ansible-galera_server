@@ -47,12 +47,6 @@ galera_server_upgrade_packages_remove:
 
 galera_mariadb_service_name: "mariadb"
 
-galera_server_percona_distro_packages:
-  - dev-db/percona-toolkit
-  - dev-db/percona-xtrabackup-bin
-  - "{{ (galera_xtrabackup_compression | bool) | ternary('app-arch/qpress', '') }}"
-
 galera_wsrep_provider: "/usr/lib64/galera/libgalera_smm.so"
 
-_use_percona_upstream: no
 mysql_service_name: mariadb

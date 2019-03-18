@@ -15,23 +15,7 @@
 
 - name: Prepare the package list
   set_fact:
-    galera_packages_list: |-
-      {% set packages = galera_server_required_distro_packages + galera_server_mariadb_distro_packages %}
-      {% if ansible_architecture == 'x86_64' %}
-      {%   set _ = packages.extend(galera_server_percona_distro_packages) %}
-      {% endif %}
-      {% if ansible_architecture == 'ppc64le' and ansible_distribution == 'Ubuntu' %}
-      {%   for extra_package in galera_server_percona_distro_packages_alt_arch[ansible_architecture] %}
-      {%     set _package_path = galera_server_extra_package_path ~ '/' ~ ansible_architecture %}
-      {%     set _ = packages.append(_package_path ~ '/' ~ extra_package['url'] | basename) %}
-      {%   endfor %}
-      {% endif %}
-      {{ packages }}
-
-- name: Download the extra packages
-  include_tasks: galera_install_download_extra_packages.yml
-  when:
-    - ansible_architecture == 'ppc64le'
+    galera_packages_list: "{{ galera_server_required_distro_packages + galera_server_mariadb_distro_packages }}"
 
 - include_tasks: "galera_install_{{ ansible_pkg_mgr }}.yml"
 

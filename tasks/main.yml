@@ -29,15 +29,6 @@
   tags:
     - always
 
-- name: Fail if compression is enabled on unsupported architecture/distro
-  fail:
-    msg: |
-      qpress compression is only supported for x86_64 and for Ubuntu/ppc64le
-  when:
-    - galera_xtrabackup_compression | bool
-    - (ansible_architecture != 'x86_64') and
-      not (ansible_architecture == 'ppc64le' and ansible_distribution == 'Ubuntu')
-
 - name: Gather variables for each operating system
   include_vars: "{{ item }}"
   with_first_found:

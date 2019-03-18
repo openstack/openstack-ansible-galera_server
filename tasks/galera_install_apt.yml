@@ -42,7 +42,6 @@
     state: absent
   with_items:
     - { name: "MariaDB", repo: "{{ galera_repo.repo }}" }
-    - { name: "Percona", repo: "{{ galera_percona_xtrabackup_repo.repo }}" }
 
 - name: Add galera repo
   apt_repository:
@@ -51,14 +50,6 @@
     state: "{{ galera_repo.state }}"
     update_cache: "no"
   register: add_galera_repo
-
-- name: Add percona repo
-  apt_repository:
-    repo: "{{ galera_percona_xtrabackup_repo.repo }}"
-    filename: "{{ galera_percona_xtrabackup_repo.filename | default(omit) }}"
-    state: "{{ galera_percona_xtrabackup_repo.state }}"
-    update_cache: "no"
-  register: add_percona_repo
 
 - name: Preseed galera password(s)
   debconf:
@@ -81,7 +72,7 @@
   apt:
     update_cache: yes
   when:
-    - add_galera_repo is changed or add_percona_repo is changed
+    - add_galera_repo is changed
   register: update_apt_cache
   until: update_apt_cache is success
   retries: 5
