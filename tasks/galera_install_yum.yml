@@ -66,9 +66,11 @@
     path: "{{ item.path }}"
     state: "{{ item.state }}"
     force: "{{ item.force | default(omit) }}"
+    mode: "{{ item.mode | default(omit) }}"
   with_items:
     - path: "/etc/mysql"
       state: "directory"
+      mode: '0755'
     - path: "/etc/mysql/conf.d"
       state: "directory"
     - src: "/usr/lib64/galera"
