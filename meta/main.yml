@@ -32,7 +32,7 @@ galaxy_info:
         - 7
     - name: opensuse
       versions:
-        - all
+        - 15
   categories:
     - cloud
     - galera
