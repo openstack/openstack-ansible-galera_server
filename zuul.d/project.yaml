@@ -16,13 +16,14 @@
 - project:
     templates:
       - openstack-ansible-role-jobs
+      - openstack-ansible-deploy-aio_metal-jobs
+      - openstack-ansible-deploy-aio_distro_metal-jobs
       - check-requirements
       - publish-openstack-docs-pti
       - release-notes-jobs-python3
     check:
       jobs:
         - openstack-ansible-functional-centos-7-ssl
-        - openstack-ansible-functional-opensuse-423-ssl
         - openstack-ansible-functional-ubuntu-xenial-ssl
         - openstack-ansible-functional-ubuntu-bionic-ssl
     experimental:
@@ -31,6 +32,5 @@
     gate:
       jobs:
         - openstack-ansible-functional-centos-7-ssl
-        - openstack-ansible-functional-opensuse-423-ssl
         - openstack-ansible-functional-ubuntu-xenial-ssl
         - openstack-ansible-functional-ubuntu-bionic-ssl
