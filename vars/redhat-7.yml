@@ -60,7 +60,7 @@ _galera_repo:
   gpgkey: "https://yum.mariadb.org/RPM-GPG-KEY-MariaDB"
 
 _galera_percona_xtrabackup_repo:
-  repo: "http://www.percona.com/downloads/percona-release/redhat/0.1-4/percona-release-0.1-4.noarch.rpm"
+  repo: "https://repo.percona.com/yum/percona-release-1.0-11.noarch.rpm"
   state: "present"
 
 galera_server_percona_distro_packages:
