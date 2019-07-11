@@ -25,6 +25,7 @@ galera_force_bootstrap: false
 
 galera_wsrep_node_name: "{{ inventory_hostname }}"
 galera_cluster_name: openstack_galera_cluster
+galera_server_bind_address: "{{ openstack_service_bind_address | default('0.0.0.0') }}"
 
 # The galera server-id should be set on all cluster nodes to ensure
 #  that replication is handled correctly and the error
@@ -107,6 +108,7 @@ galera_innodb_log_buffer_size: 128M
 ## wsrep configuration
 galera_wsrep_address: "{{ ansible_host }}"
 galera_wsrep_address_port: "{{ galera_wsrep_address }}:3306"
+galera_wsrep_cluster_port: 4567
 galera_wsrep_cluster_address: >-
   {% set _var = [] -%}
   {% for cluster_host in galera_cluster_members -%}
@@ -117,6 +119,7 @@ galera_wsrep_cluster_address: >-
   {# If only 1 cluster member is present output an empty string so the
      single-node member will re-bootstrap correctly upon restart #}
   {{ _var | join(',') if galera_cluster_members | length > 1 else '' }}
+
 galera_wsrep_node_incoming_address: "{{ galera_wsrep_address }}"
 ## Cap the maximum number of threads / workers when a user value is unspecified.
 galera_wsrep_slave_threads_max: 16
@@ -126,6 +129,7 @@ galera_wsrep_debug: 0
 galera_wsrep_sst_method: mariabackup
 galera_wsrep_provider_options:
   - { option: "gcache.size", value: "{{ galera_gcache_size }}" }
+  - { option: "gmcast.listen_addr", value: "tcp://{{ galera_wsrep_address | ternary('[::]', '0.0.0.0') }}:{{ galera_wsrep_cluster_port  }}" }
 galera_wsrep_sst_auth_user: "root"
 galera_wsrep_sst_auth_password: "{{ galera_root_password  }}"
 
