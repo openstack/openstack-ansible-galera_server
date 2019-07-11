@@ -29,7 +29,7 @@ init-connect = 'SET NAMES utf8'
 character-set-server = utf8
 datadir = /var/lib/mysql
 tmpdir = /var/lib/mysql
-bind-address = ::
+bind-address = {{ galera_server_bind_address }}
 {% if galera_server_id is defined %}
 server-id = {{ galera_server_id }}
 {% endif %}
