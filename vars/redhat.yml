@@ -60,8 +60,6 @@ galera_server_upgrade_packages_remove:
   - MariaDB-Galera-server
   - MariaDB-server
 
-galera_mariadb_service_name: "mariadb"
-
 _galera_repo_url: "http://{{ galera_repo_host }}/MariaDB/mariadb-{{ galera_client_major_version }}.{{ galera_client_minor_version }}/yum/{{ ansible_distribution | lower }}{{ ansible_distribution_major_version }}-amd64/"
 _galera_repo:
   name: MariaDB

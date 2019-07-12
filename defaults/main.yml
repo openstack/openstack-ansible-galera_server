@@ -37,6 +37,7 @@ galera_cluster_name: openstack_galera_cluster
 #  if these are used they should be set within the
 #  distro specific variable files found in vars/
 galera_debconf_items: []
+galera_mariadb_service_name: mariadb
 galera_mariadb_server_package: "{{ _galera_mariadb_server_package }}"
 
 # The major version used to select the repo URL path

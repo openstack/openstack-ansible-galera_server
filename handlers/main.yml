@@ -16,7 +16,7 @@
 - name: Reload the systemd daemon
   systemd:
     daemon_reload: yes
-    name: "{{ mysql_service_name }}"
+    name: "{{ galera_mariadb_service_name }}"
     enabled: "yes"
 
 - name: Check node status
@@ -70,7 +70,7 @@
 
 - name: Restart mysql (All)
   service:
-    name: "{{ mysql_service_name }}"
+    name: "{{ galera_mariadb_service_name }}"
     state: "{{ (not hostvars[item]['galera_cluster_ready'] | bool) | ternary('started', 'restarted') }}"
   environment:
     MYSQLD_STARTUP_TIMEOUT: 180
