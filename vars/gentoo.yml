@@ -45,8 +45,4 @@ galera_server_mariadb_distro_packages:
 # The packages to uninstall during an upgrade from a previous version
 galera_server_upgrade_packages_remove:
 
-galera_mariadb_service_name: "mariadb"
-
 galera_wsrep_provider: "/usr/lib64/galera/libgalera_smm.so"
-
-mysql_service_name: mariadb
