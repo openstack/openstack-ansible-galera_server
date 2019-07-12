@@ -15,12 +15,6 @@
 
 - name: Create galera users
   mysql_user:
-    login_user: "{{ galera_root_user }}"
-    login_password: "{{ galera_root_password }}"
-    login_host: "127.0.0.1"
-    ssl_ca: "{{ (galera_use_ssl | bool) | ternary(galera_ssl_ca_cert, omit) }}"
-    ssl_cert: "{{ (galera_use_ssl | bool) | ternary(galera_ssl_cert, omit) }}"
-    ssl_key: "{{ (galera_use_ssl | bool) | ternary(galera_ssl_key, omit) }}"
     name: "{{ item.name }}"
     host: "{{ item.host }}"
     password: "{{ item.password }}"
@@ -56,7 +50,7 @@
   no_log: True
 
 - name: Run MySQL Upgrade
-  command: "/usr/bin/mysql_upgrade -h 127.0.0.1"
+  command: /usr/bin/mysql_upgrade
   register: galera_mysql_upgrade
   changed_when:
     - not galera_mysql_upgrade.stdout is search("already upgraded")
