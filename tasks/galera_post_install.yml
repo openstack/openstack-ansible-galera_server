@@ -79,36 +79,7 @@
     recurse: "{{ item.recurse|default('false') }}"
   with_items:
     - { path: "/var/lib/mysql", owner: "mysql", mode: "02755" }
-    - { path: "/var/log/mysql", owner: "mysql", mode: "02755" }
     - { path: "/etc/mysql/conf.d" }
-
-- name: Behave properly if mysql_logs is a link
-  shell: |
-    if [ -h "/var/log/mysql_logs" ]; then
-      chown -h mysql "/var/log/mysql_logs"
-      chown -R mysql "$(readlink /var/log/mysql_logs)"
-    else
-      exit 1
-    fi
-  register: log_dir
-  failed_when: false
-  changed_when: log_dir.rc == 0
-
-- name: create the system group
-  group:
-    name: "adm"
-    state: "present"
-    system: "yes"
-
-- name: Create mysql log dir
-  file:
-    path: "/var/log/mysql_logs"
-    state: "directory"
-    owner: "mysql"
-    group: "adm"
-    mode: "02755"
-  when:
-    - log_dir.rc == 1
 
 - include_tasks: galera_ssl.yml
   when:

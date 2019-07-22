@@ -16,7 +16,6 @@ socket = "{{ galera_var_run_socket }}"
 [mysqld_safe]
 socket = "{{ galera_var_run_socket }}"
 nice = 0
-log_error = /var/log/mysql_logs/galera_server_error.log
 
 
 [mysql]
@@ -44,8 +43,6 @@ ssl-key = {{ galera_ssl_key }}
 # LOGGING #
 log-queries-not-using-indexes = {{ galera_unindexed_query_logging }}
 slow-query-log = {{ galera_slow_query_logging }}
-slow-query-log-file = /var/log/mysql_logs/mysql-slow.log
-log_error = /var/log/mysql_logs/galera_server_error.log
 log-bin = /var/lib/mysql/mariadb-bin
 log-bin-index = /var/lib/mysql/mariadb-bin.index
 expire-logs-days = 7
