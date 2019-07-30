@@ -18,7 +18,7 @@
     mysql --silent --skip-column-names --connect-timeout=10 -e 'SHOW STATUS LIKE "wsrep_local_state";'
   failed_when: false
   changed_when: false
-  register: node_status
+  register: _node_status
 
 - name: Fail if cluster is out of sync
   fail:
@@ -27,15 +27,15 @@
       Fix the cluster state before re-running the playbooks. To ignore the
       cluster state set '-e galera_ignore_cluster_state=true'.
   when:
-    - node_status.rc != 0
-    - (node_status.stdout.split()[-1] | default(false)) in ["2", "4"]
+    - _node_status.rc != 0
+    - (_node_status.stdout.split()[-1] | default(false)) in ["2", "4"]
 
 - name: Check cluster name
   command: >
     mysql --silent --skip-column-names --connect-timeout=10 -e 'SHOW VARIABLES LIKE "wsrep_cluster_name";'
   failed_when: false
   changed_when: false
-  register: cluster_name
+  register: _cluster_name
 
 - name: Fail if galera_cluster_name doesnt match provided value
   fail:
@@ -47,5 +47,5 @@
       value set in your running galera cluster. To ignore the
       cluster state set '-e galera_ignore_cluster_state=true'.
   when:
-    - cluster_name.rc != 0
-    - (cluster_name.stdout.split()[-1] | default(false)) != galera_cluster_name
+    - _cluster_name.rc != 0
+    - (_cluster_name.stdout.split()[-1] | default(false)) != galera_cluster_name
