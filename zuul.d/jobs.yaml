@@ -20,12 +20,6 @@
       tox_env: ssl
 
 - job:
-    name: openstack-ansible-functional-opensuse-423-ssl
-    parent: openstack-ansible-functional-opensuse-423
-    vars:
-      tox_env: ssl
-
-- job:
     name: openstack-ansible-functional-ubuntu-bionic-ssl
     parent: openstack-ansible-functional-ubuntu-bionic
     vars:
