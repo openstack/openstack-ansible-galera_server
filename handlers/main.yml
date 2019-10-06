@@ -63,6 +63,8 @@
   changed_when: start_new_cluster.rc == 3
   register: start_new_cluster
   delegate_to: "{{ galera_server_bootstrap_node }}"
+  vars:
+    ansible_host: "{{ hostvars[galera_server_bootstrap_node]['ansible_host'] }}"
   run_once: true
   when:
     - not galera_cluster_ready | bool
@@ -79,6 +81,8 @@
   retries: 6
   delay: 5
   delegate_to: "{{ item }}"
+  vars:
+    ansible_host: "{{ hostvars[item]['ansible_host'] }}"
   when:
     - hostvars[item]['galera_cluster_ready'] is defined
     - hostvars[item]['galera_deployed'] | default(false) | bool
