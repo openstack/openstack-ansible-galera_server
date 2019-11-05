@@ -88,6 +88,10 @@
   until: install_remote_apt_packages is success
   retries: 5
   delay: 2
+  notify:
+    - Manage LB
+    - Restart all mysql
+
 
 - name: Remove policy-rc now that the package install is complete
   file:
