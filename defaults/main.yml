@@ -41,8 +41,9 @@ galera_mariadb_service_name: mariadb
 galera_mariadb_server_package: "{{ _galera_mariadb_server_package }}"
 
 # The major version used to select the repo URL path
-galera_major_version: 10.3
-galera_minor_version: 18
+# NOTE(noonedeadpunk) 10.4.13 seems broken, as it crushed during requests http://paste.openstack.org/show/794059/
+galera_major_version: 10.4
+galera_minor_version: 12
 
 # Set the URL for the MariaDB repository
 galera_repo_host: "downloads.mariadb.com"
@@ -122,7 +123,7 @@ galera_wsrep_node_incoming_address: "{{ galera_wsrep_address }}"
 galera_wsrep_slave_threads_max: 16
 galera_wsrep_slave_threads: "{{ [[ansible_processor_vcpus|default(2), 2] | max, galera_wsrep_slave_threads_max] | min }}"
 galera_wsrep_retry_autocommit: 3
-galera_wsrep_debug: 0
+galera_wsrep_debug: NONE
 galera_wsrep_sst_method: mariabackup
 galera_wsrep_provider_options:
   - { option: "gcache.size", value: "{{ galera_gcache_size }}" }

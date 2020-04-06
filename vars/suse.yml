@@ -67,6 +67,7 @@ _galera_repo:
   baseurl: "{{ galera_repo_url }}"
 
 galera_wsrep_provider: "/usr/lib64/galera/libgalera_smm.so"
+galera_unix_socket: "/var/lib/mysqld/mysqld.sock"
 
 mariadb_delete_etc_conf_files:
   - default_plugins.cnf
