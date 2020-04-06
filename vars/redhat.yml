@@ -57,6 +57,7 @@ galera_mariadb_distro_packages_remove:
 
 # The packages to uninstall during an upgrade from a previous version
 galera_server_upgrade_packages_remove:
+  - galera-*
   - MariaDB-Galera-server
   - MariaDB-server
 
@@ -66,7 +67,9 @@ _galera_repo:
   description: "MariaDB Repo"
   baseurl: "{{ galera_repo_url }}"
 
-galera_wsrep_provider: "/usr/lib/galera/libgalera_smm.so"
+galera_wsrep_provider: "/usr/lib64/galera-4/libgalera_smm.so"
 
 galera_client_distro_packages:
   - MariaDB-client
+
+galera_unix_socket: "/var/lib/mysql/mysql.sock"

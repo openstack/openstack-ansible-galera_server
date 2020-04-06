@@ -57,7 +57,6 @@
               --silent \
               --skip-column-names
       register: wsrep_incoming_addresses
-      no_log: true
       changed_when: false
       tags:
         - skip_ansible_lint
@@ -68,7 +67,6 @@
               -e "show status like 'wsrep_local_state_comment';" \
               --silent \
               --skip-column-names
-      no_log: true
       register: wsrep_local_state_comment
       changed_when: false
       tags:
@@ -81,7 +79,6 @@
               --silent \
               --skip-column-names
       register: wsrep_evs_state
-      no_log: true
       changed_when: false
       tags:
         - skip_ansible_lint
@@ -101,7 +98,8 @@
         name: "OSA-test"
         state: "present"
       when: ansible_host == '10.1.0.2'
-      no_log: true
+      tags:
+        - skip_ansible_lint
     - name: Grant access to the DB on 10.1.0.3
       mysql_user:
         login_user: "{{ galera_root_user }}"
@@ -112,10 +110,11 @@
         host: "{{ item }}"
         state: "present"
         priv: "OSA-test.*:ALL"
-      no_log: true
       with_items:
         - "localhost"
         - "%"
       when: ansible_host == '10.1.0.3'
+      tags:
+        - skip_ansible_lint
   vars_files:
     - common/test-vars.yml
