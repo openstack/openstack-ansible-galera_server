@@ -117,6 +117,14 @@
   retries: 5
   delay: 2
 
+- name: Enable module_hotfixes
+  lineinfile:
+    dest: "/etc/yum.repos.d/{{ galera_repo.name }}.repo"
+    line: "module_hotfixes=1"
+    regexp: "^module_hotfixes"
+    insertafter: "^enabled"
+  when: ansible_distribution_major_version is version('8', '>=')
+
 # When changing the repo URL, the metadata does
 # not reliably update, resulting in the right
 # URL being used, but the wrong package list.
