@@ -17,8 +17,8 @@
 #                  version. If it is not assume it's nothing is installed.
 - name: Check mysql version
   shell: >
-    if which mysqladmin; then
-      mysqladmin --version | grep -w "{{ galera_major_version }}"
+    if which mysql; then
+      mysql -e "SHOW VARIABLES LIKE 'version';" --batch --skip-column-names | grep -w "{{ galera_major_version }}"
     fi
   register: mysqladmin_version
   changed_when: false
