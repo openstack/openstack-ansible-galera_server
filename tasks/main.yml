@@ -83,6 +83,7 @@
     - always
 
 - include_tasks: galera_upgrade.yml
+  when: galera_deployed | bool
   tags:
     - galera_server-upgrade
 
