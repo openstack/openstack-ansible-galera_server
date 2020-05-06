@@ -1,5 +1,5 @@
 ---
-# Copyright 2016, Rackspace US, Inc.
+# Copyright 2014, Rackspace US, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,10 +13,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-galera_install_server: true
-galera_install_client: true
+- name: Prepare the package list
+  set_fact:
+    galera_packages_list: "{{ galera_client_distro_packages }}"
 
-# Testing my.cnf overrides
-galera_my_cnf_overrides:
-  sst:
-    sst-initial-timeout: 600
+- include_tasks: "galera_install_{{ ansible_pkg_mgr }}.yml"
+  when:
+    - galera_client_package_install | bool
+
+- include_tasks: galera_client_post_install.yml
+
+- include_tasks: galera_client_ssl.yml
+  when:
+    - galera_use_ssl | bool

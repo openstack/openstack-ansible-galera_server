@@ -1,5 +1,5 @@
 ---
-# Copyright 2016, Rackspace US, Inc.
+# Copyright 2014, Rackspace US, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,10 +13,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-galera_install_server: true
-galera_install_client: true
-
-# Testing my.cnf overrides
-galera_my_cnf_overrides:
-  sst:
-    sst-initial-timeout: 600
+- name: Drop local .my.cnf file
+  config_template:
+    src: "client.my.cnf.j2"
+    dest: "/root/.my.cnf"
+    owner: "root"
+    group: "root"
+    mode: "0600"
+    config_overrides: "{{ galera_client_my_cnf_overrides }}"
+    config_type: "ini"
+  when: galera_client_drop_config_file | bool
+  tags:
+    - galera-client-user-config

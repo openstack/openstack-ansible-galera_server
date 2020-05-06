@@ -1,0 +1,10 @@
+# {{ ansible_managed }}
+
+[client]
+host={% if inventory_hostname in galera_cluster_members %}
+localhost
+{% else %}
+{{ galera_address }}
+{% endif %}
+user={{ galera_root_user }}
+password={{ galera_root_password }}

@@ -13,10 +13,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- name: Install galera_server role packages
+- name: Install galera role packages
   package:
     name: "{{ galera_packages_list }}"
-    state: "{{ galera_server_package_state }}"
+    state: "{{ galera_package_state }}"
     newuse: "{{ (ansible_pkg_mgr == 'portage') | ternary('yes', omit) }}"
     changed_use: "{{ (ansible_pkg_mgr == 'portage') | ternary('yes', omit) }}"
     noreplace: "{{ (ansible_pkg_mgr == 'portage') | ternary('yes', omit) }}"

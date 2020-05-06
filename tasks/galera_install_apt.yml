@@ -15,7 +15,7 @@
 
 - name: Remove conflicting distro packages
   package:
-    name: "{{ galera_server_mariadb_distro_packages_remove | default([]) }}"
+    name: "{{ galera_mariadb_distro_packages_remove | default([]) }}"
     state: absent
 
 - name: If a keyfile is provided, copy the gpg keyfile to the key location
@@ -78,10 +78,10 @@
   retries: 5
   delay: 2
 
-- name: Install galera_server role remote packages (apt)
+- name: Install galera role remote packages (apt)
   apt:
     name: "{{ galera_packages_list }}"
-    state: "{{ galera_server_package_state }}"
+    state: "{{ galera_package_state }}"
     update_cache: yes
     cache_valid_time: "{{ cache_timeout }}"
   register: install_remote_apt_packages

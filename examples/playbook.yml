@@ -3,6 +3,9 @@
   hosts: galera_all
   user: root
   roles:
-    - { role: "galera_server" }
+    - galera_server
+      vars:
+        galera_install_server: true
+        galera_install_client: true
   vars:
     galera_root_password: secrete
