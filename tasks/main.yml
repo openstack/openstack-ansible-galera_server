@@ -45,7 +45,7 @@
     dest: "/etc/ansible/facts.d/openstack_ansible.fact"
     section: "galera"
     option: initialized
-    value: true
+    value: "True"
 
 - name: Refresh local facts
   setup:
