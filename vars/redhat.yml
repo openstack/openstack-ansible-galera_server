@@ -50,7 +50,7 @@ galera_server_mariadb_distro_packages:
   - socat
 
 # Conflicting packages with those from the MariaDB repository
-galera_server_mariadb_distro_packages_remove:
+galera_mariadb_distro_packages_remove:
   - mariadb-common
   - mariadb-config
   - mariadb-server
@@ -60,10 +60,13 @@ galera_server_upgrade_packages_remove:
   - MariaDB-Galera-server
   - MariaDB-server
 
-_galera_repo_url: "http://{{ galera_repo_host }}/MariaDB/mariadb-{{ galera_client_major_version }}.{{ galera_client_minor_version }}/yum/{{ ansible_distribution | lower }}{{ ansible_distribution_major_version }}-amd64/"
+_galera_repo_url: "http://{{ galera_repo_host }}/MariaDB/mariadb-{{ galera_major_version }}.{{ galera_minor_version }}/yum/{{ ansible_distribution | lower }}{{ ansible_distribution_major_version }}-amd64/"
 _galera_repo:
   name: MariaDB
   description: "MariaDB Repo"
   baseurl: "{{ galera_repo_url }}"
 
 galera_wsrep_provider: "/usr/lib/galera/libgalera_smm.so"
+
+galera_client_distro_packages:
+  - MariaDB-client

@@ -83,3 +83,6 @@ _galera_repo:
   filename: "MariaDB"
 
 galera_wsrep_provider: "/usr/lib/galera/libgalera_smm.so"
+
+galera_client_distro_packages:
+  - "mariadb-client-{{ galera_major_version }}"

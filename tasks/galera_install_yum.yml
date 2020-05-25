@@ -22,7 +22,7 @@
 - name: Remove conflicting packages
   shell: |
     exit_code=0
-    for pkg in {{ galera_server_mariadb_distro_packages_remove | join(' ') }}; do
+    for pkg in {{ galera_mariadb_distro_packages_remove | join(' ') }}; do
       if rpm --query --quiet ${pkg}; then
         rpm -ev --nodeps ${pkg}
         exit_code=2
@@ -130,10 +130,10 @@
   tags:
     - skip_ansible_lint
 
-- name: Install galera_server role remote packages
+- name: Install galera role remote packages
   package:
     name: "{{ galera_packages_list }}"
-    state: "{{ galera_server_package_state }}"
+    state: "{{ galera_package_state }}"
   register: install_remote_packages
   until: install_remote_packages is success
   retries: 5

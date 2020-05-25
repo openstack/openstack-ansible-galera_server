@@ -81,7 +81,7 @@
     - { path: "/var/lib/mysql", owner: "mysql", mode: "02755" }
     - { path: "/etc/mysql/conf.d" }
 
-- include_tasks: galera_ssl.yml
+- include_tasks: galera_server_ssl.yml
   when:
     - galera_use_ssl | bool
 

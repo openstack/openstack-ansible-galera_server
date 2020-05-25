@@ -48,7 +48,7 @@ galera_server_mariadb_distro_packages:
   - socat
 
 # Conflicting packages with those from the MariaDB repository
-galera_server_mariadb_distro_packages_remove:
+galera_mariadb_distro_packages_remove:
   - libmariadb-devel
   - mariadb
   - mariadb-client
@@ -72,3 +72,6 @@ mariadb_delete_etc_conf_files:
   - default_plugins.cnf
   - galera.cnf
   - error_log.cnf
+
+galera_client_distro_packages:
+  - MariaDB-client

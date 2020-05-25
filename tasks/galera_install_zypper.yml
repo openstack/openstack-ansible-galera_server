@@ -15,7 +15,7 @@
 
 - name: Remove conflicting distro packages
   package:
-    name: "{{ galera_server_mariadb_distro_packages_remove }}"
+    name: "{{ galera_mariadb_distro_packages_remove }}"
     state: absent
 
 # In SUSE/CentOS systems, /etc/my.cnf.d may already exist on the
@@ -87,7 +87,7 @@
 - name: Install galera_server role remote packages (zypper)
   zypper:
     name: "{{ galera_packages_list }}"
-    state: "{{ galera_server_package_state }}"
+    state: "{{ galera_package_state }}"
   register: install_remote_packages
   until: install_remote_packages is success
   retries: 5

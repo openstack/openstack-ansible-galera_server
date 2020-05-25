@@ -55,6 +55,7 @@
   changed_when: true
   listen: Bootstrap cluster
   when:
+    - galera_install_server | bool
     - not galera_cluster_ready | bool
 
 - name: Start new cluster
@@ -67,6 +68,7 @@
     ansible_host: "{{ hostvars[galera_server_bootstrap_node]['ansible_host'] }}"
   run_once: true
   when:
+    - galera_install_server | bool
     - not galera_cluster_ready | bool
   listen: Bootstrap cluster
 
@@ -84,6 +86,7 @@
   vars:
     ansible_host: "{{ hostvars[item]['ansible_host'] }}"
   when:
+    - galera_install_server | bool
     - hostvars[item]['galera_cluster_ready'] is defined
     - hostvars[item]['galera_deployed'] | default(false) | bool
   with_items:

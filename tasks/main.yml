@@ -13,22 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- name: Fail when the host is not in galera_cluster_members
-  fail:
-    msg: "The host {{ inventory_hostname }} must be in galera_cluster_members."
-  when: inventory_hostname not in galera_cluster_members
-  tags:
-    - always
-
-- name: Fail if the galera root password is not provided
-  fail:
-    msg: |
-      Please set the galera_root_password variable prior to applying the
-      galera role.
-  when: (galera_root_password is undefined) or (galera_root_password is none)
-  tags:
-    - always
-
 - name: Gather variables for each operating system
   include_vars: "{{ item }}"
   with_first_found:
@@ -40,64 +24,10 @@
   tags:
     - always
 
-- name: initialize local facts
-  ini_file:
-    dest: "/etc/ansible/facts.d/openstack_ansible.fact"
-    section: "galera"
-    option: initialized
-    value: "True"
-
-- name: Refresh local facts
-  setup:
-    filter: ansible_local
-    gather_subset: "!all"
-  tags:
-    - always
-
-- name: Set the galera existing cluster fact
-  set_fact:
-    galera_deployed: "{{ ansible_local['openstack_ansible']['galera']['deployed'] | default(false) | bool }}"
-  tags:
-    - always
-
-- name: Cluster state notice
-  debug:
-    msg: >
-      The cluster state will be ignored. While the state checks are skipped,
-      the galera restart handlers will be triggered to ensure everything is
-      functional at the end of the playbook execution.
-  changed_when: true
+- include_tasks: galera_client_main.yml
   when:
-    - (galera_ignore_cluster_state | bool) or (galera_force_bootstrap | bool)
-  notify:
-    - Manage LB
-    - Restart all mysql
-  tags:
-    - always
+    - galera_install_client | bool
 
-- include_tasks: galera_cluster_state.yml
+- include_tasks: galera_server_main.yml
   when:
-    - galera_deployed | bool
-    - not galera_ignore_cluster_state | bool
-  tags:
-    - always
-
-- include_tasks: galera_upgrade.yml
-  when: galera_deployed | bool
-  tags:
-    - galera_server-upgrade
-
-- include_tasks: galera_install.yml
-  tags:
-    - galera_server-install
-
-- include_tasks: galera_post_install.yml
-  tags:
-    - galera_server-config
-
-- name: Flush handlers
-  meta: flush_handlers
-
-- include_tasks: galera_setup.yml
-  tags:
-    - galera_server-config
+    - galera_install_server | bool

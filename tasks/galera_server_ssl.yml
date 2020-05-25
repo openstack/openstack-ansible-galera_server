@@ -21,7 +21,7 @@
     group: "mysql"
     mode: "0755"
 
-- include_tasks: galera_ssl_self_signed.yml
+- include_tasks: galera_server_ssl_self_signed.yml
   when:
     - not galera_user_ssl_cert is defined
     - not galera_user_ssl_key is defined
