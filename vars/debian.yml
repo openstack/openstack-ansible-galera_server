@@ -56,7 +56,6 @@ galera_server_mariadb_distro_packages:
   - mariadb-client
   - mariadb-backup
   - "{{ galera_mariadb_server_package }}"
-  - galera-3
   - rsync
   - socat
 
@@ -86,3 +85,5 @@ galera_wsrep_provider: "/usr/lib/galera/libgalera_smm.so"
 
 galera_client_distro_packages:
   - "mariadb-client-{{ galera_major_version }}"
+
+galera_unix_socket: "/var/run/mysqld/mysqld.sock"

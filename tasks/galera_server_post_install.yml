@@ -104,6 +104,7 @@
     config_overrides: "{{ item.config_overrides }}"
     config_type: "{{ item.config_type }}"
     ignore_none_type: False
+  when: item.condition | default(True)
   with_items:
     - src: my.cnf.j2
       dest: "{{ galera_etc_conf_file }}"
@@ -117,6 +118,7 @@
       dest: /etc/mysql/debian.cnf
       config_overrides: "{{ galera_debian_cnf_overrides }}"
       config_type: "ini"
+      condition: "{{ (ansible_os_family | lower == 'debian') }}"
   notify:
     - Manage LB
     - Restart all mysql

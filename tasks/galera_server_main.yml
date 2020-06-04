@@ -88,5 +88,6 @@
   meta: flush_handlers
 
 - include_tasks: galera_server_setup.yml
+  when: inventory_hostname == galera_server_bootstrap_node
   tags:
     - galera_server-config
