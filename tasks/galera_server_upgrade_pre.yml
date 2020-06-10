@@ -19,7 +19,7 @@
 # we only try to stop the service is it exists.
 - name: Check whether a mysql service exists yet
   shell: >-
-    systemctl list-unit-files --state=enabled --type=service | grep "^mysql.service .* enabled$"
+    systemctl list-unit-files --state=enabled --type=service | grep "^{{ galera_mariadb_service_name }}.service .* enabled$"
   args:
     executable: /bin/bash
     warn: no
@@ -29,7 +29,7 @@
 
 - name: Stop MariaDB
   systemd:
-    name: mysql
+    name: "{{ galera_mariadb_service_name }}"
     state: stopped
   register: galera_restart_fall_back
   until: galera_restart_fall_back is success

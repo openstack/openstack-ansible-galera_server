@@ -50,7 +50,7 @@
 
 - name: Stop mysql
   service:
-    name: mysql
+    name: "{{ galera_mariadb_service_name }}"
     state: stopped
   changed_when: true
   listen: Bootstrap cluster
