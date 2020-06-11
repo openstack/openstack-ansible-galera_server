@@ -18,6 +18,37 @@
   user: root
   gather_facts: true
   tasks:
+    - name: Wait for cluster to be ready
+      block:
+        - name: Wait for cluster ready state
+          command: |
+            mysql -h {{ ansible_host }} \
+                  -p"{{ galera_root_password }}" \
+                  -e "show status like 'wsrep_incoming_addresses';" \
+                  --silent \
+                  --skip-column-names
+          register: mysql_instance_ready
+          retries: 20
+          delay: 5
+          changed_when: false
+          until: mysql_instance_ready is success and mysql_instance_ready.stdout.split()[-1].split(',') | length == groups['galera_all'] | length
+      rescue:
+        - name: Restarting weird maria instance
+          service:
+            name: mariadb
+            state: restarted
+        - name: Wait for cluster ready state
+          command: |
+            mysql -h {{ ansible_host }} \
+                  -p"{{ galera_root_password }}" \
+                  -e "show status like 'wsrep_incoming_addresses';" \
+                  --silent \
+                  --skip-column-names
+          register: mysql_instance_ready
+          retries: 20
+          delay: 5
+          changed_when: false
+          until: mysql_instance_ready is success and mysql_instance_ready.stdout.split()[-1].split(',') | length == groups['galera_all'] | length
     - name: Check cluster incoming addresses
       command: |
         mysql -h {{ ansible_host }} \

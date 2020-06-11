@@ -27,6 +27,8 @@
         - openstack-ansible-functional-opensuse-15-ssl:
             voting: false
         - openstack-ansible-functional-ubuntu-bionic-ssl
+        - openstack-ansible-upgrade-aio_metal-ubuntu-bionic:
+            voting: false
     experimental:
       jobs:
         - openstack-ansible-integrated-deploy-aio
@@ -34,3 +36,5 @@
       jobs:
         - openstack-ansible-functional-centos-7-ssl
         - openstack-ansible-functional-ubuntu-bionic-ssl
+        - openstack-ansible-upgrade-aio_metal-ubuntu-bionic:
+            voting: false
