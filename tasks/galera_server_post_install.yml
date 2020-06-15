@@ -100,7 +100,7 @@
     dest: "{{ item.dest }}"
     owner: "root"
     group: "root"
-    mode: "0644"
+    mode: "{{ item.mode | default('0644') }}"
     config_overrides: "{{ item.config_overrides }}"
     config_type: "{{ item.config_type }}"
     ignore_none_type: False
@@ -119,6 +119,11 @@
       config_overrides: "{{ galera_debian_cnf_overrides }}"
       config_type: "ini"
       condition: "{{ (ansible_os_family | lower == 'debian') }}"
+    - src: "client.my.cnf.j2"
+      dest: "/root/.my.cnf"
+      config_overrides: "{{ galera_client_my_cnf_overrides }}"
+      config_type: "ini"
+      mode: "0600"
   notify:
     - Manage LB
     - Restart all mysql

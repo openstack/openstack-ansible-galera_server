@@ -53,7 +53,7 @@ _galera_mariadb_server_package: "mariadb-server-{{ galera_major_version }}"
 # mariadb-galera-server and galera.
 galera_server_mariadb_distro_packages:
   - libmariadb-dev
-  - mariadb-client
+  - mariadb-client-{{ galera_major_version }}
   - mariadb-backup
   - "{{ galera_mariadb_server_package }}"
   - rsync
@@ -61,7 +61,7 @@ galera_server_mariadb_distro_packages:
 
 # The packages to uninstall during an upgrade from a previous version
 galera_server_upgrade_packages_remove:
-  - mariadb-server
+  - mariadb-server-*
   - mysql-common
 
 galera_debconf_items:
