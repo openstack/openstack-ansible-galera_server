@@ -42,9 +42,8 @@ galera_mariadb_service_name: mariadb
 galera_mariadb_server_package: "{{ _galera_mariadb_server_package }}"
 
 # The major version used to select the repo URL path
-# NOTE(noonedeadpunk) 10.4.13 seems broken, as it crushed during requests http://paste.openstack.org/show/794059/
-galera_major_version: 10.4
-galera_minor_version: 12
+galera_major_version: 10.5
+galera_minor_version: 6
 
 # Set the URL for the MariaDB repository
 galera_repo_host: "downloads.mariadb.com"
