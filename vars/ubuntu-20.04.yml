@@ -51,7 +51,7 @@ _galera_mariadb_client_package: "mariadb-client-{{ galera_major_version }}"
 # mariadb-galera-server and galera.
 galera_server_mariadb_distro_packages:
   - libmariadb3
-  - "{{ galera_mariadb_server_package }}"
+  - "{{ galera_mariadb_client_package }}"
   - mariadb-backup
   - "{{ galera_mariadb_server_package }}"
   - galera-4
