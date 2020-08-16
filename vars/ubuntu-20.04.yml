@@ -21,7 +21,7 @@ _galera_disable_privatedevices: yes
 
 # Galera GPG Keys
 _galera_gpg_keys:
-  - url: http://repo.vexxhost.net/mariadb/key.gpg
+  - url: https://mariadb.org/mariadb_release_signing_key.asc
 
 galera_server_required_distro_packages:
   - apt-transport-https
@@ -43,14 +43,15 @@ galera_var_run_socket: "/var/run/mysqld/mysqld.sock"
 # so that it can be used in debconf later in the
 # "galera_common" role.
 _galera_mariadb_server_package: "mariadb-server-{{ galera_major_version }}"
+_galera_mariadb_client_package: "mariadb-client-{{ galera_major_version }}"
 
 # NB This is specifically galera_server_mariadb_distro_packages as these
 # packages only get installed during the galera play - this is because of
 # the preseed task and the service startup control used when installing
 # mariadb-galera-server and galera.
 galera_server_mariadb_distro_packages:
-  - libmariadb-dev
-  - mariadb-client
+  - libmariadb3
+  - "{{ galera_mariadb_server_package }}"
   - mariadb-backup
   - "{{ galera_mariadb_server_package }}"
   - galera-4
@@ -73,9 +74,9 @@ galera_debconf_items:
     vtype: "string"
 
 # Repositories
-_galera_repo_url: "http://repo.vexxhost.net/mariadb"
+_galera_repo_url: "http://nyc2.mirrors.digitalocean.com/mariadb/repo/10.4/ubuntu"
 _galera_repo:
-  repo: "deb {{ galera_repo_url }} {{ ansible_distribution_release }} main"
+  repo: "deb [arch=amd64,arm64,ppc64el] {{ galera_repo_url }} {{ ansible_distribution_release }} main"
   state: "present"
   filename: "MariaDB"
 

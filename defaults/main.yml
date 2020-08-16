@@ -40,11 +40,13 @@ galera_server_bind_address: "{{ openstack_service_bind_address | default('0.0.0.
 galera_debconf_items: []
 galera_mariadb_service_name: mariadb
 galera_mariadb_server_package: "{{ _galera_mariadb_server_package }}"
+galera_mariadb_client_package: "{{ _galera_mariadb_client_package }}"
+
 
 # The major version used to select the repo URL path
 # NOTE(noonedeadpunk) 10.4.13 seems broken, as it crushed during requests http://paste.openstack.org/show/794059/
 galera_major_version: 10.4
-galera_minor_version: 12
+galera_minor_version: 14
 
 # Set the URL for the MariaDB repository
 galera_repo_host: "downloads.mariadb.com"
