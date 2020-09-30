@@ -91,3 +91,10 @@
   when: inventory_hostname == galera_server_bootstrap_node
   tags:
     - galera_server-config
+
+- include_tasks: galera_server_backups.yml
+  when:
+    - galera_mariadb_backups_enabled | bool
+    - inventory_hostname in galera_mariadb_backups_nodes
+  tags:
+    - galera_server-backups

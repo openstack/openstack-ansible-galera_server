@@ -1,0 +1,82 @@
+---
+
+- name: Create mariadb back up directory
+  file:
+    path: "{{ galera_mariadb_backups_path }}"
+    state: "directory"
+    group: "root"
+    owner: "root"
+    mode: "0755"
+
+- name: Template out mariadb backup script
+  template:
+    src: "mariabackup_script.py.j2"
+    dest: "{{ galera_mariadb_backups_path }}/mariabackup_script.py"
+    mode: "0755"
+
+- name: Template out mariabackup cnf file
+  template:
+    src: "mariabackup.cnf.j2"
+    dest: "{{ galera_mariadb_backups_cnf_file }}"
+    mode: "0644"
+
+- name: Create service and timer for full backups
+  import_role:
+    name: systemd_service
+  vars:
+    systemd_service_enabled: true
+    systemd_service_restart_changed: false
+    systemd_user_name: "root"
+    systemd_group_name: "root"
+    systemd_services:
+      - service_name: "mariabackup-full"
+        execstarts:
+          - /usr/bin/python3 {{ galera_mariadb_backups_path }}/mariabackup_script.py {{ galera_mariadb_backups_path }}
+            --full-backup --copies={{ galera_mariadb_backups_full_copies }} --suffix={{ galera_mariadb_backups_suffix }}
+            --defaults-file={{ galera_mariadb_backups_cnf_file }}
+        timer:
+          state: "started"
+          options:
+            OnCalendar: "{{ galera_mariadb_backups_full_on_calendar }}"
+            Persistent: true
+            Unit: "mariabackup-full.service"
+
+- name: Create service and timer for incremental backups
+  import_role:
+    name: systemd_service
+  vars:
+    systemd_service_enabled: true
+    systemd_service_restart_changed: false
+    systemd_user_name: "root"
+    systemd_group_name: "root"
+    systemd_services:
+      - service_name: "mariabackup-increment"
+        execstarts:
+          - /usr/bin/python3 {{ galera_mariadb_backups_path }}/mariabackup_script.py {{ galera_mariadb_backups_path }}
+            --increment --copies={{ galera_mariadb_backups_full_copies }} --suffix={{ galera_mariadb_backups_suffix }}
+            --defaults-file={{ galera_mariadb_backups_cnf_file }}
+        timer:
+          state: "started"
+          options:
+            OnCalendar: "{{ galera_mariadb_backups_increment_on_calendar }}"
+            Persistent: true
+            Unit: "mariabackup-increment.service"
+  when: galera_mariadb_backups_increment_on_calendar is defined
+
+- name: Grant access to the database for the backup service
+  delegate_to: "{{ openstack_db_setup_host | default('localhost') }}"
+  vars:
+    galera_db_setup_host: "{{ openstack_db_setup_host | default('localhost') }}"
+    ansible_python_interpreter: "{{ openstack_db_setup_python_interpreter |
+                                 default((galera_db_setup_host == 'localhost') |
+                                 ternary(ansible_playbook_python, ansible_python['executable'])) }}"
+  community.mysql.mysql_user:
+    name: "{{ galera_mariadb_backups_user }}"
+    password: "{{ galera_mariadb_backups_password }}"
+    host: "%"
+    priv: "*.*:RELOAD,PROCESS,LOCK TABLES,REPLICATION CLIENT"
+    append_privs: yes
+    login_host: "{{ galera_address }}"
+    login_port: 3306
+  no_log: true
+  run_once: true

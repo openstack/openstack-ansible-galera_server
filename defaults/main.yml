@@ -206,3 +206,19 @@ galera_client_my_cnf_overrides: {}
 # defined key is not present. By default this will try and pull from the
 # "galera_server" group and fall back to localhost.
 galera_ssl_server: "{{ (galera_cluster_members | default(['localhost']))[0] }}"
+
+# Configure backups of database
+# copies is the number of full backups to be kept, the corresponding
+# incremental backups will also be kept. Uses systemd timer instead of cron.
+galera_mariadb_backups_enabled: false
+galera_mariadb_backups_path: "/var/backup/mariadb_backups"
+galera_mariadb_backups_full_copies: 2
+galera_mariadb_backups_full_on_calendar: "*-*-* 00:00:00"
+galera_mariadb_backups_increment_on_calendar:
+  - "*-*-* 06:00:00"
+  - "*-*-* 12:00:00"
+  - "*-*-* 18:00:00"
+galera_mariadb_backups_user: galera_mariadb_backup
+galera_mariadb_backups_suffix: "{{ inventory_hostname }}"
+galera_mariadb_backups_cnf_file: "/etc/mysql/mariabackup.cnf"
+galera_mariadb_backups_nodes: ["{{ galera_cluster_members[0] }}"]
