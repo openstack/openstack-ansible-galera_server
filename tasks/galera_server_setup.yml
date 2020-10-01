@@ -14,7 +14,7 @@
 # limitations under the License.
 
 - name: Create galera users
-  mysql_user:
+  community.mysql.mysql_user:
     name: "{{ item.name }}"
     host: "{{ item.host }}"
     password: "{{ item.password }}"

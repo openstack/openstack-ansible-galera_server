@@ -91,7 +91,7 @@
           - "'10.1.0.3' in wsrep_incoming_addresses.stdout"
           - "'10.1.0.4' in wsrep_incoming_addresses.stdout"
     - name: Create DB for service on 10.1.0.2
-      mysql_db:
+      community.mysql.mysql_db:
         login_user: "{{ galera_root_user }}"
         login_password: "{{ galera_root_password }}"
         login_host: "10.1.0.2"
@@ -101,7 +101,7 @@
       tags:
         - skip_ansible_lint
     - name: Grant access to the DB on 10.1.0.3
-      mysql_user:
+      community.mysql.mysql_user:
         login_user: "{{ galera_root_user }}"
         login_password: "{{ galera_root_password }}"
         login_host: "10.1.0.3"
