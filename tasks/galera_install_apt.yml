@@ -48,7 +48,7 @@
     repo: "{{ galera_repo.repo }}"
     filename: "{{ galera_repo.filename | default(omit) }}"
     state: "{{ galera_repo.state }}"
-    update_cache: "no"
+    update_cache: no
   register: add_galera_repo
 
 - name: Preseed galera password(s)

@@ -55,7 +55,7 @@
     force: true
   when:
     - mycnfd_stat.stat.isdir is defined
-    - mycnfd_stat.stat.isdir == True
+    - mycnfd_stat.stat.isdir
 
 # We replace the default paths for the system with symlinks to
 # the paths used by the MariaDB packages so ensure that any other
