@@ -42,7 +42,7 @@ galera_mariadb_server_package: "{{ _galera_mariadb_server_package }}"
 
 # The major version used to select the repo URL path
 galera_major_version: 10.3
-galera_minor_version: 13
+galera_minor_version: 25
 
 # Set the URL for the MariaDB repository
 galera_repo_host: "downloads.mariadb.com"
