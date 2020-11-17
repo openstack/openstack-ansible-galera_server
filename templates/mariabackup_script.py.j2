@@ -139,8 +139,10 @@ def create_increment_backup(dest, curtime, increment_backup_filename, extra_mari
     get_lock_file()
     try:
         basedir = max([ os.path.normpath(dest+'/'+f) for f in os.listdir(dest) if f.startswith('mariabackup-')], key=os.path.getmtime)
-    except(OSError):
-        basedir="./"
+    except ValueError:
+        print("No full backup found, cannot create incremental backup.")
+        os.unlink("/var/run/db_backup.pid")
+        raise SystemExit(1)
     try:
         err = open(os.path.normpath(dest+"/increment.err"), "w")
         #Creating incremental backup
