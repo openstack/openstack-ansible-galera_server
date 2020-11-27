@@ -119,7 +119,7 @@ def create_full_backup(dest, curtime, full_backup_filename, extra_mariabackup_ar
         #Preparing full backup
         err_p = open(os.path.normpath(dest+"/prepare.log"), "w")
         mariabackup_prep = Popen(
-        ["/usr/bin/mariabackup"] + extra_mariabackup_args + ["--prepare", "--apply-log-only", "--target-dir="+os.path.normpath(dest+"/"+full_backup_filename+curtime)], stdout=None, stderr=err_p
+        ["/usr/bin/mariabackup"] + extra_mariabackup_args + ["--prepare", "--target-dir="+os.path.normpath(dest+"/"+full_backup_filename+curtime)], stdout=None, stderr=err_p
         )
         mariabackup_prep.wait()
         mariabackup_prep_res = mariabackup_prep.communicate()
@@ -131,7 +131,7 @@ def create_full_backup(dest, curtime, full_backup_filename, extra_mariabackup_ar
     except Exception as e:
         print(e)
     finally:
-        os.unlink("/var/run/db_backup.pid")
+        os.unlink("/var/run/mariabackup-galera/db_backup.pid")
 
 
 def create_increment_backup(dest, curtime, increment_backup_filename, extra_mariabackup_args):
@@ -141,7 +141,7 @@ def create_increment_backup(dest, curtime, increment_backup_filename, extra_mari
         basedir = max([ os.path.normpath(dest+'/'+f) for f in os.listdir(dest) if f.startswith('mariabackup-')], key=os.path.getmtime)
     except ValueError:
         print("No full backup found, cannot create incremental backup.")
-        os.unlink("/var/run/db_backup.pid")
+        os.unlink("/var/run/mariabackup-galera/db_backup.pid")
         raise SystemExit(1)
     try:
         err = open(os.path.normpath(dest+"/increment.err"), "w")
@@ -159,7 +159,7 @@ def create_increment_backup(dest, curtime, increment_backup_filename, extra_mari
     except Exception as e:
         print(e)
     finally:
-        os.unlink("/var/run/db_backup.pid")
+        os.unlink("/var/run/mariabackup-galera/db_backup.pid")
 
 
 def rotate_backups(dest, copies, full_backup_filename, increment_backup_filename):
@@ -179,7 +179,7 @@ def rotate_backups(dest, copies, full_backup_filename, increment_backup_filename
             folder = min(full_list, key=os.path.getmtime)
             full_list.remove(folder)
             rmtree(folder)
-    os.unlink("/var/run/db_backup.pid")
+    os.unlink("/var/run/mariabackup-galera/db_backup.pid")
 
 
 def parsedate(s):
@@ -188,7 +188,7 @@ def parsedate(s):
 
 def check_lock_file():
     timer = 0
-    while os.path.isfile("/var/run/db_backup.pid"):
+    while os.path.isfile("/var/run/mariabackup-galera/db_backup.pid"):
         sleep(60)
         timer += 1
         if timer == 120:
@@ -198,7 +198,7 @@ def check_lock_file():
 
 def get_lock_file():
     try:
-        pid = open('/var/run/db_backup.pid', 'w')
+        pid = open('/var/run/mariabackup-galera/db_backup.pid', 'w')
         pid.write(str(os.getpid()))
         pid.close()
     except Exception as e:
