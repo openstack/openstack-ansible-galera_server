@@ -206,6 +206,10 @@ galera_client_my_cnf_overrides: {}
 # "galera_server" group and fall back to localhost.
 galera_ssl_server: "{{ (galera_cluster_members | default(['localhost']))[0] }}"
 
+## Database info
+galera_db_setup_host: "{{ openstack_db_setup_host | default(galera_cluster_members[0] | default('localhost')) }}"
+galera_db_setup_python_interpreter: "{{ openstack_db_setup_python_interpreter | default((galera_db_setup_host == 'localhost') | ternary(ansible_playbook_python, ansible_python['executable'])) }}"
+
 # Configure backups of database
 # copies is the number of full backups to be kept, the corresponding
 # incremental backups will also be kept. Uses systemd timer instead of cron.
