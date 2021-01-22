@@ -17,7 +17,7 @@
     templates:
       - check-requirements
       - publish-openstack-docs-pti
-      - release-notes-jobs-python3
+      - build-release-notes-jobs-python3
       - openstack-ansible-linters-jobs
       - openstack-ansible-deploy-infra_lxc-jobs
       - openstack-ansible-upgrade-aio_metal-jobs
