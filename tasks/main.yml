@@ -27,7 +27,7 @@
 - include_tasks: galera_client_main.yml
   when:
     - galera_install_client | bool
-    - inventory_hostname not in galera_cluster_members
+    - inventory_hostname not in galera_cluster_members or galera_root_user != 'root'
 
 - include_tasks: galera_server_main.yml
   when:
