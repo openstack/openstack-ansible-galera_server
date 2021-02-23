@@ -53,8 +53,8 @@
     dest: "/usr/local/bin/galera_secure_node"
     mode: "0750"
   when:
-    - ansible_pkg_mgr != "apt"
-    - ansible_pkg_mgr != "portage"
+    - ansible_facts['pkg_mgr'] != "apt"
+    - ansible_facts['pkg_mgr'] != "portage"
     - not galera_upgrade
 
 - name: Run galera secure
@@ -63,8 +63,8 @@
     creates: "/var/lib/mysql/osa_default_secured"
     warn: no
   when:
-    - ansible_pkg_mgr != "apt"
-    - ansible_pkg_mgr != "portage"
+    - ansible_facts['pkg_mgr'] != "apt"
+    - ansible_facts['pkg_mgr'] != "portage"
     - not galera_upgrade
   tags:
     - skip_ansible_lint
@@ -118,7 +118,7 @@
       dest: /etc/mysql/debian.cnf
       config_overrides: "{{ galera_debian_cnf_overrides }}"
       config_type: "ini"
-      condition: "{{ (ansible_os_family | lower == 'debian') }}"
+      condition: "{{ (ansible_facts['os_family'] | lower == 'debian') }}"
     - src: "client.my.cnf.j2"
       dest: "/root/.my.cnf"
       config_overrides: "{{ galera_client_my_cnf_overrides }}"
@@ -133,7 +133,7 @@
   command: "emerge --config dev-db/mariadb"
   failed_when: false
   when:
-    - ansible_pkg_mgr == 'portage'
+    - ansible_facts['pkg_mgr'] == 'portage'
 
 - name: Apply service defaults
   template:
@@ -141,7 +141,7 @@
     dest: "/etc/default/mariadb"
     mode: "0644"
   when:
-    - ansible_pkg_mgr != 'portage'
+    - ansible_facts['pkg_mgr'] != 'portage'
   notify:
     - Manage LB
     - Restart all mysql
@@ -154,7 +154,7 @@
     state: "link"
     force: "yes"
   when:
-    - ansible_pkg_mgr != 'portage'
+    - ansible_facts['pkg_mgr'] != 'portage'
 
 - name: remove default mysql_safe_syslog
   file:

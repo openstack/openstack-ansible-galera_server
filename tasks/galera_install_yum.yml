@@ -123,7 +123,7 @@
     line: "module_hotfixes=1"
     regexp: "^module_hotfixes"
     insertafter: "^enabled"
-  when: ansible_distribution_major_version is version('8', '>=')
+  when: ansible_facts['distribution_major_version'] is version('8', '>=')
 
 # When changing the repo URL, the metadata does
 # not reliably update, resulting in the right
@@ -131,7 +131,7 @@
 # This is why we force the metadata to be
 # cleaned out whenever the repo config changes.
 - name: Force the expiry of the repo metadata
-  command: "{{ ansible_pkg_mgr }} clean metadata"
+  command: "{{ ansible_facts['pkg_mgr'] }} clean metadata"
   args:
     warn: no
   when: add_galera_repos is changed

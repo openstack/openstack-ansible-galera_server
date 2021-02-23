@@ -72,4 +72,4 @@
       retries: 5
       delay: 2
   when:
-    - ansible_pkg_mgr == "apt"
+    - ansible_facts['pkg_mgr'] == "apt"

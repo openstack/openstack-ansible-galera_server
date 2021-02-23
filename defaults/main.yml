@@ -123,7 +123,7 @@ galera_wsrep_cluster_address: >-
 galera_wsrep_node_incoming_address: "{{ galera_wsrep_address }}"
 ## Cap the maximum number of threads / workers when a user value is unspecified.
 galera_wsrep_slave_threads_max: 16
-galera_wsrep_slave_threads: "{{ [[ansible_processor_vcpus|default(2), 2] | max, galera_wsrep_slave_threads_max] | min }}"
+galera_wsrep_slave_threads: "{{ [[ansible_facts['processor_vcpus']|default(2), 2] | max, galera_wsrep_slave_threads_max] | min }}"
 galera_wsrep_retry_autocommit: 3
 galera_wsrep_debug: NONE
 galera_wsrep_sst_method: mariabackup
@@ -151,7 +151,7 @@ galera_debian_cnf_overrides: {}
 # if deploying galera on different hardware.
 # galera_max_connections: 500
 
-# This is only applied if the ansible_pkg_mgr is 'apt'
+# This is only applied if the ansible_facts['pkg_mgr'] is 'apt'
 galera_distro_package_pins:
   - package: '*'
     release: MariaDB
@@ -208,7 +208,7 @@ galera_ssl_server: "{{ (galera_cluster_members | default(['localhost']))[0] }}"
 
 ## Database info
 galera_db_setup_host: "{{ openstack_db_setup_host | default(galera_cluster_members[0] | default('localhost')) }}"
-galera_db_setup_python_interpreter: "{{ openstack_db_setup_python_interpreter | default((galera_db_setup_host == 'localhost') | ternary(ansible_playbook_python, ansible_python['executable'])) }}"
+galera_db_setup_python_interpreter: "{{ openstack_db_setup_python_interpreter | default((galera_db_setup_host == 'localhost') | ternary(ansible_playbook_python, ansible_facts['python']['executable'])) }}"
 
 # Configure backups of database
 # copies is the number of full backups to be kept, the corresponding

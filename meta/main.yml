@@ -44,4 +44,4 @@ dependencies:
     apt_pinned_packages: "{{ galera_distro_package_pins }}"
     apt_package_pinning_file_name: "galera_pin.pref"
     when:
-      - ansible_pkg_mgr == 'apt'
+      - ansible_facts['pkg_mgr'] == 'apt'

@@ -17,7 +17,7 @@
   set_fact:
     galera_packages_list: "{{ galera_server_required_distro_packages + galera_server_mariadb_distro_packages }}"
 
-- include_tasks: "galera_install_{{ ansible_pkg_mgr }}.yml"
+- include_tasks: "galera_install_{{ ansible_facts['pkg_mgr'] }}.yml"
 
 - name: Record galera has been deployed
   ini_file:

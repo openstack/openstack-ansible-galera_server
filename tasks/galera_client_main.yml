@@ -17,7 +17,7 @@
   set_fact:
     galera_packages_list: "{{ galera_client_distro_packages }}"
 
-- include_tasks: "galera_install_{{ ansible_pkg_mgr }}.yml"
+- include_tasks: "galera_install_{{ ansible_facts['pkg_mgr'] }}.yml"
   when:
     - galera_client_package_install | bool
 

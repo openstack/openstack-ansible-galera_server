@@ -1,6 +1,6 @@
 {%- set all_calculated_max_connections = [] %}
 {%- for galera_node in galera_cluster_members %}
-    {%- set vcpus = hostvars[galera_node]['ansible_processor_vcpus'] %}
+    {%- set vcpus = hostvars[galera_node]['ansible_facts']['processor_vcpus'] %}
     {%- if all_calculated_max_connections.append([[vcpus|default(2), 2] | max, galera_wsrep_slave_threads_max] | min * 100) %}
     {%- endif %}
 {%- endfor %}
