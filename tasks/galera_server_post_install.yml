@@ -124,6 +124,7 @@
       config_overrides: "{{ galera_client_my_cnf_overrides }}"
       config_type: "ini"
       mode: "0600"
+      condition: "{{ (galera_root_user == 'root') }}"
   notify:
     - Manage LB
     - Restart all mysql
