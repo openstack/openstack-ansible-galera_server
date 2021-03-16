@@ -46,7 +46,6 @@
 #                  as all of these tasks will be run on Package install
 #                  and running them again will cause a conflict within
 #                  debian based deployments.
-# NOTE(prometheanfire): Ditto Gentoo ^
 - name: Create galera initial secure tool
   template:
     src: "galera_secure_node.j2"
@@ -54,7 +53,6 @@
     mode: "0750"
   when:
     - ansible_facts['pkg_mgr'] != "apt"
-    - ansible_facts['pkg_mgr'] != "portage"
     - not galera_upgrade
 
 - name: Run galera secure
@@ -64,7 +62,6 @@
     warn: no
   when:
     - ansible_facts['pkg_mgr'] != "apt"
-    - ansible_facts['pkg_mgr'] != "portage"
     - not galera_upgrade
   tags:
     - skip_ansible_lint
@@ -129,20 +126,11 @@
     - Manage LB
     - Restart all mysql
 
-# Safe to run multiple times, config has it's own checks
-- name: initialize database (gentoo)
-  command: "emerge --config dev-db/mariadb"
-  failed_when: false
-  when:
-    - ansible_facts['pkg_mgr'] == 'portage'
-
 - name: Apply service defaults
   template:
     src: "mysql_defaults.j2"
     dest: "/etc/default/mariadb"
     mode: "0644"
-  when:
-    - ansible_facts['pkg_mgr'] != 'portage'
   notify:
     - Manage LB
     - Restart all mysql
@@ -154,8 +142,6 @@
     dest: "/etc/default/mysql"
     state: "link"
     force: "yes"
-  when:
-    - ansible_facts['pkg_mgr'] != 'portage'
 
 - name: remove default mysql_safe_syslog
   file:

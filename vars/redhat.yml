@@ -32,7 +32,7 @@ galera_server_required_distro_packages:
   - libgcrypt
   - MariaDB-client
   - MariaDB-devel
-  - "{{ ansible_facts['distribution_major_version'] is version('8', '<') | ternary('MySQL-python', 'python3-PyMySQL') }}" # needed by mysql_user
+  - python3-PyMySQL
   - xinetd
 
 galera_etc_conf_file: "/etc/mysql/my.cnf"
