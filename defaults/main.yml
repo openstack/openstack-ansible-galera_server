@@ -130,7 +130,7 @@ galera_wsrep_sst_method: mariabackup
 galera_wsrep_provider_options:
   - { option: "gcache.size", value: "{{ galera_gcache_size }}" }
   - { option: "gmcast.listen_addr", value: "tcp://{{ galera_wsrep_node_incoming_address }}:{{ galera_wsrep_cluster_port  }}" }
-galera_wsrep_sst_auth_user: "root"
+galera_wsrep_sst_auth_user: "{{ galera_root_user }}"
 galera_wsrep_sst_auth_password: "{{ galera_root_password  }}"
 
 # mariabackup parallel/sync threads
