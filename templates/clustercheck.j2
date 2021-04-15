@@ -33,6 +33,8 @@ fi
 
 MYSQL_USERNAME="${1-{{ galera_monitoring_user }}}"
 MYSQL_PASSWORD="${2-{{ galera_monitoring_user_password }}}"
+MYSQL_HOST="{{ galera_server_bind_address }}"
+MYSQL_PORT="{{ galera_monitoring_port }}"
 AVAILABLE_WHEN_DONOR=${3:-0}
 ERR_FILE="${4:-/dev/null}"
 AVAILABLE_WHEN_READONLY=${5:-1}
@@ -50,6 +52,16 @@ if [[ -n "$MYSQL_PASSWORD" ]]; then
     EXTRA_ARGS="$EXTRA_ARGS --password=${MYSQL_PASSWORD}"
 else
     EXTRA_ARGS="$EXTRA_ARGS --password="
+fi
+
+if [[ -n "$MYSQL_PORT" ]]; then
+    # Port does not apply unless host is set
+    if [[ "$MYSQL_HOST" != "0.0.0.0" ]]; then
+        EXTRA_ARGS="$EXTRA_ARGS --host=${MYSQL_HOST}"
+    else
+        EXTRA_ARGS="$EXTRA_ARGS --host=127.0.0.1"
+    fi
+    EXTRA_ARGS="$EXTRA_ARGS --port=${MYSQL_PORT}"
 fi
 
 if [[ -r $DEFAULTS_EXTRA_FILE ]]; then

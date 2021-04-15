@@ -49,6 +49,10 @@ expire-logs-days = 7
 log_slave_updates = 1
 log_bin_trust_function_creators = 1
 
+# MONITORING #
+extra_port = {{ galera_monitoring_port }}
+extra_max_connections = {{ galera_monitoring_max_connections }}
+
 # SAFETY #
 max-allowed-packet = 16M
 max-connect-errors = 1000000
