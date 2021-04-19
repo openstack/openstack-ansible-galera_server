@@ -20,4 +20,4 @@
       - build-release-notes-jobs-python3
       - openstack-ansible-linters-jobs
       - openstack-ansible-deploy-infra_lxc-jobs
-      - openstack-ansible-upgrade-aio_metal-jobs
+      - openstack-ansible-upgrade-infra_lxc-jobs
