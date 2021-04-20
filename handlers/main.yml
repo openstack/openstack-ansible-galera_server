@@ -88,6 +88,8 @@
   with_items:
     - "{{ ansible_play_hosts }}"
   run_once: true
+  notify:
+    - Delete encryption keyfile after starting Galera
 
 - meta: noop
   listen: Manage LB
@@ -98,3 +100,8 @@
     name: xinetd
     state: "{{ (galera_monitoring_check_enabled | bool) | ternary('restarted', 'stopped') }}"
     enabled: "{{ galera_monitoring_check_enabled | bool }}"
+
+- name: Delete encryption keyfile after starting Galera
+  file:
+    path: "/tmp/.keyfile.key"
+    state: absent

@@ -144,6 +144,7 @@ galera_unindexed_query_logging: 0
 galera_my_cnf_overrides: {}
 galera_cluster_cnf_overrides: {}
 galera_debian_cnf_overrides: {}
+galera_encryption_overrides: {}
 
 # Set the max connections value for galera. Set this value to override the
 # computed value which is (100 x vCPUs) with a cap of 1600. If computed, the
@@ -228,3 +229,7 @@ galera_mariadb_backups_user: galera_mariadb_backup
 galera_mariadb_backups_suffix: "{{ inventory_hostname }}"
 galera_mariadb_backups_cnf_file: "/etc/mysql/mariabackup.cnf"
 galera_mariadb_backups_nodes: ["{{ galera_cluster_members[0] }}"]
+
+galera_mariadb_encryption_enabled: false
+galera_mariadb_encryption_plugin: "file_key_management"
+galera_db_encryption_tmp_dir: ""
