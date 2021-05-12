@@ -77,6 +77,9 @@ galera_monitoring_user_password: ""
 #
 #galera_monitoring_allowed_source: "0.0.0.0/0"
 
+# Enable or disable the installation of galera development packages
+galera_install_devel: false
+
 # Enable or disable the installation of galera server
 galera_install_server: false
 
