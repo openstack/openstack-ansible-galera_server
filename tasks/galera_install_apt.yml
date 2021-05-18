@@ -42,6 +42,7 @@
     state: absent
   with_items:
     - { name: "MariaDB", repo: "{{ galera_repo.repo }}" }
+  when: galera_repo.repo is defined
 
 - name: Add galera repo
   apt_repository:
@@ -50,6 +51,7 @@
     state: "{{ galera_repo.state }}"
     update_cache: no
   register: add_galera_repo
+  when: galera_repo.repo is defined
 
 - name: Preseed galera password(s)
   debconf:
