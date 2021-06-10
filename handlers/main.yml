@@ -52,6 +52,7 @@
   service:
     name: "{{ galera_mariadb_service_name }}"
     state: stopped
+    enabled: yes
   changed_when: true
   listen: Bootstrap cluster
   when:
@@ -84,6 +85,7 @@
   service:
     name: "{{ galera_mariadb_service_name }}"
     state: "{{ (not hostvars[item]['galera_cluster_ready'] | bool) | ternary('started', 'restarted') }}"
+    enabled: yes
   environment:
     MYSQLD_STARTUP_TIMEOUT: 180
   register: galera_restart
