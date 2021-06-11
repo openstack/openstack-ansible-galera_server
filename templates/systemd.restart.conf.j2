@@ -1,9 +1,0 @@
-# {{ ansible_managed }}
-
-[Service]
-# Define the condition under which the service will be restarted
-# on-abort is the most conservative one since that should capture unexpected
-# failures but also exclude failures due to bad configurations. This is
-# currently the upstream option as well
-Restart=on-abort
-RestartSec=5s

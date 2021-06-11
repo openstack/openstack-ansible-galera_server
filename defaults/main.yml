@@ -148,6 +148,7 @@ galera_my_cnf_overrides: {}
 galera_cluster_cnf_overrides: {}
 galera_debian_cnf_overrides: {}
 galera_encryption_overrides: {}
+galera_init_overrides: {}
 
 # Set the max connections value for galera. Set this value to override the
 # computed value which is (100 x vCPUs) with a cap of 1600. If computed, the

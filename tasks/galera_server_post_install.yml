@@ -13,34 +13,32 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- name: Create mariadb systemd service config dir
+# TODO(noonedeadpunk): Remove task and called handler after X release
+- name: Remove old systemd overrides
   file:
-    path: "/etc/systemd/system/{{ galera_mariadb_service_name }}.service.d"
-    state: "directory"
-    group: "root"
-    owner: "root"
-    mode: "0755"
-
-- name: Apply systemd options
-  template:
-    src: "{{ item.src }}"
-    dest: "/etc/systemd/system/{{ galera_mariadb_service_name }}.service.d/{{ item.dest }}"
-    mode: "0644"
+    path: "/etc/systemd/system/{{ galera_mariadb_service_name }}.service.d/{{ item }}"
+    state: absent
   with_items:
-    - { src: "systemd.environment.conf.j2", dest: "environment.conf" }
-    - { src: "systemd.limits.conf.j2", dest: "limits.conf" }
-    - { src: "systemd.restart.conf.j2", dest: "restart.conf" }
-    - { src: "systemd.slice.conf.j2", dest: "slice.conf" }
-    - { src: "systemd.timeout.conf.j2", dest: "timeout.conf" }
-    - { src: "systemd.without-privatedevices.conf.j2", dest: "without-privatedevices.conf" }
-  notify:
-    - Manage LB
-    - Reload the systemd daemon
-    - Restart all mysql
+    - environment.conf
+    - limits.conf
+    - restart.conf
+    - slice.conf
+    - timeout.conf
+    - without-privatedevices.conf
+  when: galera_upgrade | bool
+  notify: Reload the systemd daemon
 
-- name: Reload systemd service files
-  systemd:
-    daemon_reload: yes
+- name: Run the systemd service role
+  import_role:
+    name: systemd_service
+  vars:
+    systemd_tempd_prefix: openstack
+    systemd_services:
+      - service_name: "{{ galera_mariadb_service_name }}"
+        systemd_overrides_only: True
+        systemd_overrides: "{{ galera_init_defaults | combine(galera_init_overrides) }}"
+  tags:
+    - galera-service
 
 # NOTE(cloudnull): The secure task is not needed on Debian based systems
 #                  as all of these tasks will be run on Package install
@@ -134,7 +132,6 @@
   notify:
     - Manage LB
     - Restart all mysql
-    - Reload the systemd daemon
 
 - name: Link mysql and mariadb config files
   file:
