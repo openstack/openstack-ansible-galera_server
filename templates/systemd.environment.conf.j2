@@ -3,3 +3,6 @@
 [Service]
 # https://jira.mariadb.org/browse/MDEV-14256
 Environment="WSREP_SST_OPT_PORT=4444"
+
+# Configure Linux OOM killer to prioritize other targets than mariadb
+OOMScoreAdjust=-1000
