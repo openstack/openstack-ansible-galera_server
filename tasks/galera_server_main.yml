@@ -73,34 +73,58 @@
 
 - include_tasks: galera_server_upgrade.yml
   when: galera_deployed | bool
+  args:
+    apply:
+      tags:
+        - galera_server-upgrade
   tags:
-    - galera_server-upgrade
+    - always
 
 - include_tasks: galera_server_install.yml
+  args:
+    apply:
+      tags:
+        - galera_server-install
   tags:
-    - galera_server-install
+    - always
 
 - include_tasks: galera_server_post_install.yml
+  args:
+    apply:
+      tags:
+        - galera_server-config
   tags:
-    - galera_server-config
+    - always
 
 - name: Flush handlers
   meta: flush_handlers
 
 - include_tasks: galera_server_setup.yml
   when: inventory_hostname == galera_server_bootstrap_node
+  args:
+    apply:
+      tags:
+        - galera_server-config
   tags:
-    - galera_server-config
+    - always
 
 - include_tasks: tasks/galera_server_xinetd.yml
-  tags:
-    - galera_server-config
   when:
     - galera_monitoring_check_enabled | bool
+  args:
+    apply:
+      tags:
+        - galera_server-config
+  tags:
+    - always
 
 - include_tasks: galera_server_backups.yml
   when:
     - galera_mariadb_backups_enabled | bool
     - inventory_hostname in galera_mariadb_backups_nodes
+  args:
+    apply:
+      tags:
+        - galera_server-backups
   tags:
-    - galera_server-backups
+    - always
