@@ -59,16 +59,6 @@
     - galera_install_server | bool
     - not galera_cluster_ready | bool
 
-# TODO: Remove this include once MariaDB bug will be resolved
-# https://jira.mariadb.org/browse/MDEV-25030
-- name: Fix root user permissions during upgrade
-  include_tasks: handlers/galera_upgrade_hook.yml
-  listen: Bootstrap cluster
-  when:
-    - galera_install_server | bool
-    - galera_upgrade | bool
-    - inventory_hostname == galera_server_bootstrap_node
-
 - name: Start new cluster
   command: /usr/local/bin/galera_new_cluster
   failed_when: not start_new_cluster.rc in [0, 3]
