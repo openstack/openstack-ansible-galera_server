@@ -25,7 +25,9 @@
   failed_when: false
   changed_when: true
   register: node_status
-  listen: Restart all mysql
+  listen:
+    - Restart all mysql
+    - cert installed
   notify:
     - Bootstrap cluster
     - Restart mysql (All)

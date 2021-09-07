@@ -164,7 +164,62 @@ galera_distro_package_pins:
 
 # Galera Server SSL functionality.
 
+# Storage location for SSL certificate authority
+galera_pki_dir: "{{ openstack_pki_dir | default('/etc/pki/galera-ca') }}"
+
+# Create a certificate authority if one does not already exist
+galera_pki_create_ca: "{{ openstack_pki_authorities is not defined | bool }}"
+galera_pki_regen_ca: ''
+
+galera_pki_authorities:
+  - name: "MariaDBRoot"
+    country: "GB"
+    state_or_province_name: "England"
+    organization_name: "Example Corporation"
+    organizational_unit_name: "IT Security"
+    cn: "MariaDB Root CA"
+    provider: selfsigned
+    basic_constraints: "CA:TRUE"
+    key_usage:
+      - digitalSignature
+      - cRLSign
+      - keyCertSign
+    not_after: "+3650d"
+  - name: "MariaDBIntermediate"
+    country: "GB"
+    state_or_province_name: "England"
+    organization_name: "Example Corporation"
+    organizational_unit_name: "IT Security"
+    cn: "MariaDB Intermediate CA"
+    provider: ownca
+    basic_constraints: "CA:TRUE,pathlen:0"
+    key_usage:
+      - digitalSignature
+      - cRLSign
+      - keyCertSign
+    not_after: "+3650d"
+    signed_by: "MariaDBRoot"
+
+# Installation details for certificate authorities
+galera_pki_install_ca:
+  - name: "MariaDBRoot"
+    condition: "{{ galera_pki_create_ca }}"
+
+# Galera server certificate
+galera_pki_keys_path: "{{ galera_pki_dir ~ '/certs/private/' }}"
+galera_pki_certs_path: "{{ galera_pki_dir ~ '/certs/certs/' }}"
+galera_pki_intermediate_cert_name: "{{ openstack_pki_service_intermediate_cert_name | default('MariaDBIntermediate') }}"
+galera_pki_intermediate_cert_path: "{{ galera_pki_dir ~ '/roots/' ~ galera_pki_intermediate_cert_name ~ '/certs/' ~ galera_pki_intermediate_cert_name ~ '.crt' }}"
+galera_pki_regen_cert: ''
+galera_pki_certificates:
+  - name: "galera_{{ ansible_facts['hostname'] }}"
+    provider: ownca
+    cn: "{{ ansible_facts['hostname'] }}"
+    san: "{{ 'DNS:' ~ ansible_facts['hostname'] ~ ',IP:' ~ galera_address }}"
+    signed_by: "{{ galera_pki_intermediate_cert_name }}"
+
 galera_use_ssl: false
+galera_ssl_verify: true
 galera_ssl_cert: /etc/ssl/certs/galera.pem
 galera_ssl_key: /etc/mysql/ssl/galera.key
 galera_ssl_ca_cert: /etc/ssl/certs/galera-ca.pem
@@ -174,16 +229,28 @@ galera_ssl_ca_cert: /etc/ssl/certs/galera-ca.pem
 # galera_user_ssl_key: /etc/openstack_deploy/self_signed_certs/galera.key
 # galera_user_ssl_ca_cert: /etc/openstack_deploy/self_signed_certs/galera-ca.pem
 
-## Set galera_ssl_self_signed_regen to true if you want to generate a new
-# SSL certificate for Galera when this playbook runs.  You can also change
-# the subject of the self-signed certificate here if you prefer.
-galera_ssl_self_signed_regen: false
-galera_ssl_self_signed_subject: "/C=US/ST=Texas/L=San Antonio/O=IT/CN={{ galera_address }}"
-galera_ssl_ca_self_signed_subject: "/C=US/ST=Texas/L=San Antonio/O=IT"
-
 # This option is used for creating the CA and overriding the Galera address on the clients side.
 # Should be set to either public VIP of VIP FQDN, depending on what is currently used in the env.
 galera_address: "{{ ansible_host }}"
+
+# Installation details for SSL certificates
+galera_pki_install_certificates:
+  - src: "{{ galera_user_ssl_cert | default(galera_pki_certs_path ~ 'galera_' ~ ansible_facts['hostname'] ~ '-chain.crt') }}"
+    dest: "{{ galera_ssl_cert }}"
+    owner: "root"
+    group: "root"
+    mode: "0644"
+  - src: "{{ galera_user_ssl_key | default(galera_pki_keys_path ~ 'galera_' ~ ansible_facts['hostname'] ~ '.key.pem') }}"
+    dest: "{{ galera_ssl_key }}"
+    owner: "mysql"
+    group: "root"
+    mode: "0600"
+  - src: "{{ galera_user_ssl_ca_cert | default(galera_pki_intermediate_cert_path) }}"
+    dest: "{{ galera_ssl_ca_cert }}"
+    owner: "root"
+    group: "root"
+    mode: "0644"
+
 
 # MariaDB 10.1+ ships with 'PrivateDevices=True' in the systemd unit file. This
 # provides some additional security, but it causes problems with systemd 219.
@@ -206,10 +273,8 @@ galera_client_package_state: "latest"
 galera_client_drop_config_file: "true"
 galera_client_my_cnf_overrides: {}
 
-# This server is used when pulling an ssl cert onto a given host when a user
-# defined key is not present. By default this will try and pull from the
-# "galera_server" group and fall back to localhost.
-galera_ssl_server: "{{ (galera_cluster_members | default(['localhost']))[0] }}"
+# Delegated host for operating the certificate authority
+galera_ssl_server: "{{ openstack_pki_setup_host | default('localhost') }}"
 
 ## Database info
 galera_db_setup_host: "{{ openstack_db_setup_host | default(galera_cluster_members[0] | default('localhost')) }}"

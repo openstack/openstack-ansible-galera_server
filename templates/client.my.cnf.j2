@@ -8,3 +8,9 @@ localhost
 {% endif %}
 user={{ galera_root_user }}
 password={{ galera_root_password }}
+{% if galera_use_ssl %}
+ssl
+{%   if galera_ssl_verify %}
+ssl-verify-server-cert
+{%   endif %}
+{% endif %}

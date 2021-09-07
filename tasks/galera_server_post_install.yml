@@ -76,7 +76,21 @@
     - { path: "/var/lib/mysql", owner: "mysql", mode: "02755" }
     - { path: "/etc/mysql/conf.d" }
 
-- include_tasks: galera_server_ssl.yml
+- name: Create and install SSL certificates
+  include_role:
+    name: pki
+    tasks_from: "{{ galera_pki_create_ca | ternary('main.yml', 'main_certs.yml') }}"
+  vars:
+    pki_setup_host: "{{ galera_ssl_server }}"
+    pki_dir: "{{ galera_pki_dir }}"
+    pki_create_ca: "{{ galera_pki_create_ca }}"
+    pki_regen_ca: "{{ galera_pki_regen_ca }}"
+    pki_authorities: "{{ galera_pki_authorities }}"
+    pki_install_ca: "{{ galera_pki_install_ca }}"
+    pki_create_certificates: "{{ galera_user_ssl_cert is not defined and galera_user_ssl_key is not defined }}"
+    pki_regen_cert: "{{ galera_pki_regen_cert }}"
+    pki_certificates: "{{ galera_pki_certificates }}"
+    pki_install_certificates: "{{ galera_pki_install_certificates }}"
   when:
     - galera_use_ssl | bool
 
