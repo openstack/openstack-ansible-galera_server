@@ -14,7 +14,7 @@
 # limitations under the License.
 
 - name: Drop local .my.cnf file
-  config_template:
+  openstack.config_template.config_template:
     src: "client.my.cnf.j2"
     dest: "/root/.my.cnf"
     owner: "root"

@@ -104,7 +104,7 @@
   with_items: "{{ mariadb_delete_etc_conf_files | default([]) }}"
 
 - name: Drop mariadb config(s)
-  config_template:
+  openstack.config_template.config_template:
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
     owner: "root"
