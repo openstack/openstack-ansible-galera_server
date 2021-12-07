@@ -1,18 +1,14 @@
 # {{ ansible_managed }}
 
 [client]
-host     = localhost
 user     = root
 password = {{ galera_root_password }}
 socket   = /var/run/mysqld/mysqld.sock
 {% if galera_use_ssl | bool %}
-ssl-ca   = {{ galera_ssl_ca_cert }}
-ssl-cert = {{ galera_ssl_cert }}
-ssl-key  = {{ galera_ssl_key }}
+ssl
 {% endif %}
 
 [mysql_upgrade]
-host     = localhost
 user     = root
 password = {{ galera_root_password }}
 socket   = /var/run/mysqld/mysqld.sock
