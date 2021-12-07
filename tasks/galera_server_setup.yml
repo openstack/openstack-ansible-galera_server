@@ -30,6 +30,7 @@
     path: /var/lib/mysql/mysql_upgrade_info
     search_regex: "^{{ galera_major_version }}.{{ galera_minor_version }}"
 
+# NOTE(noonedeadpunk): We don't need to verify hostname when connectig to socket
 - name: Create galera users
   community.mysql.mysql_user:
     name: "{{ item.name }}"
@@ -38,6 +39,7 @@
     priv: "{{ item.priv }}"
     state: "{{ item.state }}"
     login_unix_socket: "{{ galera_unix_socket }}"
+    check_hostname: false
   with_items:
     - name: "{{ galera_root_user }}"
       host: "%"
