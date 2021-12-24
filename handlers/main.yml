@@ -57,7 +57,7 @@
   listen: Bootstrap cluster
   when:
     - galera_install_server | bool
-    - not galera_cluster_ready | bool
+    - not galera_cluster_ready | bool or galera_force_bootstrap | bool
 
 - name: Start new cluster
   command: /usr/local/bin/galera_new_cluster
@@ -68,13 +68,13 @@
   run_once: true
   when:
     - galera_install_server | bool
-    - not galera_cluster_ready | bool
+    - not galera_cluster_ready | bool or galera_force_bootstrap | bool
   listen: Bootstrap cluster
 
 - name: Restart mysql (All)
   service:
     name: "{{ galera_mariadb_service_name }}"
-    state: "{{ (not hostvars[item]['galera_cluster_ready'] | bool) | ternary('started', 'restarted') }}"
+    state: "{{ (not hostvars[item]['galera_cluster_ready'] | bool or galera_force_bootstrap | bool) | ternary('started', 'restarted') }}"
     enabled: yes
   environment:
     MYSQLD_STARTUP_TIMEOUT: 180
