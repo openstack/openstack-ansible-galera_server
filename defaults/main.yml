@@ -215,7 +215,7 @@ galera_pki_certificates:
   - name: "galera_{{ ansible_facts['hostname'] }}"
     provider: ownca
     cn: "{{ ansible_facts['hostname'] }}"
-    san: "{{ 'DNS:' ~ ansible_facts['hostname'] ~ ',IP:' ~ galera_address }}"
+    san: "{{ 'DNS:' ~ ansible_facts['hostname'] ~ ',' ~ ((galera_address | ansible.netcommon.ipaddr) is string) | ternary('IP', 'DNS') ~ ':' ~ galera_address }}"
     signed_by: "{{ galera_pki_intermediate_cert_name }}"
 
 galera_use_ssl: false
@@ -230,7 +230,7 @@ galera_ssl_ca_cert: /etc/ssl/certs/galera-ca.pem
 # galera_user_ssl_ca_cert: /etc/openstack_deploy/self_signed_certs/galera-ca.pem
 
 # This option is used for creating the CA and overriding the Galera address on the clients side.
-# Should be set to either public VIP of VIP FQDN, depending on what is currently used in the env.
+# Should be set to either internal VIP or VIP FQDN, depending on what is currently used in the env.
 galera_address: "{{ ansible_host }}"
 
 # Installation details for SSL certificates
