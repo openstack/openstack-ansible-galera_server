@@ -28,6 +28,28 @@
   when: galera_upgrade | bool
   notify: Reload the systemd daemon
 
+# TODO (jrosser) Remove all of these xinetd cleanup tasks in the Z release
+- name: Clean up legacy xinetd config
+  file:
+    path: "/etc/xinetd.d/mysqlchk"
+    state: absent
+  register: legacy_xinetd
+
+- name: Remove legacy galera service check from /etc/services
+  lineinfile:
+    dest: /etc/services
+    state: absent
+    regexp: '^mysqlchk'
+    line: 'mysqlchk    9200/tcp    # MySQL check'
+    backup: yes
+  register: legacy_services
+
+- name: Restart xinetd service
+  service:
+    name: xinetd
+    state: restarted
+  when: (legacy_xinetd is changed or legacy_services is changed)
+
 - name: Run the systemd service role
   import_role:
     name: systemd_service
@@ -37,6 +59,21 @@
       - service_name: "{{ galera_mariadb_service_name }}"
         systemd_overrides_only: True
         systemd_overrides: "{{ galera_init_defaults | combine(galera_init_overrides, recursive=True) }}"
+      - service_name: "mariadbcheck@"
+        service_type: "oneshot"
+        execstarts: "-/usr/local/bin/clustercheck"
+        enabled: False
+        load: False
+        standard_output: "socket"
+        sockets:
+          - socket_name: "mariadbcheck"
+            enabled: "{{ galera_monitoring_check_enabled }}"
+            state: "restarted"
+            options:
+              ListenStream: "{{ galera_server_bind_address }}:{{ galera_monitoring_check_port }}"
+              IPAddressDeny: any
+              IPAddressAllow: "{{ (galera_monitoring_allowed_source is defined) | ternary(galera_monitoring_allowed_source, 'localhost') }}"
+              Accept: "yes"
   tags:
     - galera-service
 
@@ -164,3 +201,9 @@
     src: "galera_new_cluster.j2"
     dest: "/usr/local/bin/galera_new_cluster"
     mode: "0750"
+
+- name: Create clustercheck script
+  template:
+    src: "clustercheck.j2"
+    dest: "/usr/local/bin/clustercheck"
+    mode: "0755"

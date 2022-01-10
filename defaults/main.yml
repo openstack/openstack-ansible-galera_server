@@ -66,7 +66,7 @@ galera_gpg_keys: "{{ _galera_gpg_keys | default([]) }}"
 galera_monitoring_user: monitoring
 galera_monitoring_user_password: ""
 
-# WARNING: Set this to open xinetd rules for galera monitoring.
+# WARNING: Set this to open IP rules for galera monitoring.
 # This is REQUIRED to run a working openstack-ansible deployment.
 # If it's undefined the galera cluster state can't be reported,
 # and haproxy would fail to do proper load balancing on the cluster.
@@ -74,6 +74,7 @@ galera_monitoring_user_password: ""
 # should be restricted, which we do in the integrated build.
 # Please override accordingly to your use case.
 # This can be replaced with other hostnames, cidr, ips, and ips + wildcards.
+# See https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html
 #
 #galera_monitoring_allowed_source: "0.0.0.0/0"
 

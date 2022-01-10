@@ -108,16 +108,6 @@
   tags:
     - always
 
-- include_tasks: tasks/galera_server_xinetd.yml
-  when:
-    - galera_monitoring_check_enabled | bool
-  args:
-    apply:
-      tags:
-        - galera_server-config
-  tags:
-    - always
-
 - include_tasks: galera_server_backups.yml
   when:
     - galera_mariadb_backups_enabled | bool
