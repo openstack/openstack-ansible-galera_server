@@ -104,7 +104,7 @@ galera_tmp_dir: /var/lib/mysql/#tmp
 galera_ignore_db_dirs:
   - "'#tmp'"
 
-galera_file_limits: 65535
+galera_file_limits: 164679
 galera_wait_timeout: "{{ openstack_db_connection_recycle_time | default('600') }}"
 # Increase this value if large SST transfers cause mysql startup to fail due
 # to timeout
