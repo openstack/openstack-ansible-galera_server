@@ -36,7 +36,7 @@
     systemd_services:
       - service_name: "{{ galera_mariadb_service_name }}"
         systemd_overrides_only: True
-        systemd_overrides: "{{ galera_init_defaults | combine(galera_init_overrides) }}"
+        systemd_overrides: "{{ galera_init_defaults | combine(galera_init_overrides, recursive=True) }}"
   tags:
     - galera-service
 
