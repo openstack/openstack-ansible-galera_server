@@ -13,21 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# TODO(noonedeadpunk): Remove task and called handler after X release
-- name: Remove old systemd overrides
-  file:
-    path: "/etc/systemd/system/{{ galera_mariadb_service_name }}.service.d/{{ item }}"
-    state: absent
-  with_items:
-    - environment.conf
-    - limits.conf
-    - restart.conf
-    - slice.conf
-    - timeout.conf
-    - without-privatedevices.conf
-  when: galera_upgrade | bool
-  notify: Reload the systemd daemon
-
 # TODO (jrosser) Remove all of these xinetd cleanup tasks in the Z release
 - name: Clean up legacy xinetd config
   file:
