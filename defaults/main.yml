@@ -65,6 +65,8 @@ galera_gpg_keys: "{{ _galera_gpg_keys | default([]) }}"
 
 galera_monitoring_user: monitoring
 galera_monitoring_user_password: ""
+galera_monitoring_port: 3307
+galera_monitoring_max_connections: 10
 
 # WARNING: Set this to open xinetd rules for galera monitoring.
 # This is REQUIRED to run a working openstack-ansible deployment.
