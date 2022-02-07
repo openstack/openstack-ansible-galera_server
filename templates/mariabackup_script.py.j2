@@ -167,18 +167,19 @@ def rotate_backups(dest, copies, full_backup_filename, increment_backup_filename
     get_lock_file()
     full_list = [os.path.normpath(dest+'/'+f) for f in os.listdir(dest) if f.startswith(full_backup_filename)]
     increment_list = [ os.path.normpath(dest+'/'+f) for f in os.listdir(dest) if f.startswith(increment_backup_filename)]
+    # Rotate full backups
     if len(full_list) > copies:
         full_list.sort()
-        left = parsedate(full_list[0].split(full_backup_filename)[1])
-        right = parsedate(full_list[1].split(full_backup_filename)[1])
-        for files in increment_list:
-            stamp = parsedate(files.split(increment_backup_filename)[1])
-            if stamp > left and stamp < right:
-                rmtree(files)
         while len(full_list) > copies:
-            folder = min(full_list, key=os.path.getmtime)
-            full_list.remove(folder)
-            rmtree(folder)
+            oldest_full_backup = min(full_list, key=os.path.getmtime)
+            full_list.remove(oldest_full_backup)
+            rmtree(oldest_full_backup)
+        # Remove all incremental backups older than the oldest full backup
+        oldest_full_backup_timestamp = parsedate(oldest_full_backup.split(full_backup_filename)[1])
+        for increment in increment_list:
+            increment_timestamp = parsedate(increment.split(increment_backup_filename)[1])
+            if increment_timestamp < oldest_full_backup_timestamp:
+                rmtree(increment)
     os.unlink("/var/run/mariabackup-galera/db_backup.pid")
 
 
