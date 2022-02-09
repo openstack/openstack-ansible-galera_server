@@ -99,12 +99,6 @@
   listen: Manage LB
   when: false
 
-- name: Restart xinetd
-  service:
-    name: xinetd
-    state: "{{ (galera_monitoring_check_enabled | bool) | ternary('restarted', 'stopped') }}"
-    enabled: "{{ galera_monitoring_check_enabled | bool }}"
-
 - name: Delete encryption keyfile after starting Galera
   file:
     path: "/tmp/.keyfile.key"
