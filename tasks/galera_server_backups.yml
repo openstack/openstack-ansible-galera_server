@@ -88,7 +88,7 @@
     host: "%"
     priv: "*.*:RELOAD,PROCESS,LOCK TABLES,REPLICATION CLIENT"
     append_privs: yes
-    login_host: "{{ galera_address }}"
-    login_port: 3306
+    login_unix_socket: "{{ galera_unix_socket }}"
+    check_hostname: false
   no_log: true
   run_once: true
