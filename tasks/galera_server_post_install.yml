@@ -111,6 +111,7 @@
     recurse: "{{ item.recurse|default('false') }}"
   with_items:
     - { path: "/var/lib/mysql", owner: "mysql", mode: "02755" }
+    - { path: "{{ galera_tmp_dir }}", owner: "mysql", mode: "02755" }
     - { path: "/etc/mysql/conf.d" }
 
 - name: Create and install SSL certificates
