@@ -218,7 +218,7 @@ galera_pki_certificates:
   - name: "galera_{{ ansible_facts['hostname'] }}"
     provider: ownca
     cn: "{{ ansible_facts['hostname'] }}"
-    san: "{{ 'DNS:' ~ ansible_facts['hostname'] ~ ',' ~ ((galera_address | ansible.netcommon.ipaddr) is string) | ternary('IP', 'DNS') ~ ':' ~ galera_address }}"
+    san: "{{ 'DNS:' ~ ansible_facts['hostname'] ~ ',' ~ ((galera_address | ansible.utils.ipaddr) is string) | ternary('IP', 'DNS') ~ ':' ~ galera_address }}"
     signed_by: "{{ galera_pki_intermediate_cert_name }}"
 
 galera_use_ssl: false
