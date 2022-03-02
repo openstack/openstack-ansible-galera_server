@@ -97,6 +97,7 @@ galera_root_user: root
 # WARNING: This option is deprecated and will be removed in v12.0
 galera_gcache_size: 1024M
 
+galera_data_dir: /var/lib/mysql
 galera_max_heap_table_size: 32M
 galera_tmp_table_size: 32M
 galera_tmp_dir: /var/lib/mysql/#tmp

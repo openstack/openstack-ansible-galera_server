@@ -27,7 +27,7 @@ user = mysql
 collation-server = utf8_general_ci
 init-connect = 'SET NAMES utf8'
 character-set-server = utf8
-datadir = /var/lib/mysql
+datadir = {{ galera_data_dir }}
 tmpdir = {{ galera_tmp_dir }}
 ignore_db_dirs = {{ galera_ignore_db_dirs | join(',') }}
 
@@ -45,8 +45,8 @@ ssl-key = {{ galera_ssl_key }}
 # LOGGING #
 log-queries-not-using-indexes = {{ galera_unindexed_query_logging }}
 slow-query-log = {{ galera_slow_query_logging }}
-log-bin = /var/lib/mysql/mariadb-bin
-log-bin-index = /var/lib/mysql/mariadb-bin.index
+log-bin = {{ galera_data_dir }}/mariadb-bin
+log-bin-index = {{ galera_data_dir }}/mariadb-bin.index
 expire-logs-days = 7
 log_slave_updates = 1
 log_bin_trust_function_creators = 1

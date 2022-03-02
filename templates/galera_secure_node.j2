@@ -43,4 +43,4 @@ fi
 
 # Create a marker file to ensure this script is not run again
 systemctl unset-environment MYSQLD_OPTS
-touch "/var/lib/mysql/osa_default_secured"
+touch "{{ galera_data_dir }}/osa_default_secured"
