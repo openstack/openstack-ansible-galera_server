@@ -13,12 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- name: Reload the systemd daemon
-  systemd:
-    daemon_reload: yes
-    name: "{{ galera_mariadb_service_name }}"
-    enabled: "yes"
-
 - name: Check node status
   command: >
     mysql --silent --skip-column-names --connect-timeout=10 -e 'SHOW STATUS LIKE "wsrep_local_state";'
