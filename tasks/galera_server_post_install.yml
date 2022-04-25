@@ -78,7 +78,7 @@
 - name: Run galera secure
   command: "/usr/local/bin/galera_secure_node"
   args:
-    creates: "/var/lib/mysql/osa_default_secured"
+    creates: "{{ galera_data_dir }}/osa_default_secured"
     warn: no
   when:
     - ansible_facts['pkg_mgr'] != "apt"
@@ -95,7 +95,7 @@
     mode: "{{ item.mode|default('0755') }}"
     recurse: "{{ item.recurse|default('false') }}"
   with_items:
-    - { path: "/var/lib/mysql", owner: "mysql", mode: "02755" }
+    - { path: "{{ galera_data_dir }}", owner: "mysql", mode: "02755" }
     - { path: "{{ galera_tmp_dir }}", owner: "mysql", mode: "02755" }
     - { path: "/etc/mysql/conf.d" }
 

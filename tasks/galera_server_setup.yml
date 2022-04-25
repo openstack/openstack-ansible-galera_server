@@ -27,7 +27,7 @@
 #                      need to wait for it to finish to avoid race conditions
 - name: Wait for MySQL Upgrade to finish
   wait_for:
-    path: /var/lib/mysql/mysql_upgrade_info
+    path: "{{ galera_data_dir }}/mysql_upgrade_info"
     search_regex: "^{{ galera_major_version }}.{{ galera_minor_version }}"
 
 # NOTE(noonedeadpunk): We don't need to verify hostname when connectig to socket
