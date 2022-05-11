@@ -45,6 +45,7 @@ ssl-key = {{ galera_ssl_key }}
 # LOGGING #
 log-queries-not-using-indexes = {{ galera_unindexed_query_logging }}
 slow-query-log = {{ galera_slow_query_logging }}
+slow_query_log_file = {{ galera_slow_query_log_file }}
 log-bin = {{ galera_data_dir }}/mariadb-bin
 log-bin-index = {{ galera_data_dir }}/mariadb-bin.index
 expire-logs-days = 7
