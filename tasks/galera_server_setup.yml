@@ -13,22 +13,22 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- name: Run MySQL Upgrade
-  command: /usr/bin/mariadb-upgrade --version-check
-  register: galera_mysql_upgrade
-  changed_when:
-    - not galera_mysql_upgrade.stdout is search("already upgraded")
-  until: galera_mysql_upgrade is success
-  when: ansible_facts['os_family'] | lower == 'redhat'
-  retries: 3
-  delay: 10
-
-# NOTE(noonedeadpunk): debian-start runs mariadb-upgrade with systemd unit so we
-#                      need to wait for it to finish to avoid race conditions
-- name: Wait for MySQL Upgrade to finish
-  wait_for:
-    path: /var/lib/mysql/mysql_upgrade_info
-    search_regex: "^{{ galera_major_version }}.{{ galera_minor_version }}"
+- name: Run mysql_upgrade
+  block:
+    - name: Fail if upgrade is needed
+      command: /usr/bin/mariadb-upgrade --check-if-upgrade-is-needed
+      register: galera_upgrade_check
+      failed_when: galera_upgrade_check.rc == 0
+      changed_when: False
+  rescue:
+    - name: Run MySQL Upgrade
+      command: /usr/bin/mariadb-upgrade
+      register: galera_mysql_upgrade
+      changed_when:
+        - not galera_mysql_upgrade.stdout is search("already upgraded")
+      until: galera_mysql_upgrade is success
+      retries: 3
+      delay: 10
 
 # NOTE(noonedeadpunk): We don't need to verify hostname when connectig to socket
 - name: Create galera users
