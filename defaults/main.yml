@@ -103,6 +103,7 @@ galera_tmp_table_size: 32M
 galera_tmp_dir: /var/lib/mysql/#tmp
 galera_ignore_db_dirs:
   - "'#tmp'"
+  - "lost+found"
 
 galera_file_limits: 65535
 galera_wait_timeout: "{{ openstack_db_connection_recycle_time | default('600') }}"
