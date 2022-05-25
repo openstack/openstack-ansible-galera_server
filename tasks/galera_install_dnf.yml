@@ -112,6 +112,7 @@
     gpgcheck: yes
     enabled: yes
     priority: 25
+  when: galera_repo != {}
   register: add_galera_repos
   until: add_galera_repos is success
   retries: 5
@@ -123,6 +124,7 @@
     line: "module_hotfixes=1"
     regexp: "^module_hotfixes"
     insertafter: "^enabled"
+  when: galera_repo != {}
 
 # When changing the repo URL, the metadata does
 # not reliably update, resulting in the right
