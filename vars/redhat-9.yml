@@ -23,6 +23,7 @@ _galera_gpg_keys: {}
 _galera_disable_privatedevices: yes
 
 galera_server_required_distro_packages:
+  - findutils
   - gnupg2
   - libaio
   - libstdc++
@@ -36,7 +37,7 @@ galera_etc_conf_file: "/etc/mysql/my.cnf"
 galera_etc_include_dir: "/etc/mysql/conf.d"
 galera_var_run_socket: "/var/lib/mysql/mysql.sock"
 
-_galera_mariadb_server_package: "mariadb"
+_galera_mariadb_server_package: "mariadb-server"
 
 galera_server_mariadb_distro_packages:
   - which
@@ -57,7 +58,8 @@ _galera_repo: {}
 
 galera_wsrep_provider: "/usr/lib64/galera/libgalera_smm.so"
 
-galera_client_distro_packages: []
+galera_client_distro_packages:
+  - mariadb
 
 galera_devel_distro_packages:
   - mariadb-connector-c-devel

@@ -52,7 +52,8 @@
         standard_output: "socket"
         sockets:
           - socket_name: "mariadbcheck"
-            after_targets: "network.target"
+            after_targets:
+              - "network.target"
             enabled: "{{ galera_monitoring_check_enabled }}"
             state: "restarted"
             options:
