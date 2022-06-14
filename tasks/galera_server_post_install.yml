@@ -160,7 +160,6 @@
       mode: "0600"
       condition: "{{ (galera_root_user == 'root') }}"
   notify:
-    - Manage LB
     - Restart all mysql
 
 - name: Apply service defaults
@@ -169,7 +168,6 @@
     dest: "/etc/default/mariadb"
     mode: "0644"
   notify:
-    - Manage LB
     - Restart all mysql
 
 - name: Link mysql and mariadb config files

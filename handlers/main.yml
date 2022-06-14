@@ -89,10 +89,6 @@
   notify:
     - Delete encryption keyfile after starting Galera
 
-- meta: noop
-  listen: Manage LB
-  when: false
-
 - name: Delete encryption keyfile after starting Galera
   file:
     path: "/tmp/.keyfile.key"

@@ -59,7 +59,6 @@
   when:
     - (galera_ignore_cluster_state | bool) or (galera_force_bootstrap | bool)
   notify:
-    - Manage LB
     - Restart all mysql
   tags:
     - always
