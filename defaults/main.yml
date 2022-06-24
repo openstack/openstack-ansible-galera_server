@@ -92,7 +92,7 @@ galera_monitoring_check_enabled: true
 # Set the monitoring port used with the galera monitoring check.
 galera_monitoring_check_port: 9200
 
-galera_root_user: root
+galera_root_user: admin
 
 # WARNING: This option is deprecated and will be removed in v12.0
 galera_gcache_size: 1024M
