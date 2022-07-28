@@ -21,7 +21,9 @@ _galera_disable_privatedevices: yes
 
 # Galera GPG Keys
 _galera_gpg_keys:
-  - url: http://repo.vexxhost.net/mariadb/key.gpg
+  # MariaDB Signing Key <signing-key@mariadb.org>
+  - id: C74CD1D8
+    file: /etc/ssl/mariadb-key
 
 galera_server_required_distro_packages:
   - apt-transport-https
@@ -50,16 +52,15 @@ _galera_mariadb_server_package: "mariadb-server-{{ galera_major_version }}"
 # mariadb-galera-server and galera.
 galera_server_mariadb_distro_packages:
   - libmariadb-dev
-  - mariadb-client
+  - mariadb-client-{{ galera_major_version }}
   - mariadb-backup
   - "{{ galera_mariadb_server_package }}"
-  - galera-4
   - rsync
   - socat
 
 # The packages to uninstall during an upgrade from a previous version
 galera_server_upgrade_packages_remove:
-  - mariadb-server
+  - mariadb-server-*
   - mysql-common
 
 galera_debconf_items:
@@ -73,7 +74,7 @@ galera_debconf_items:
     vtype: "string"
 
 # Repositories
-_galera_repo_url: "http://repo.vexxhost.net/mariadb"
+_galera_repo_url: "http://{{ galera_repo_host }}/MariaDB/mariadb-{{ galera_major_version }}.{{ galera_minor_version }}/repo/{{ ansible_distribution | lower }}"
 _galera_repo:
   repo: "deb {{ galera_repo_url }} {{ ansible_distribution_release }} main"
   state: "present"
