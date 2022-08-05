@@ -152,7 +152,7 @@
       dest: /etc/mysql/debian.cnf
       config_overrides: "{{ galera_debian_cnf_overrides }}"
       config_type: "ini"
-      condition: "{{ (ansible_facts['os_family'] | lower == 'debian') }}"
+      condition: "{{ (ansible_facts['os_family'] | lower == 'debian') and (galera_root_user == 'root') }}"
     - src: "client.my.cnf.j2"
       dest: "/root/.my.cnf"
       config_overrides: "{{ galera_client_my_cnf_overrides }}"
