@@ -32,6 +32,10 @@ tmpdir = {{ galera_tmp_dir }}
 ignore_db_dirs = {{ galera_ignore_db_dirs | join(',') }}
 
 bind-address = {{ galera_server_bind_address }}
+{% if galera_server_proxy_protocol_networks %}
+proxy-protocol-networks = {{ galera_server_proxy_protocol_networks }}
+{% endif %}
+
 {% if galera_server_id is defined %}
 server-id = {{ galera_server_id }}
 {% endif %}

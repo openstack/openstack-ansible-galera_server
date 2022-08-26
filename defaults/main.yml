@@ -26,6 +26,7 @@ galera_force_bootstrap: false
 galera_wsrep_node_name: "{{ inventory_hostname }}"
 galera_cluster_name: openstack_galera_cluster
 galera_server_bind_address: "{{ openstack_service_bind_address | default('0.0.0.0') }}"
+galera_server_proxy_protocol_networks: ""
 
 # The galera server-id should be set on all cluster nodes to ensure
 #  that replication is handled correctly and the error
