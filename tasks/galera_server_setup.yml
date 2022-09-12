@@ -38,29 +38,10 @@
     password: "{{ item.password }}"
     priv: "{{ item.priv }}"
     state: "{{ item.state }}"
+    resource_limits: "{{ item.resource_limits | default(omit) }}"
     login_unix_socket: "{{ galera_unix_socket }}"
     check_hostname: false
-  with_items:
-    - name: "{{ galera_root_user }}"
-      host: "%"
-      password: "{{ galera_root_password }}"
-      priv: "*.*:ALL,GRANT"
-      state: present
-    - name: "{{ galera_root_user }}"
-      host: "localhost"
-      password: "{{ galera_root_password }}"
-      priv: "*.*:ALL,GRANT"
-      state: present
-    - name: "{{ galera_monitoring_user }}"
-      host: '%'
-      password: "{{ galera_monitoring_user_password }}"
-      priv: "*.*:USAGE"
-      state: present
-    - name: "{{ galera_monitoring_user }}"
-      host: 'localhost'
-      password: "{{ galera_monitoring_user_password }}"
-      priv: "*.*:USAGE"
-      state: present
+  with_items: "{{ galera_setup_users }}"
   register: galera_users
   until: galera_users is success
   retries: 3

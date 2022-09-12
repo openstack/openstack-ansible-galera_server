@@ -27,3 +27,27 @@ galera_init_defaults:
     TimeoutStartSec: "{{ galera_startup_timeout }}"
     PrivateDevices: "{{ galera_disable_privatedevices | bool | ternary('false', 'true') }}"
     OOMScoreAdjust: "-1000"
+
+_galera_base_users:
+  - name: "{{ galera_root_user }}"
+    host: "%"
+    password: "{{ galera_root_password }}"
+    priv: "*.*:ALL,GRANT"
+    state: present
+  - name: "{{ galera_root_user }}"
+    host: "localhost"
+    password: "{{ galera_root_password }}"
+    priv: "*.*:ALL,GRANT"
+    state: present
+  - name: "{{ galera_monitoring_user }}"
+    host: '%'
+    password: "{{ galera_monitoring_user_password }}"
+    priv: "*.*:USAGE"
+    state: present
+  - name: "{{ galera_monitoring_user }}"
+    host: 'localhost'
+    password: "{{ galera_monitoring_user_password }}"
+    priv: "*.*:USAGE"
+    state: present
+
+galera_setup_users: "{{ _galera_base_users + galera_additional_users }}"

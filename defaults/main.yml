@@ -81,6 +81,14 @@ galera_monitoring_max_connections: 10
 #
 #galera_monitoring_allowed_source: "0.0.0.0/0"
 
+# Additional users to add or remove
+galera_additional_users: []
+#  - name: "my_username"
+#    host: '%'
+#    password: "my_password"
+#    priv: "*.*:USAGE"
+#    state: present
+
 # Enable or disable the installation of galera development packages
 galera_install_devel: false
 
