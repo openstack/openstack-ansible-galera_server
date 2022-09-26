@@ -62,14 +62,6 @@
   with_items: "{{ galera_debconf_items }}"
   no_log: yes
 
-- name: Prevent galera from starting on install
-  copy:
-    src: "policy-rc.d"
-    dest: "/usr/sbin/policy-rc.d"
-    mode: "0755"
-    backup: yes
-  changed_when: false
-
 - name: Update Apt cache
   apt:
     update_cache: yes
@@ -84,6 +76,7 @@
   apt:
     name: "{{ galera_packages_list }}"
     state: "{{ galera_package_state }}"
+    policy_rc_d: 101
     update_cache: yes
     cache_valid_time: "{{ cache_timeout }}"
   register: install_remote_apt_packages
@@ -92,10 +85,3 @@
   delay: 2
   notify:
     - Restart all mysql
-
-
-- name: Remove policy-rc now that the package install is complete
-  file:
-    path: "/usr/sbin/policy-rc.d"
-    state: absent
-  changed_when: false
