@@ -33,7 +33,6 @@
   changed_when: _remove_existing_mariadb_packages.rc == 2
   failed_when: _remove_existing_mariadb_packages.rc not in [0, 2]
   args:
-    warn: no
     executable: /bin/bash
 
 # In CentOS systems, /etc/my.cnf.d may already exist on the
@@ -133,8 +132,6 @@
 # cleaned out whenever the repo config changes.
 - name: Force the expiry of the repo metadata
   command: "{{ ansible_facts['pkg_mgr'] }} clean metadata"
-  args:
-    warn: no
   when: add_galera_repos is changed
   tags:
     - skip_ansible_lint
