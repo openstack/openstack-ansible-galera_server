@@ -53,7 +53,6 @@
         sockets:
           - socket_name: "mariadbcheck"
             enabled: "{{ galera_monitoring_check_enabled }}"
-            state: "restarted"
             options:
               ListenStream: "{{ galera_server_bind_address }}:{{ galera_monitoring_check_port }}"
               IPAddressDeny: any
