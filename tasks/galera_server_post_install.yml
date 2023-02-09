@@ -50,6 +50,7 @@
         enabled: False
         load: False
         standard_output: "socket"
+        after_targets: []
         sockets:
           - socket_name: "mariadbcheck"
             enabled: "{{ galera_monitoring_check_enabled }}"
@@ -58,6 +59,7 @@
               IPAddressDeny: any
               IPAddressAllow: "{{ (galera_monitoring_allowed_source is defined) | ternary(galera_monitoring_allowed_source, 'localhost') }}"
               Accept: "yes"
+              FreeBind: "true"
   tags:
     - galera-service
 
