@@ -31,5 +31,5 @@
     pki_setup_host: "{{ galera_ssl_server }}"
     pki_dir: "{{ galera_pki_dir }}"
     pki_install_ca: "{{ galera_pki_install_ca }}"
-    when:
+  when:
     - galera_use_ssl | bool
