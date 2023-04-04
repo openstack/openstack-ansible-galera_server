@@ -43,7 +43,7 @@ galera_var_run_socket: "/var/run/mysqld/mysqld.sock"
 # The package name for mariaDB is set as a variable
 # so that it can be used in debconf later in the
 # "galera_common" role.
-_galera_mariadb_server_package: "mariadb-server-{{ galera_major_version }}"
+_galera_mariadb_server_package: "mariadb-server"
 
 # NB This is specifically galera_server_mariadb_distro_packages as these
 # packages only get installed during the galera play - this is because of
@@ -51,7 +51,7 @@ _galera_mariadb_server_package: "mariadb-server-{{ galera_major_version }}"
 # mariadb-galera-server and galera.
 galera_server_mariadb_distro_packages:
   - libmariadb-dev
-  - mariadb-client-{{ galera_major_version }}
+  - mariadb-client
   - mariadb-backup
   - "{{ galera_mariadb_server_package }}"
   - rsync
@@ -59,7 +59,7 @@ galera_server_mariadb_distro_packages:
 
 # The packages to uninstall during an upgrade from a previous version
 galera_server_upgrade_packages_remove:
-  - mariadb-server-*
+  - mariadb-server*
   - mariadb-common
 
 galera_debconf_items:
@@ -82,7 +82,7 @@ _galera_repo:
 galera_wsrep_provider: "/usr/lib/galera/libgalera_smm.so"
 
 galera_client_distro_packages:
-  - "mariadb-client-{{ galera_major_version }}"
+  - "mariadb-client"
 
 galera_devel_distro_packages:
   - libmariadb-dev
