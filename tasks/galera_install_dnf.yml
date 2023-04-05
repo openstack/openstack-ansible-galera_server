@@ -92,16 +92,6 @@
     mode: '0644'
   with_items: "{{ galera_gpg_keys }}"
 
-- name: Install gpg keys
-  rpm_key: "{{ key }}"
-  with_items: "{{ galera_gpg_keys }}"
-  loop_control:
-    loop_var: key
-  register: _add_yum_keys
-  until: _add_yum_keys is success
-  retries: 5
-  delay: 2
-
 - name: Add galera repo
   yum_repository:
     name: "{{ galera_repo.name }}"
