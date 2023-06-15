@@ -1,11 +1,10 @@
 #!/usr/bin/python3
 # {{ ansible_managed }}
-from subprocess import Popen, PIPE
+from subprocess import Popen, PIPE, check_output, run
 from argparse import ArgumentParser
 from shutil import rmtree
 from time import strftime, mktime, sleep
 from datetime import datetime, timedelta
-import socket
 import os
 
 def get_opts():
@@ -34,6 +33,21 @@ def get_opts():
         dest="increment_flag",
         default=False,
         help="Flag to make incremental backup, based on the latest backup",
+        )
+    parser.add_argument(
+        "--compress",
+        dest="compress_flag",
+        default=False,
+        type=eval,
+        choices=[True, False],
+        help="Flag to compress created backups",
+        )
+    parser.add_argument(
+        "--compressor",
+        dest="compressor",
+        default="gzip",
+        type=str,
+        help="The compressor to use when compressing backups (default: gzip)",
         )
     parser.add_argument(
         "-c",
@@ -102,30 +116,44 @@ def check_backups(dest, warning, critical, full_backup_filename):
         raise SystemExit(0)
 
 
-def create_full_backup(dest, curtime, full_backup_filename, extra_mariabackup_args):
+def create_full_backup(dest, curtime, full_backup_filename, extra_mariabackup_args, compress, compressor):
     check_lock_file()
     get_lock_file()
     try:
-        #Creating full backup
         err = open(os.path.normpath(dest+"/backup.log"), "w")
-        mariabackup_run = Popen(
-        ["/usr/bin/mariabackup"] + extra_mariabackup_args + ["--backup", "--target-dir="+os.path.normpath(dest+"/"+full_backup_filename+curtime)], stdout=None, stderr=err
-        )
-        mariabackup_run.wait()
-        mariabackup_res = mariabackup_run.communicate()
-        if mariabackup_run.returncode:
-            print(mariabackup_res[1])
+        if compress:
+            #Creating compressed full backup
+            os.makedirs(dest+"/"+full_backup_filename+curtime, exist_ok=True)
+            mariabackup_run = Popen(
+            ["/usr/bin/mariabackup"] + extra_mariabackup_args + ["--backup", "--stream=xbstream", "--extra-lsndir="+os.path.normpath(dest+"/"+full_backup_filename+curtime)], stdout=PIPE, stderr=err
+            )
+            compressed_backup = open(os.path.normpath(dest+"/"+full_backup_filename+curtime+"/"+full_backup_filename+curtime), "wb")
+            run([compressor], stdin=mariabackup_run.stdout, stdout=compressed_backup)
+            mariabackup_run.wait()
+            mariabackup_res = mariabackup_run.communicate()
+            if mariabackup_run.returncode:
+                print(mariabackup_res[1])
+            compressed_backup.close()
+        else:
+            #Creating full backup
+            mariabackup_run = Popen(
+            ["/usr/bin/mariabackup"] + extra_mariabackup_args + ["--backup", "--target-dir="+os.path.normpath(dest+"/"+full_backup_filename+curtime)], stdout=None, stderr=err
+            )
+            mariabackup_run.wait()
+            mariabackup_res = mariabackup_run.communicate()
+            if mariabackup_run.returncode:
+                print(mariabackup_res[1])
+            #Preparing full backup
+            err_p = open(os.path.normpath(dest+"/prepare.log"), "w")
+            mariabackup_prep = Popen(
+            ["/usr/bin/mariabackup"] + extra_mariabackup_args + ["--prepare", "--target-dir="+os.path.normpath(dest+"/"+full_backup_filename+curtime)], stdout=None, stderr=err_p
+            )
+            mariabackup_prep.wait()
+            mariabackup_prep_res = mariabackup_prep.communicate()
+            if mariabackup_prep.returncode:
+                print(mariabackup_prep_res[1])
+            err_p.close()
         err.close()
-        #Preparing full backup
-        err_p = open(os.path.normpath(dest+"/prepare.log"), "w")
-        mariabackup_prep = Popen(
-        ["/usr/bin/mariabackup"] + extra_mariabackup_args + ["--prepare", "--target-dir="+os.path.normpath(dest+"/"+full_backup_filename+curtime)], stdout=None, stderr=err_p
-        )
-        mariabackup_prep.wait()
-        mariabackup_prep_res = mariabackup_prep.communicate()
-        if mariabackup_prep.returncode:
-            print(mariabackup_prep_res[1])
-        err_p.close()
     except OSError:
         print("Please, check that Mariabackup is installed")
     except Exception as e:
@@ -134,7 +162,7 @@ def create_full_backup(dest, curtime, full_backup_filename, extra_mariabackup_ar
         os.unlink("/var/run/mariabackup-galera/db_backup.pid")
 
 
-def create_increment_backup(dest, curtime, increment_backup_filename, extra_mariabackup_args):
+def create_increment_backup(dest, curtime, increment_backup_filename, extra_mariabackup_args, compress, compressor):
     check_lock_file()
     get_lock_file()
     try:
@@ -145,14 +173,28 @@ def create_increment_backup(dest, curtime, increment_backup_filename, extra_mari
         raise SystemExit(1)
     try:
         err = open(os.path.normpath(dest+"/increment.err"), "w")
-        #Creating incremental backup
-        mariabackup_run = Popen(
-        ["/usr/bin/mariabackup"] + extra_mariabackup_args + ["--backup", "--target-dir="+os.path.normpath(dest+"/"+increment_backup_filename+curtime), "--incremental-basedir="+basedir], stdout=None, stderr=err
-        )
-        mariabackup_run.wait()
-        mariabackup_res = mariabackup_run.communicate()
-        if mariabackup_run.returncode:
-            print(mariabackup_res[1])
+        if compress:
+            #Creating compressed incremental backup
+            os.makedirs(dest+"/"+increment_backup_filename+curtime, exist_ok=True)
+            mariabackup_run = Popen(
+            ["/usr/bin/mariabackup"] + extra_mariabackup_args + ["--backup", "--stream=xbstream", "--incremental-basedir="+basedir, "--extra-lsndir="+os.path.normpath(dest+"/"+increment_backup_filename+curtime)], stdout=PIPE, stderr=err
+            )
+            compressed_backup = open(os.path.normpath(dest+"/"+increment_backup_filename+curtime+"/"+increment_backup_filename+curtime), "wb")
+            run([compressor], stdin=mariabackup_run.stdout, stdout=compressed_backup)
+            mariabackup_run.wait()
+            mariabackup_res = mariabackup_run.communicate()
+            if mariabackup_run.returncode:
+                print(mariabackup_res[1])
+            compressed_backup.close()
+        else:
+            #Creating incremental backup
+            mariabackup_run = Popen(
+            ["/usr/bin/mariabackup"] + extra_mariabackup_args + ["--backup", "--target-dir="+os.path.normpath(dest+"/"+increment_backup_filename+curtime), "--incremental-basedir="+basedir], stdout=None, stderr=err
+            )
+            mariabackup_run.wait()
+            mariabackup_res = mariabackup_run.communicate()
+            if mariabackup_run.returncode:
+                print(mariabackup_res[1])
         err.close()
     except OSError:
         print("Please, check that Mariabackup is installed")
@@ -227,11 +269,11 @@ def main():
     if opts.fullbackup_flag and opts.increment_flag:
         raise NameError("Only one flag can be specified per operation")
     elif opts.fullbackup_flag:
-        create_full_backup(opts.destdir, curtime, full_backup_filename, extra_mariabackup_args)
+        create_full_backup(opts.destdir, curtime, full_backup_filename, extra_mariabackup_args, opts.compress_flag, opts.compressor)
         rotate_backups(opts.destdir, opts.copies_flag, full_backup_filename, increment_backup_filename)
         raise SystemExit()
     elif opts.increment_flag:
-        create_increment_backup(opts.destdir, curtime, increment_backup_filename, extra_mariabackup_args)
+        create_increment_backup(opts.destdir, curtime, increment_backup_filename, extra_mariabackup_args, opts.compress_flag, opts.compressor)
         raise SystemExit()
     elif opts.check_flag:
         pass
