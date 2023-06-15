@@ -307,6 +307,8 @@ galera_mariadb_backups_user: galera_mariadb_backup
 galera_mariadb_backups_suffix: "{{ inventory_hostname }}"
 galera_mariadb_backups_cnf_file: "/etc/mysql/mariabackup.cnf"
 galera_mariadb_backups_nodes: ["{{ galera_cluster_members[0] }}"]
+galera_mariadb_backups_compress: False
+galera_mariadb_backups_compressor: gzip
 
 galera_mariadb_encryption_enabled: false
 galera_mariadb_encryption_plugin: "file_key_management"
