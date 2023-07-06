@@ -80,7 +80,6 @@
   command: "/usr/local/bin/galera_secure_node"
   args:
     creates: "{{ galera_data_dir }}/osa_default_secured"
-    warn: no
   when:
     - ansible_facts['pkg_mgr'] != "apt"
     - not galera_upgrade
