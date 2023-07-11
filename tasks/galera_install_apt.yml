@@ -23,10 +23,16 @@
     src: "gpg/{{ item.id }}"
     dest: "{{ item.file }}"
     mode: '0644'
-  with_items: "{{ galera_gpg_keys | selectattr('file','defined') | list }}"
+  with_items: "{{ galera_gpg_keys | selectattr('file', 'defined') | list }}"
 
 - name: Install gpg keys
-  apt_key: "{{ key }}"
+  apt_key:
+    data: "{{ key['data'] | default(omit) }}"
+    file: "{{ key['file'] | default(omit) }}"
+    id: "{{ key['id'] | default(omit) }}"
+    state: "{{ key['state'] | default(omit) }}"
+    url: "{{ key['url'] | default(omit) }}"
+    validate_certs: "{{ key['validate_certs'] | default(omit) }}"
   with_items: "{{ galera_gpg_keys }}"
   loop_control:
     loop_var: key
@@ -61,16 +67,6 @@
     vtype: "{{ item.vtype }}"
   with_items: "{{ galera_debconf_items }}"
   no_log: yes
-
-- name: Update Apt cache
-  apt:
-    update_cache: yes
-  when:
-    - add_galera_repo is changed
-  register: update_apt_cache
-  until: update_apt_cache is success
-  retries: 5
-  delay: 2
 
 - name: Install galera role remote packages (apt)
   apt:

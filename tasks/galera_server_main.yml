@@ -29,12 +29,13 @@
   tags:
     - always
 
-- name: initialize local facts
+- name: Initialize local facts
   ini_file:
     dest: "/etc/ansible/facts.d/openstack_ansible.fact"
     section: "galera"
     option: initialized
     value: true
+    mode: "0644"
 
 - name: Refresh local facts
   setup:
@@ -63,14 +64,16 @@
   tags:
     - always
 
-- include_tasks: galera_server_cluster_state.yml
+- name: Including galera_server_cluster_state
+  include_tasks: galera_server_cluster_state.yml
   when:
     - galera_deployed | bool
     - not galera_ignore_cluster_state | bool
   tags:
     - always
 
-- include_tasks: galera_server_upgrade.yml
+- name: Including galera_server_upgrade
+  include_tasks: galera_server_upgrade.yml
   when: galera_deployed | bool
   args:
     apply:
@@ -79,7 +82,8 @@
   tags:
     - always
 
-- include_tasks: galera_server_install.yml
+- name: Including galera_server_install
+  include_tasks: galera_server_install.yml
   args:
     apply:
       tags:
@@ -87,7 +91,8 @@
   tags:
     - always
 
-- include_tasks: galera_server_post_install.yml
+- name: Including galera_server_post_install
+  include_tasks: galera_server_post_install.yml
   args:
     apply:
       tags:
@@ -98,7 +103,8 @@
 - name: Flush handlers
   meta: flush_handlers
 
-- include_tasks: galera_server_setup.yml
+- name: Including galera_server_setup
+  include_tasks: galera_server_setup.yml
   when: inventory_hostname == galera_server_bootstrap_node
   args:
     apply:
@@ -107,7 +113,8 @@
   tags:
     - always
 
-- include_tasks: galera_server_backups.yml
+- name: Including galera_server_backups
+  include_tasks: galera_server_backups.yml
   when:
     - galera_mariadb_backups_enabled | bool
     - inventory_hostname in galera_mariadb_backups_nodes

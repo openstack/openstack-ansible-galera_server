@@ -79,7 +79,7 @@ galera_monitoring_max_connections: 10
 # This can be replaced with other hostnames, cidr, ips, and ips + wildcards.
 # See https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html
 #
-#galera_monitoring_allowed_source: "0.0.0.0/0"
+# galera_monitoring_allowed_source: "0.0.0.0/0"
 
 # Additional users to add or remove
 galera_additional_users: []
@@ -143,15 +143,15 @@ galera_wsrep_cluster_address: >-
 galera_wsrep_node_incoming_address: "{{ galera_wsrep_address }}"
 ## Cap the maximum number of threads / workers when a user value is unspecified.
 galera_wsrep_slave_threads_max: 16
-galera_wsrep_slave_threads: "{{ [[ansible_facts['processor_vcpus']|default(2), 2] | max, galera_wsrep_slave_threads_max] | min }}"
+galera_wsrep_slave_threads: "{{ [[ansible_facts['processor_vcpus'] | default(2), 2] | max, galera_wsrep_slave_threads_max] | min }}"
 galera_wsrep_retry_autocommit: 3
 galera_wsrep_debug: NONE
 galera_wsrep_sst_method: mariabackup
 galera_wsrep_provider_options:
   - { option: "gcache.size", value: "{{ galera_gcache_size }}" }
-  - { option: "gmcast.listen_addr", value: "tcp://{{ galera_wsrep_node_incoming_address }}:{{ galera_wsrep_cluster_port  }}" }
+  - { option: "gmcast.listen_addr", value: "tcp://{{ galera_wsrep_node_incoming_address }}:{{ galera_wsrep_cluster_port }}" }
 galera_wsrep_sst_auth_user: "{{ galera_root_user }}"
-galera_wsrep_sst_auth_password: "{{ galera_root_password  }}"
+galera_wsrep_sst_auth_password: "{{ galera_root_password }}"
 
 # mariabackup parallel/sync threads
 galera_mariabackup_threads: 4
@@ -227,7 +227,10 @@ galera_pki_install_ca:
 galera_pki_keys_path: "{{ galera_pki_dir ~ '/certs/private/' }}"
 galera_pki_certs_path: "{{ galera_pki_dir ~ '/certs/certs/' }}"
 galera_pki_intermediate_cert_name: "{{ openstack_pki_service_intermediate_cert_name | default('MariaDBIntermediate') }}"
-galera_pki_intermediate_cert_path: "{{ galera_pki_dir ~ '/roots/' ~ galera_pki_intermediate_cert_name ~ '/certs/' ~ galera_pki_intermediate_cert_name ~ '.crt' }}"
+galera_pki_intermediate_cert_path: >-
+  {{
+    galera_pki_dir ~ '/roots/' ~ galera_pki_intermediate_cert_name ~ '/certs/' ~ galera_pki_intermediate_cert_name ~ '.crt'
+  }}
 galera_pki_regen_cert: ''
 galera_pki_certificates:
   - name: "galera_{{ ansible_facts['hostname'] }}"
@@ -284,7 +287,7 @@ galera_pki_install_certificates:
 # Setting the following variable to 'yes' will disable the PrivateDevices
 galera_disable_privatedevices: "{{ _galera_disable_privatedevices }}"
 
-#install and configure the galera client as well as the server
+# install and configure the galera client as well as the server
 galera_install_client: false
 galera_client_package_install: "{{ galera_install_client }}"
 galera_client_package_state: "latest"
@@ -296,13 +299,18 @@ galera_ssl_server: "{{ openstack_pki_setup_host | default('localhost') }}"
 
 ## Database info
 galera_db_setup_host: "{{ openstack_db_setup_host | default(galera_cluster_members[0] | default('localhost')) }}"
-galera_db_setup_python_interpreter: "{{ openstack_db_setup_python_interpreter | default((galera_db_setup_host == 'localhost') | ternary(ansible_playbook_python, ansible_facts['python']['executable'])) }}"
+galera_db_setup_python_interpreter: >-
+  {{
+    openstack_db_setup_python_interpreter | default(
+      (galera_db_setup_host == 'localhost') | ternary(ansible_playbook_python, ansible_facts['python']['executable'])
+    )
+  }}
 
 # Configure backups of database
 # copies is the number of full backups to be kept, the corresponding
 # incremental backups will also be kept. Uses systemd timer instead of cron.
 galera_mariadb_backups_enabled: false
-#galera_mariadb_backups_group_gid: <specify a GID>
+# galera_mariadb_backups_group_gid: <specify a GID>
 galera_mariadb_backups_group_name: backups
 galera_mariadb_backups_path: "/var/backup/mariadb_backups"
 galera_mariadb_backups_full_copies: 2
@@ -314,7 +322,7 @@ galera_mariadb_backups_increment_on_calendar:
   - "*-*-* 12:00:00"
   - "*-*-* 18:00:00"
 galera_mariadb_backups_increment_randomized_delay_sec: 0
-#galera_mariadb_backups_user is the name of the mariadb database user
+# galera_mariadb_backups_user is the name of the mariadb database user
 galera_mariadb_backups_user: galera_mariadb_backup
 galera_mariadb_backups_suffix: "{{ inventory_hostname }}"
 galera_mariadb_backups_cnf_file: "/etc/mysql/mariabackup.cnf"

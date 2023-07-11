@@ -90,10 +90,10 @@
   file:
     path: "{{ item.path }}"
     state: "directory"
-    owner: "{{ item.owner|default('root') }}"
-    group: "{{ item.group|default('root') }}"
-    mode: "{{ item.mode|default('0755') }}"
-    recurse: "{{ item.recurse|default('false') }}"
+    owner: "{{ item.owner | default('root') }}"
+    group: "{{ item.group | default('root') }}"
+    mode: "{{ item.mode | default('0755') }}"
+    recurse: "{{ item.recurse | default('false') }}"
   with_items:
     - { path: "{{ galera_data_dir }}", owner: "mysql", mode: "02755" }
     - { path: "{{ galera_tmp_dir }}", owner: "mysql", mode: "02755" }
@@ -175,7 +175,7 @@
     state: "link"
     force: "yes"
 
-- name: remove default mysql_safe_syslog
+- name: Remove default mysql_safe_syslog
   file:
     path: "/etc/mysql/conf.d/mysqld_safe_syslog.cnf"
     state: absent

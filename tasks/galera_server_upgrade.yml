@@ -37,7 +37,8 @@
   tags:
     - galera_server-upgrade
 
-- include_tasks: galera_server_upgrade_pre.yml
+- name: Including galera_server_upgrade_pre
+  include_tasks: galera_server_upgrade_pre.yml
   when:
     - galera_upgrade | bool
   args:

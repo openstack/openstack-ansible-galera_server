@@ -17,9 +17,11 @@
   set_fact:
     galera_packages_list: "{{ galera_server_required_distro_packages + galera_server_mariadb_distro_packages }}"
 
-- include_tasks: "galera_install_{{ ansible_facts['pkg_mgr'] }}.yml"
+- name: Including distro-specific installation tasks
+  include_tasks: "galera_install_{{ ansible_facts['pkg_mgr'] }}.yml"
 
-- include_tasks: galera_server_encryption.yml
+- name: Including galera_server_encryption
+  include_tasks: galera_server_encryption.yml
   when:
     - galera_mariadb_encryption_enabled | bool
   tags:
@@ -31,6 +33,7 @@
     section: galera
     option: deployed
     value: true
+    mode: "0644"
 
 - name: Set the galera existing cluster fact
   set_fact:

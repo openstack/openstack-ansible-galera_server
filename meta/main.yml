@@ -18,19 +18,19 @@ galaxy_info:
   description: Installation galera server
   company: Rackspace
   license: Apache2
-  min_ansible_version: 2.1
+  min_ansible_version: "2.10"
   platforms:
     - name: Debian
       versions:
-        - buster
+        - bullseye
     - name: Ubuntu
       versions:
-        - bionic
         - focal
+        - jammy
     - name: EL
       versions:
-        - 8
-  categories:
+        - "9"
+  galaxy_tags:
     - cloud
     - galera
     - mariadb

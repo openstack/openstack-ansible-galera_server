@@ -73,7 +73,9 @@ galera_debconf_items:
     vtype: "string"
 
 # Repositories
-_galera_repo_url: "http://{{ galera_repo_host }}/MariaDB/mariadb-{{ galera_major_version }}.{{ galera_minor_version }}/repo/{{ ansible_facts['distribution'] | lower }}"
+_galera_repo_url: >-
+  http://{{ galera_repo_host }}/MariaDB/mariadb-{{ galera_major_version }}.{{ galera_minor_version }}/repo/{{ ansible_facts['distribution'] | lower }}
+
 _galera_repo:
   repo: "deb {{ galera_repo_url }} {{ ansible_facts['distribution_release'] }} main"
   state: "present"
