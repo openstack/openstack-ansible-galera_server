@@ -17,14 +17,11 @@
   command: >
     mysql --silent --skip-column-names --connect-timeout=10 -e 'SHOW STATUS LIKE "wsrep_local_state";'
   failed_when: false
-  changed_when: true
+  changed_when: false
   register: node_status
   listen:
     - Restart all mysql
     - cert installed
-  notify:
-    - Bootstrap cluster
-    - Restart mysql (All)
 
 - name: Check if node is in the cluster
   command: >
@@ -32,17 +29,23 @@
   failed_when: false
   changed_when: false
   register: incoming_addresses
-  listen: Bootstrap cluster
+  listen:
+    - Restart all mysql
+    - cert installed
 
 - name: Set incoming addresses fact (primary)
   set_fact:
     galera_incoming_addresses: "{{ (incoming_addresses.stdout.split()[-1] | default('')).split(',') }}"
-  listen: Bootstrap cluster
+  listen:
+    - Restart all mysql
+    - cert installed
 
 - name: Set node status fact
   set_fact:
     galera_cluster_ready: "{{ (galera_wsrep_address_port in galera_incoming_addresses) or ((node_status.stdout.split()[-1] | default(false)) in ['2', '4']) }}"
-  listen: Bootstrap cluster
+  listen:
+    - Restart all mysql
+    - cert installed
 
 - name: Stop mysql
   service:
@@ -50,7 +53,9 @@
     state: stopped
     enabled: yes
   changed_when: true
-  listen: Bootstrap cluster
+  listen:
+    - Restart all mysql
+    - cert installed
   when:
     - galera_install_server | bool
     - not galera_cluster_ready | bool or galera_force_bootstrap | bool
@@ -65,7 +70,9 @@
   when:
     - galera_install_server | bool
     - not galera_cluster_ready | bool or galera_force_bootstrap | bool
-  listen: Bootstrap cluster
+  listen:
+    - Restart all mysql
+    - cert installed
 
 - name: Restart mysql (All)
   service:
@@ -86,10 +93,15 @@
   with_items:
     - "{{ ansible_play_hosts }}"
   run_once: true
-  notify:
-    - Delete encryption keyfile after starting Galera
+  listen:
+    - Restart all mysql
+    - cert installed
 
 - name: Delete encryption keyfile after starting Galera
   file:
     path: "/tmp/.keyfile.key"
     state: absent
+  when: galera_restart is changed
+  listen:
+    - Restart all mysql
+    - cert installed
