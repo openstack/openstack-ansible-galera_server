@@ -30,7 +30,7 @@ galera_server_required_distro_packages:
   - debconf-utils
   - libaio1
   - libc6
-  - libgcc1
+  - libgcc-s1
   - libgcrypt20
   - libstdc++6
   - python3-pymysql # needed by mysql_user
