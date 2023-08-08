@@ -61,6 +61,7 @@ galera_server_mariadb_distro_packages:
 galera_server_upgrade_packages_remove:
   - mariadb-server*
   - mariadb-common
+  - galera-*
 
 galera_debconf_items:
   - question: "mysql-server/root_password"
