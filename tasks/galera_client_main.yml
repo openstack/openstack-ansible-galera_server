@@ -17,11 +17,13 @@
   set_fact:
     galera_packages_list: "{{ galera_client_distro_packages }}"
 
-- include_tasks: "galera_install_{{ ansible_facts['pkg_mgr'] }}.yml"
+- name: Including distro-specific installation tasks
+  include_tasks: "galera_install_{{ ansible_facts['pkg_mgr'] }}.yml"
   when:
     - galera_client_package_install | bool
 
-- include_tasks: galera_client_post_install.yml
+- name: Including galera_client_post_install
+  include_tasks: galera_client_post_install.yml
 
 - name: Create and install SSL certificates
   include_role:

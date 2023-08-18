@@ -17,8 +17,8 @@
 # a service may not yet exist on the target host. This will
 # cause the service stop task to fail. To cater for this
 # we only try to stop the service is it exists.
-- name: Check whether a mysql service exists yet
-  shell: systemctl list-unit-files --state=enabled --type=service | grep "^{{ galera_mariadb_service_name }}.service .* enabled$" # noqa command-instead-of-module risky-shell-pipe
+- name: Check whether a mysql service exists yet # noqa command-instead-of-module risky-shell-pipe
+  shell: systemctl list-unit-files --state=enabled --type=service | grep "^{{ galera_mariadb_service_name }}.service .* enabled$"
   args:
     executable: /bin/bash
   changed_when: false
@@ -42,4 +42,3 @@
     state: absent
   with_items:
     - "{{ galera_server_upgrade_packages_remove }}"
-

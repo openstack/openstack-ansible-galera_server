@@ -17,4 +17,5 @@
   set_fact:
     galera_packages_list: "{{ galera_devel_distro_packages }}"
 
-- include_tasks: "galera_install_{{ ansible_facts['pkg_mgr'] }}.yml"
+- name: Including distro-specific installation tasks
+  include_tasks: "galera_install_{{ ansible_facts['pkg_mgr'] }}.yml"
