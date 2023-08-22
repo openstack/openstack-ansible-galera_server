@@ -19,6 +19,8 @@ galaxy_info:
   company: Rackspace
   license: Apache2
   min_ansible_version: "2.10"
+  role_name: galera_server
+  namespace: openstack
   platforms:
     - name: Debian
       versions:
