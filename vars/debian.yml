@@ -89,5 +89,6 @@ galera_client_distro_packages:
 
 galera_devel_distro_packages:
   - libmariadb-dev
+  - libmariadb-dev-compat
 
 galera_unix_socket: "/var/run/mysqld/mysqld.sock"
