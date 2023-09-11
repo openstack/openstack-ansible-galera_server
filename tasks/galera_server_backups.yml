@@ -31,6 +31,7 @@
   vars:
     systemd_service_enabled: true
     systemd_service_restart_changed: false
+    systemd_overrides: "{{ galera_mariadb_backups_full_init_overrides }}"
     systemd_user_name: "mysql"
     systemd_group_name: "{{ galera_mariadb_backups_group_name }}"
     systemd_services:
@@ -58,6 +59,7 @@
   vars:
     systemd_service_enabled: true
     systemd_service_restart_changed: false
+    systemd_overrides: "{{ galera_mariadb_backups_increment_init_overrides }}"
     systemd_user_name: "mysql"
     systemd_group_name: "{{ galera_mariadb_backups_group_name }}"
     systemd_services:
