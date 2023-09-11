@@ -316,12 +316,14 @@ galera_mariadb_backups_path: "/var/backup/mariadb_backups"
 galera_mariadb_backups_full_copies: 2
 galera_mariadb_backups_full_on_calendar: "*-*-* 00:00:00"
 galera_mariadb_backups_full_randomized_delay_sec: 0
+galera_mariadb_backups_full_init_overrides: {}
 
 galera_mariadb_backups_increment_on_calendar:
   - "*-*-* 06:00:00"
   - "*-*-* 12:00:00"
   - "*-*-* 18:00:00"
 galera_mariadb_backups_increment_randomized_delay_sec: 0
+galera_mariadb_backups_increment_init_overrides: {}
 # galera_mariadb_backups_user is the name of the mariadb database user
 galera_mariadb_backups_user: galera_mariadb_backup
 galera_mariadb_backups_suffix: "{{ inventory_hostname }}"
