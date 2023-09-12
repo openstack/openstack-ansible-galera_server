@@ -55,7 +55,7 @@
     repo: "{{ galera_repo.repo }}"
     filename: "{{ galera_repo.filename | default(omit) }}"
     state: "{{ galera_repo.state }}"
-    update_cache: no
+    update_cache: yes
   register: add_galera_repo
   when: galera_repo.repo is defined
 
