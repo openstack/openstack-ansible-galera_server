@@ -9,7 +9,7 @@ import os
 
 def get_opts():
     parser = ArgumentParser(
-        usage="python3 mariabackup_script <destdir> [--full-backup][--increment] [--suffix=<suffix>] [--defaults-file=<defaults-file>]",
+        usage="python3 mariabackup_script <destdir> [--full-backup][--increment][--dump] [--suffix=<suffix>] [--defaults-file=<defaults-file>]",
         prog="Mariadb Backup Script",
         description="""
         This program makes a mariadb backup with Mariabackup
@@ -41,6 +41,14 @@ def get_opts():
         type=eval,
         choices=[True, False],
         help="Flag to compress created backups",
+        )
+        parser.add_argument(
+        "-d",
+        "--dump",
+        action="store_true",
+        dest="dump_flag",
+        default=False,
+        help="Flag to make SQL dump database backup",
         )
     parser.add_argument(
         "--compressor",
@@ -161,6 +169,22 @@ def create_full_backup(dest, curtime, full_backup_filename, extra_mariabackup_ar
     finally:
         os.unlink("/var/run/mariabackup-galera/db_backup.pid")
 
+def create_dump_backup(dest, curtime, dump_backup_filename, extra_mariabackup_args):
+    check_lock_file()
+    get_lock_file()
+    try:
+        #Creating full backup
+        err = open(os.path.normpath(dest+"/dumpdb.log"), "w")
+       # dblist = check_output("mysqlshow |sed -r '/Databases|information_schema|performance_schema|#.*/d'| awk '{ print $2 }' |grep -v '^$'|xargs", shell=True,universal_newlines=True).strip()
+        
+        dump_out=check_output("/usr/bin/mysqldump "+ ' '.join(extra_mariabackup_args) +" --databases "+dblist+" | /usr/bin/gzip > "+os.path.normpath(dest+"/"+dump_backup_filename+curtime)+".gz",shell=True, stderr=err)
+        err.close()
+    except OSError:
+        print("Please, check that Mariabackup is installed")
+    except Exception as e:
+        print(e)
+    finally:
+        os.unlink("/var/run/mariabackup-galera/db_backup.pid")
 
 def create_increment_backup(dest, curtime, increment_backup_filename, extra_mariabackup_args, compress, compressor):
     check_lock_file()
@@ -257,10 +281,13 @@ def main():
 
     full_backup_filename = "mariabackup-full_"
     increment_backup_filename = "mariabackup-increment_"
+    dump_backup_filename = "dumpbackup-full_"
+
     if opts.suffix:
         full_backup_filename = ("mariabackup-full-" + opts.suffix + "_")
         increment_backup_filename = ("mariabackup-increment-" + opts.suffix + "_")
-
+        dump_backup_filename = ("dumpbackup-full-" + opts.suffix + "_")
+        
     extra_mariabackup_args = []
     # --defaults-file must be specified straight after the process
     if opts.defaults_file:
@@ -271,6 +298,10 @@ def main():
     elif opts.fullbackup_flag:
         create_full_backup(opts.destdir, curtime, full_backup_filename, extra_mariabackup_args, opts.compress_flag, opts.compressor)
         rotate_backups(opts.destdir, opts.copies_flag, full_backup_filename, increment_backup_filename)
+        raise SystemExit()
+    elif opts.dump_flag:
+        extra_mariabackup_args = ["--single-transaction", "--flush-logs", "--flush-privileges"]
+        create_dump_backup(opts.destdir, curtime, dump_backup_filename, extra_mariabackup_args)
         raise SystemExit()
     elif opts.increment_flag:
         create_increment_backup(opts.destdir, curtime, increment_backup_filename, extra_mariabackup_args, opts.compress_flag, opts.compressor)
