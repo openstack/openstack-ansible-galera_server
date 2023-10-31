@@ -169,13 +169,17 @@ def create_full_backup(dest, curtime, full_backup_filename, extra_mariabackup_ar
     finally:
         os.unlink("/var/run/mariabackup-galera/db_backup.pid")
 
-def create_dump_backup(dest, curtime, dump_backup_filename, extra_mariabackup_args):
+def create_dump_backup(dest, curtime, dump_backup_filename, extra_mariabackup_args, compress, compressor):
     check_lock_file()
     get_lock_file()
     try:
-        #Creating full backup 
+        #Creating dump SQL backup
+        err = open(os.path.normpath(dest+"/dumpdb.log"), "w")
         dblist = check_output("mysqlshow |sed -r '/Databases|information_schema|performance_schema|#.*/d'|awk '{ print $2 }' |grep -v '^$'|xargs", shell=True,universal_newlines=True).strip()
-        dump_out=check_output("/usr/bin/mysqldump "+ ' '.join(extra_mariabackup_args) +" --databases "+dblist+" | /usr/bin/gzip > "+os.path.normpath(dest+"/"+dump_backup_filename+curtime)+".gz",shell=True, stderr=err)
+        if compress:
+            dump_out=check_output("/usr/bin/mysqldump "+ ' '.join(extra_mariabackup_args) +" --databases "+dblist+" | " + compressor +" > "+os.path.normpath(dest+"/"+dump_backup_filename+curtime)+".gz",shell=True, stderr=err)
+        else:
+           dump_out=check_output("/usr/bin/mysqldump "+ ' '.join(extra_mariabackup_args) +" --databases "+dblist+"  > "+os.path.normpath(dest+"/"+dump_backup_filename+curtime)+".sql",shell=True, stderr=err)
         err.close()
     except OSError:
         print("Please, check that Mariabackup is installed")
@@ -260,7 +264,6 @@ def check_lock_file():
             print("timeout of waiting another process is reached")
             raise SystemExit(1)
 
-
 def get_lock_file():
     try:
         pid = open('/var/run/mariabackup-galera/db_backup.pid', 'w')
@@ -268,7 +271,6 @@ def get_lock_file():
         pid.close()
     except Exception as e:
         print(e)
-
 
 def main():
     opts = get_opts()
@@ -299,7 +301,7 @@ def main():
         raise SystemExit()
     elif opts.dump_flag:
         extra_mariabackup_args = ["--single-transaction", "--flush-logs", "--flush-privileges"]
-        create_dump_backup(opts.destdir, curtime, dump_backup_filename, extra_mariabackup_args)
+        create_dump_backup(opts.destdir, curtime, dump_backup_filename, extra_mariabackup_args, opts.compress_flag, opts.compressor)
         raise SystemExit()
     elif opts.increment_flag:
         create_increment_backup(opts.destdir, curtime, increment_backup_filename, extra_mariabackup_args, opts.compress_flag, opts.compressor)
