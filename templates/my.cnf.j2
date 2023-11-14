@@ -29,7 +29,9 @@ init-connect = 'SET NAMES utf8'
 character-set-server = utf8
 datadir = {{ galera_data_dir }}
 tmpdir = {{ galera_tmp_dir }}
-ignore_db_dirs = {{ galera_ignore_db_dirs | join(',') }}
+{% for ignored_db in galera_ignore_db_dirs %}
+ignore_db_dirs = {{ ignored_db }}
+{% endfor %}
 
 bind-address = {{ galera_server_bind_address }}
 {% if galera_server_id is defined %}
