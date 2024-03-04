@@ -46,6 +46,8 @@ ssl
 ssl-ca = {{ galera_ssl_ca_cert }}
 ssl-cert = {{ galera_ssl_cert }}
 ssl-key = {{ galera_ssl_key }}
+require-secure-transport = {{ galera_require_secure_transport }}
+tls-version = {{ galera_tls_version }}
 {% endif %}
 
 # LOGGING #

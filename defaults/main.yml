@@ -244,6 +244,8 @@ galera_ssl_verify: true
 galera_ssl_cert: /etc/ssl/certs/galera.pem
 galera_ssl_key: /etc/mysql/ssl/galera.key
 galera_ssl_ca_cert: /etc/ssl/certs/galera-ca.pem
+galera_require_secure_transport: false
+galera_tls_version: "TLSv1.2,TLSv1.3"
 
 ## These options should be specified in user_variables if necessary, otherwise self-signed certs are used.
 # galera_user_ssl_cert: /etc/openstack_deploy/self_signed_certs/galera.pem
