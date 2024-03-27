@@ -44,3 +44,5 @@ dependencies:
     apt_package_pinning_file_name: "galera_pin.pref"
     when:
       - ansible_facts['pkg_mgr'] == 'apt'
+      - galera_install_method == 'external_repo'
+      - galera_repo | default(True)

@@ -32,6 +32,7 @@
   register: _remove_existing_mariadb_packages
   changed_when: _remove_existing_mariadb_packages.rc == 2
   failed_when: _remove_existing_mariadb_packages.rc not in [0, 2]
+  when: galera_install_method == 'external_repo'
   args:
     executable: /bin/bash
 
@@ -85,35 +86,38 @@
       state: "link"
       force: true
 
-- name: If a keyfile is provided, copy the gpg keyfile to the key location
-  copy:
-    src: "gpg/{{ item.key | basename }}"
-    dest: "{{ item.key }}"
-    mode: '0644'
-  with_items: "{{ galera_gpg_keys }}"
+- name: Configure repositories for MariaDB installation
+  when:
+    - galera_install_method == 'external_repo'
+    - galera_repo
+  block:
+    - name: If a keyfile is provided, copy the gpg keyfile to the key location
+      copy:
+        src: "gpg/{{ item.key | basename }}"
+        dest: "{{ item.key }}"
+        mode: '0644'
+      with_items: "{{ galera_gpg_keys }}"
 
-- name: Add galera repo
-  yum_repository:
-    name: "{{ galera_repo.name }}"
-    description: "{{ galera_repo.description }}"
-    baseurl: "{{ galera_repo.baseurl }}"
-    gpgkey: "{{ galera_repo.gpgkey | default(omit) }}"
-    gpgcheck: yes
-    enabled: yes
-    priority: 25
-  when: galera_repo != {}
-  register: add_galera_repos
-  until: add_galera_repos is success
-  retries: 5
-  delay: 2
+    - name: Add galera repo
+      yum_repository:
+        name: "{{ galera_repo.name }}"
+        description: "{{ galera_repo.description }}"
+        baseurl: "{{ galera_repo.baseurl }}"
+        gpgkey: "{{ galera_repo.gpgkey | default(omit) }}"
+        gpgcheck: yes
+        enabled: yes
+        priority: 25
+      register: add_galera_repos
+      until: add_galera_repos is success
+      retries: 5
+      delay: 2
 
-- name: Enable module_hotfixes
-  lineinfile:
-    dest: "/etc/yum.repos.d/{{ galera_repo.name }}.repo"
-    line: "module_hotfixes=1"
-    regexp: "^module_hotfixes"
-    insertafter: "^enabled"
-  when: galera_repo != {}
+    - name: Enable module_hotfixes
+      lineinfile:
+        dest: "/etc/yum.repos.d/{{ galera_repo.name }}.repo"
+        line: "module_hotfixes=1"
+        regexp: "^module_hotfixes"
+        insertafter: "^enabled"
 
 # When changing the repo URL, the metadata does
 # not reliably update, resulting in the right
