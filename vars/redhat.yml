@@ -25,6 +25,7 @@ _galera_gpg_keys:
 _galera_disable_privatedevices: yes
 
 galera_server_required_distro_packages:
+  - findutils  # "find" is used by wsrep_sst_mariabackup script
   - gnupg2
   - libaio
   - libstdc++
