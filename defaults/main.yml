@@ -89,6 +89,9 @@ galera_additional_users: []
 #    priv: "*.*:USAGE"
 #    state: present
 
+# Choose 'distro' or 'external_repo'
+galera_install_method: external_repo
+
 # Enable or disable the installation of galera development packages
 galera_install_devel: false
 

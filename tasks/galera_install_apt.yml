@@ -17,47 +17,53 @@
   package:
     name: "{{ galera_mariadb_distro_packages_remove | default([]) }}"
     state: absent
+  when: galera_install_method == 'external_repo'
 
-- name: If a keyfile is provided, copy the gpg keyfile to the key location
-  copy:
-    src: "gpg/{{ item.id }}"
-    dest: "{{ item.file }}"
-    mode: '0644'
-  with_items: "{{ galera_gpg_keys | selectattr('file', 'defined') | list }}"
+- name: Configure repositories for MariaDB installation
+  when:
+    - galera_install_method == 'external_repo'
+    - galera_repo
+  block:
+    - name: If a keyfile is provided, copy the gpg keyfile to the key location
+      copy:
+        src: "gpg/{{ item.id }}"
+        dest: "{{ item.file }}"
+        mode: '0644'
+      with_items: "{{ galera_gpg_keys | selectattr('file', 'defined') | list }}"
 
-- name: Install gpg keys
-  apt_key:
-    data: "{{ key['data'] | default(omit) }}"
-    file: "{{ key['file'] | default(omit) }}"
-    id: "{{ key['id'] | default(omit) }}"
-    state: "{{ key['state'] | default(omit) }}"
-    url: "{{ key['url'] | default(omit) }}"
-    validate_certs: "{{ key['validate_certs'] | default(omit) }}"
-  with_items: "{{ galera_gpg_keys }}"
-  loop_control:
-    loop_var: key
-  register: _add_apt_keys
-  until: _add_apt_keys is success
-  retries: 5
-  delay: 2
+    - name: Install gpg keys
+      apt_key:
+        data: "{{ key['data'] | default(omit) }}"
+        file: "{{ key['file'] | default(omit) }}"
+        id: "{{ key['id'] | default(omit) }}"
+        state: "{{ key['state'] | default(omit) }}"
+        url: "{{ key['url'] | default(omit) }}"
+        validate_certs: "{{ key['validate_certs'] | default(omit) }}"
+      with_items: "{{ galera_gpg_keys }}"
+      loop_control:
+        loop_var: key
+      register: _add_apt_keys
+      until: _add_apt_keys is success
+      retries: 5
+      delay: 2
 
-- name: Remove old repos
-  lineinfile:
-    dest: "/etc/apt/sources.list.d/{{ item.name }}.list"
-    regexp: "^((?!{{ item.repo }}).*)$"
-    state: absent
-  with_items:
-    - { name: "MariaDB", repo: "{{ galera_repo.repo }}" }
-  when: galera_repo.repo is defined
+    - name: Remove old repos
+      lineinfile:
+        dest: "/etc/apt/sources.list.d/{{ item.name }}.list"
+        regexp: "^((?!{{ item.repo }}).*)$"
+        state: absent
+      with_items:
+        - { name: "MariaDB", repo: "{{ galera_repo.repo }}" }
+      when: galera_repo.repo is defined
 
-- name: Add galera repo
-  apt_repository:
-    repo: "{{ galera_repo.repo }}"
-    filename: "{{ galera_repo.filename | default(omit) }}"
-    state: "{{ galera_repo.state }}"
-    update_cache: yes
-  register: add_galera_repo
-  when: galera_repo.repo is defined
+    - name: Add galera repo
+      apt_repository:
+        repo: "{{ galera_repo.repo }}"
+        filename: "{{ galera_repo.filename | default(omit) }}"
+        state: "{{ galera_repo.state }}"
+        update_cache: yes
+      register: add_galera_repo
+      when: galera_repo.repo is defined
 
 - name: Preseed galera password(s)
   debconf:

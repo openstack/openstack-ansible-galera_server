@@ -30,21 +30,21 @@ galera_server_required_distro_packages:
   - libstdc++
   - libgcc
   - libgcrypt
-  - MariaDB-client
-  - MariaDB-devel
+  - "{{ (galera_install_method == 'external_repo') | ternary('MariaDB-client', 'mariadb') }}"
+  - "{{ (galera_install_method == 'external_repo') | ternary('MariaDB-devel', 'mariadb-connector-c-devel') }}"
   - python3-PyMySQL
 
 galera_etc_conf_file: "/etc/mysql/my.cnf"
 galera_etc_include_dir: "/etc/mysql/conf.d"
 galera_var_run_socket: "{{ galera_data_dir }}/mysql.sock"
 
-_galera_mariadb_server_package: "MariaDB-server"
+_galera_mariadb_server_package: "{{ (galera_install_method == 'external_repo') | ternary('MariaDB-server', 'mariadb-server') }}"
 
 galera_server_mariadb_distro_packages:
   - which
   - "{{ galera_mariadb_server_package }}"
-  - MariaDB-backup
-  - MariaDB-shared
+  - "{{ (galera_install_method == 'external_repo') | ternary('MariaDB-backup', 'mariadb-backup') }}"
+  - "{{ (galera_install_method == 'external_repo') | ternary('MariaDB-shared', 'galera') }}"
   - rsync
   - socat
 
@@ -56,9 +56,9 @@ galera_mariadb_distro_packages_remove:
 
 # The packages to uninstall during an upgrade from a previous version
 galera_server_upgrade_packages_remove:
-  - galera-*
+  - galera*
   - MariaDB-Galera-server
-  - MariaDB-server
+  - "{{ galera_mariadb_server_package }}"
 
 _galera_repo_url: "http://{{ galera_repo_host }}/MariaDB/mariadb-{{ galera_major_version }}.{{ galera_minor_version }}/yum/rhel/$releasever/$basearch"
 _galera_repo:
@@ -67,12 +67,13 @@ _galera_repo:
   baseurl: "{{ galera_repo_url }}"
   gpgkey: "file://{{ galera_gpg_keys | map(attribute='key') | join('file://') }}"
 
-galera_wsrep_provider: "/usr/lib64/galera-4/libgalera_smm.so"
+# NOTE: CentOS Stream/Rocky 9 still ship mariadb 10.5 out of their default repos
+galera_wsrep_provider: "/usr/lib64/{{ (galera_install_method == 'external_repo') | ternary('galera-4', 'galera') }}/libgalera_smm.so"
 
 galera_client_distro_packages:
-  - MariaDB-client
+  - "{{ (galera_install_method == 'external_repo') | ternary('MariaDB-client', 'mariadb') }}"
 
 galera_devel_distro_packages:
-  - MariaDB-devel
+  - "{{ (galera_install_method == 'external_repo') | ternary('MariaDB-devel', 'mariadb-connector-c-devel') }}"
 
 galera_unix_socket: "{{ galera_data_dir }}/mysql.sock"
