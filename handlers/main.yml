@@ -15,7 +15,7 @@
 
 - name: Check node status
   command: >
-    mysql --silent --skip-column-names --connect-timeout=10 -e 'SHOW STATUS LIKE "wsrep_local_state";'
+    {{ galera_mariadb_client_binary }} --silent --skip-column-names --connect-timeout=10 -e 'SHOW STATUS LIKE "wsrep_local_state";'
   failed_when: false
   changed_when: false
   register: node_status
@@ -25,7 +25,7 @@
 
 - name: Check if node is in the cluster
   command: >
-    mysql --silent --skip-column-names --connect-timeout=10 -e 'SHOW STATUS LIKE "wsrep_incoming_addresses";'
+    {{ galera_mariadb_client_binary }} --silent --skip-column-names --connect-timeout=10 -e 'SHOW STATUS LIKE "wsrep_incoming_addresses";'
   failed_when: false
   changed_when: false
   register: incoming_addresses

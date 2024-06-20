@@ -125,7 +125,7 @@ def create_full_backup(dest, curtime, full_backup_filename, extra_mariabackup_ar
             #Creating compressed full backup
             os.makedirs(dest+"/"+full_backup_filename+curtime, exist_ok=True)
             mariabackup_run = Popen(
-            ["/usr/bin/mariabackup"] + extra_mariabackup_args + ["--backup", "--stream=xbstream", "--extra-lsndir="+os.path.normpath(dest+"/"+full_backup_filename+curtime)], stdout=PIPE, stderr=err
+            ["/usr/bin/mariadb-backup"] + extra_mariabackup_args + ["--backup", "--stream=xbstream", "--extra-lsndir="+os.path.normpath(dest+"/"+full_backup_filename+curtime)], stdout=PIPE, stderr=err
             )
             compressed_backup = open(os.path.normpath(dest+"/"+full_backup_filename+curtime+"/"+full_backup_filename+curtime), "wb")
             run([compressor], stdin=mariabackup_run.stdout, stdout=compressed_backup)
@@ -137,7 +137,7 @@ def create_full_backup(dest, curtime, full_backup_filename, extra_mariabackup_ar
         else:
             #Creating full backup
             mariabackup_run = Popen(
-            ["/usr/bin/mariabackup"] + extra_mariabackup_args + ["--backup", "--target-dir="+os.path.normpath(dest+"/"+full_backup_filename+curtime)], stdout=None, stderr=err
+            ["/usr/bin/mariadb-backup"] + extra_mariabackup_args + ["--backup", "--target-dir="+os.path.normpath(dest+"/"+full_backup_filename+curtime)], stdout=None, stderr=err
             )
             mariabackup_run.wait()
             mariabackup_res = mariabackup_run.communicate()
@@ -146,7 +146,7 @@ def create_full_backup(dest, curtime, full_backup_filename, extra_mariabackup_ar
             #Preparing full backup
             err_p = open(os.path.normpath(dest+"/prepare.log"), "w")
             mariabackup_prep = Popen(
-            ["/usr/bin/mariabackup"] + extra_mariabackup_args + ["--prepare", "--target-dir="+os.path.normpath(dest+"/"+full_backup_filename+curtime)], stdout=None, stderr=err_p
+            ["/usr/bin/mariadb-backup"] + extra_mariabackup_args + ["--prepare", "--target-dir="+os.path.normpath(dest+"/"+full_backup_filename+curtime)], stdout=None, stderr=err_p
             )
             mariabackup_prep.wait()
             mariabackup_prep_res = mariabackup_prep.communicate()
@@ -177,7 +177,7 @@ def create_increment_backup(dest, curtime, increment_backup_filename, extra_mari
             #Creating compressed incremental backup
             os.makedirs(dest+"/"+increment_backup_filename+curtime, exist_ok=True)
             mariabackup_run = Popen(
-            ["/usr/bin/mariabackup"] + extra_mariabackup_args + ["--backup", "--stream=xbstream", "--incremental-basedir="+basedir, "--extra-lsndir="+os.path.normpath(dest+"/"+increment_backup_filename+curtime)], stdout=PIPE, stderr=err
+            ["/usr/bin/mariadb-backup"] + extra_mariabackup_args + ["--backup", "--stream=xbstream", "--incremental-basedir="+basedir, "--extra-lsndir="+os.path.normpath(dest+"/"+increment_backup_filename+curtime)], stdout=PIPE, stderr=err
             )
             compressed_backup = open(os.path.normpath(dest+"/"+increment_backup_filename+curtime+"/"+increment_backup_filename+curtime), "wb")
             run([compressor], stdin=mariabackup_run.stdout, stdout=compressed_backup)
@@ -189,7 +189,7 @@ def create_increment_backup(dest, curtime, increment_backup_filename, extra_mari
         else:
             #Creating incremental backup
             mariabackup_run = Popen(
-            ["/usr/bin/mariabackup"] + extra_mariabackup_args + ["--backup", "--target-dir="+os.path.normpath(dest+"/"+increment_backup_filename+curtime), "--incremental-basedir="+basedir], stdout=None, stderr=err
+            ["/usr/bin/mariadb-backup"] + extra_mariabackup_args + ["--backup", "--target-dir="+os.path.normpath(dest+"/"+increment_backup_filename+curtime), "--incremental-basedir="+basedir], stdout=None, stderr=err
             )
             mariabackup_run.wait()
             mariabackup_res = mariabackup_run.communicate()

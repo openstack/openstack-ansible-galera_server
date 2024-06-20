@@ -25,16 +25,16 @@ if ! systemctl status {{ galera_mariadb_service_name }}; then
   systemctl status {{ galera_mariadb_service_name }}
 fi
 
-if mysqladmin --no-defaults --port=3306 --socket=/var/run/mysqld/mysqld.sock --host=127.0.0.1 --user=root password "{{ galera_root_password }}"; then
-  mysql -u root -h localhost -e "UPDATE mysql.user SET Password=PASSWORD('$rootpass') WHERE User='root';"
-  mysql -u root -h localhost -e "DELETE FROM mysql.user WHERE user='';"
-  mysql -u root -h localhost -e "DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('%', 'localhost', '127.0.0.1', '::1');"
-  mysql -u root -h localhost -e "DELETE FROM mysql.db WHERE Db='test' OR Db='test\_%';"
-  mysql -u root -h localhost -e "GRANT ALL PRIVILEGES ON *.* TO '{{ galera_root_user }}'@'localhost' IDENTIFIED BY '{{ galera_root_password }}' WITH GRANT OPTION;"
-  mysql -u root -h localhost -e "GRANT ALL PRIVILEGES ON *.* TO '{{ galera_root_user }}'@'127.0.0.1' IDENTIFIED BY '{{ galera_root_password }}' WITH GRANT OPTION;"
-  mysql -u root -h localhost -e "GRANT ALL PRIVILEGES ON *.* TO '{{ galera_root_user }}'@'::1' IDENTIFIED BY '{{ galera_root_password }}' WITH GRANT OPTION;"
-  mysql -u root -h localhost -e "GRANT ALL PRIVILEGES ON *.* TO '{{ galera_root_user }}'@'%' IDENTIFIED BY '{{ galera_root_password }}' WITH GRANT OPTION;"
-  mysql -u root -h localhost -e "FLUSH PRIVILEGES;"
+if mariadb-admin --no-defaults --port=3306 --socket=/var/run/mysqld/mysqld.sock --host=127.0.0.1 --user=root password "{{ galera_root_password }}"; then
+  {{ galera_mariadb_client_binary }} -u root -h localhost -e "UPDATE mysql.user SET Password=PASSWORD('$rootpass') WHERE User='root';"
+  {{ galera_mariadb_client_binary }} -u root -h localhost -e "DELETE FROM mysql.user WHERE user='';"
+  {{ galera_mariadb_client_binary }} -u root -h localhost -e "DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('%', 'localhost', '127.0.0.1', '::1');"
+  {{ galera_mariadb_client_binary }} -u root -h localhost -e "DELETE FROM mysql.db WHERE Db='test' OR Db='test\_%';"
+  {{ galera_mariadb_client_binary }} -u root -h localhost -e "GRANT ALL PRIVILEGES ON *.* TO '{{ galera_root_user }}'@'localhost' IDENTIFIED BY '{{ galera_root_password }}' WITH GRANT OPTION;"
+  {{ galera_mariadb_client_binary }} -u root -h localhost -e "GRANT ALL PRIVILEGES ON *.* TO '{{ galera_root_user }}'@'127.0.0.1' IDENTIFIED BY '{{ galera_root_password }}' WITH GRANT OPTION;"
+  {{ galera_mariadb_client_binary }} -u root -h localhost -e "GRANT ALL PRIVILEGES ON *.* TO '{{ galera_root_user }}'@'::1' IDENTIFIED BY '{{ galera_root_password }}' WITH GRANT OPTION;"
+  {{ galera_mariadb_client_binary }} -u root -h localhost -e "GRANT ALL PRIVILEGES ON *.* TO '{{ galera_root_user }}'@'%' IDENTIFIED BY '{{ galera_root_password }}' WITH GRANT OPTION;"
+  {{ galera_mariadb_client_binary }} -u root -h localhost -e "FLUSH PRIVILEGES;"
 fi
 
 if [ "${STOP_MYSQL}" = true ]; then

@@ -26,7 +26,7 @@ function cleanup {
 }
 
 function wait_operational {
-  WAITCMD="while ! mysql --silent --skip-column-names -e 'SHOW STATUS LIKE \"wsrep_evs_state\"' | grep -wq \"OPERATIONAL\"; do sleep 5; done"
+  WAITCMD="while ! {{ galera_mariadb_client_binary }} --silent --skip-column-names -e 'SHOW STATUS LIKE \"wsrep_evs_state\"' | grep -wq \"OPERATIONAL\"; do sleep 5; done"
   if ! timeout 180 sh -c "${WAITCMD}"; then
     echo "Cluster failed to return an \"OPERATIONAL\" state"
     return 1

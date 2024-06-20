@@ -40,11 +40,12 @@ galera_server_proxy_protocol_networks: ""
 #  distro specific variable files found in vars/
 galera_debconf_items: []
 galera_mariadb_service_name: mariadb
+galera_mariadb_client_binary: mariadb
 galera_mariadb_server_package: "{{ (galera_install_method == 'external_repo') | ternary(_galera_mariadb_external_repo_package, 'mariadb-server') }}"
 
 # The major version used to select the repo URL path
-galera_major_version: 10.11
-galera_minor_version: 8
+galera_major_version: 11.4
+galera_minor_version: 4
 
 # Set the URL for the MariaDB repository
 galera_repo_host: "mirror.mariadb.org"
@@ -245,7 +246,12 @@ galera_pki_certificates:
   - name: "galera_{{ ansible_facts['hostname'] }}"
     provider: ownca
     cn: "{{ ansible_facts['hostname'] }}"
-    san: "{{ 'DNS:' ~ ansible_facts['hostname'] ~ ',' ~ ((galera_address | ansible.utils.ipaddr) is string) | ternary('IP', 'DNS') ~ ':' ~ galera_address }}"
+    san: >-
+      {{
+        'DNS:' ~ ansible_facts['hostname'] ~ ',' ~ (
+          (galera_address | ansible.utils.ipaddr) is string) | ternary('IP', 'DNS') ~ ':' ~ galera_address ~
+          ',IP:' ~ management_address
+      }}
     signed_by: "{{ galera_pki_intermediate_cert_name }}"
 
 galera_use_ssl: false

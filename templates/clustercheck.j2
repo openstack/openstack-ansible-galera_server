@@ -65,10 +65,10 @@ if [[ -n "$MYSQL_PORT" ]]; then
 fi
 
 if [[ -r $DEFAULTS_EXTRA_FILE ]]; then
-    MYSQL_CMDLINE="mysql --defaults-extra-file=$DEFAULTS_EXTRA_FILE -nNE --connect-timeout=$TIMEOUT \
+    MYSQL_CMDLINE="{{ galera_mariadb_client_binary }} --defaults-extra-file=$DEFAULTS_EXTRA_FILE -nNE --connect-timeout=$TIMEOUT \
                     ${EXTRA_ARGS}"
 else
-    MYSQL_CMDLINE="mysql -nNE --connect-timeout=$TIMEOUT ${EXTRA_ARGS}"
+    MYSQL_CMDLINE="{{ galera_mariadb_client_binary }} -nNE --connect-timeout=$TIMEOUT ${EXTRA_ARGS}"
 fi
 
 #
