@@ -26,9 +26,10 @@
       The cluster may be broken, the cluster state is not known to be good.
       Fix the cluster state before re-running the playbooks. To ignore the
       cluster state set '-e galera_ignore_cluster_state=true'.
-  when:
-    - _node_status.rc != 0
-    - (_node_status.stdout.split()[-1] | default(false)) in ["2", "4"]
+  # State 2 means Donor, State 4 means Synced
+  when: >-
+    _node_status.rc != 0
+    or (_node_status.stdout.split()[-1] | default(false)) not in ["2", "4"]
 
 - name: Check cluster name
   command: >
@@ -46,6 +47,6 @@
       "/etc/mysql/conf.d/cluster.cnf" on the host, and the "wsrep_cluster_name"
       value set in your running galera cluster. To ignore the
       cluster state set '-e galera_ignore_cluster_state=true'.
-  when:
-    - _cluster_name.rc != 0
-    - (_cluster_name.stdout.split()[-1] | default(false)) != galera_cluster_name
+  when: >-
+    _cluster_name.rc != 0
+    or (_cluster_name.stdout.split()[-1] | default(false)) != galera_cluster_name
