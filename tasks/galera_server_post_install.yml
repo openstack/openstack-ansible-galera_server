@@ -13,28 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# TODO (jrosser) Remove all of these xinetd cleanup tasks in the Z release
-- name: Clean up legacy xinetd config
-  file:
-    path: "/etc/xinetd.d/mysqlchk"
-    state: absent
-  register: legacy_xinetd
-
-- name: Remove legacy galera service check from /etc/services
-  lineinfile:
-    dest: /etc/services
-    state: absent
-    regexp: '^mysqlchk'
-    line: 'mysqlchk    9200/tcp    # MySQL check'
-    backup: yes
-  register: legacy_services
-
-- name: Restart xinetd service
-  service:
-    name: xinetd
-    state: restarted
-  when: (legacy_xinetd is changed or legacy_services is changed)
-
 - name: Run the systemd service role
   import_role:
     name: systemd_service
