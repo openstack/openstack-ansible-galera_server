@@ -36,7 +36,13 @@ galera_var_run_socket: "/var/run/mysqld/mysqld.sock"
 # The package name for mariaDB is set as a variable
 # so that it can be used in debconf later in the
 # "galera_common" role.
-_galera_mariadb_server_package: "mariadb-server"
+_galera_mariadb_external_repo_package: "mariadb-server=1:{{ galera_major_version }}.{{ galera_minor_version }}*"
+
+_galera_architecture_mapping:
+  x86_64: amd64
+  ppc64le: ppc64el
+  s390x: s390x
+  aarch64: arm64
 
 # NB This is specifically galera_server_mariadb_distro_packages as these
 # packages only get installed during the galera play - this is because of
@@ -69,7 +75,7 @@ galera_debconf_items:
 
 # Repositories
 _galera_repo_url: >-
-  http://{{ galera_repo_host }}/MariaDB/mariadb-{{ galera_major_version }}.{{ galera_minor_version }}/repo/{{ ansible_facts['distribution'] | lower }}
+  https://{{ galera_repo_host }}/repo/{{ galera_major_version }}/{{ ansible_facts['distribution'] | lower }}
 
 _galera_repo:
   - name: "MariaDB"
