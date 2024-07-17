@@ -28,7 +28,6 @@ _galera_gpg_keys:
 galera_server_required_distro_packages:
   - apt-transport-https
   - debconf-utils
-  - libaio1
   - libc6
   - libgcc-s1
   - libgcrypt20
