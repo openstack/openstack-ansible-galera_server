@@ -67,6 +67,7 @@ _galera_repo:
   description: "MariaDB Repo"
   baseurl: "{{ galera_repo_url }}"
   gpgkey: "file://{{ galera_gpg_keys | map(attribute='key') | join('file://') }}"
+  state: "{{ (galera_install_method == 'external_repo') | ternary('present', 'absent') }}"
 
 # NOTE: CentOS Stream/Rocky 9 still ship mariadb 10.5 out of their default repos
 galera_wsrep_provider: "/usr/lib64/{{ (galera_install_method == 'external_repo') | ternary('galera-4', 'galera') }}/libgalera_smm.so"
