@@ -19,12 +19,6 @@ cache_timeout: 600
 # Default private device setting
 _galera_disable_privatedevices: yes
 
-# Galera GPG Keys
-_galera_gpg_keys:
-  # MariaDB Signing Key <signing-key@mariadb.org>
-  - id: C74CD1D8
-    file: /etc/ssl/mariadb-key
-
 galera_server_required_distro_packages:
   - apt-transport-https
   - debconf-utils
@@ -78,9 +72,13 @@ _galera_repo_url: >-
   http://{{ galera_repo_host }}/MariaDB/mariadb-{{ galera_major_version }}.{{ galera_minor_version }}/repo/{{ ansible_facts['distribution'] | lower }}
 
 _galera_repo:
-  repo: "deb {{ galera_repo_url }} {{ ansible_facts['distribution_release'] }} main"
-  state: "present"
-  filename: "MariaDB"
+  - name: "MariaDB"
+    suites: "{{ ansible_facts['distribution_release'] | lower }}"
+    uris: "{{ galera_repo_url }}"
+    signed_by: "{{ lookup('file', 'gpg/C74CD1D8') }}"
+    components: main
+    architectures: "{{ ansible_facts['architecture'] }}"
+    state: "{{ (galera_install_method == 'external_repo') | ternary('present', 'absent') }}"
 
 galera_wsrep_provider: "/usr/lib/galera/libgalera_smm.so"
 

@@ -13,57 +13,68 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+- name: Validate repo config is deb822 format
+  vars:
+    _repo_check: "{{ galera_repo | selectattr('repo', 'defined') | map(attribute='repo') }}"
+  ansible.builtin.assert:
+    that: _repo_check | length == 0
+    fail_msg: "The following repository definitions must be updated to deb822 format {{ _repo_check }}"
+
 - name: Remove conflicting distro packages
   package:
     name: "{{ galera_mariadb_distro_packages_remove | default([]) }}"
     state: absent
   when: galera_install_method == 'external_repo'
 
-- name: Configure repositories for MariaDB installation
-  when:
-    - galera_install_method == 'external_repo'
-    - galera_repo
-  block:
-    - name: If a keyfile is provided, copy the gpg keyfile to the key location
-      copy:
-        src: "gpg/{{ item.id }}"
-        dest: "{{ item.file }}"
-        mode: '0644'
-      with_items: "{{ galera_gpg_keys | selectattr('file', 'defined') | list }}"
+# NOTE(jrosser) remove this task for the 2025.2 release
+- name: Clean up legacy repository config not in deb822 format
+  vars:
+    galera_apt_repo_cleanup:
+      - MariaDB.list
+  file:
+    path: "/etc/apt/sources.list.d/{{ item }}"
+    state: absent
+  with_items: "{{ galera_apt_repo_cleanup }}"
+  register: apt_repo_removed
 
-    - name: Install gpg keys
-      apt_key:
-        data: "{{ key['data'] | default(omit) }}"
-        file: "{{ key['file'] | default(omit) }}"
-        id: "{{ key['id'] | default(omit) }}"
-        state: "{{ key['state'] | default(omit) }}"
-        url: "{{ key['url'] | default(omit) }}"
-        validate_certs: "{{ key['validate_certs'] | default(omit) }}"
-      with_items: "{{ galera_gpg_keys }}"
-      loop_control:
-        loop_var: key
-      register: _add_apt_keys
-      until: _add_apt_keys is success
-      retries: 5
-      delay: 2
+- name: Ensure python3-debian package is available
+  apt:
+    name: python3-debian
 
-    - name: Remove old repos
-      lineinfile:
-        dest: "/etc/apt/sources.list.d/{{ item.name }}.list"
-        regexp: "^((?!{{ item.repo }}).*)$"
-        state: absent
-      with_items:
-        - { name: "MariaDB", repo: "{{ galera_repo.repo }}" }
-      when: galera_repo.repo is defined
+- name: Manage apt repositories
+  vars:
+    _a: "{{ item.architectures }}"
+    _architecture_fixup: "{{ ((_a | d([])) is iterable and (_a | d([])) is not string) | ternary(_a, [_a]) | map('replace', 'x86_64', 'amd64') }}"
+  ansible.builtin.deb822_repository:
+    allow_downgrade_to_insecure: "{{ item.allow_downgrade_to_insecure | default(omit) }}"
+    allow_insecure: "{{ item.allow_insecure | default(omit) }}"
+    allow_weak: "{{ item.allow_weak | default(omit) }}"
+    architectures: "{{ (_architecture_fixup | length > 0) | ternary(_architecture_fixup, omit) }}"
+    by_hash: "{{ item.by_hash | default(omit) }}"
+    check_date: "{{ item.check_date | default(omit) }}"
+    check_valid_until: "{{ item.check_valid_until | default(omit) }}"
+    components: "{{ item.components | default(omit) }}"
+    date_max_future: "{{ item.date_max_future | default(omit) }}"
+    enabled: "{{ item.enabled | default(omit) }}"
+    inrelease_path: "{{ item.inrelease_path | default(omit) }}"
+    languages: "{{ item.languages | default(omit) }}"
+    mode: "{{ item.mode | default(omit) }}"
+    name: "{{ item.name }}"
+    pdiffs: "{{ item.pdiffs | default(omit) }}"
+    signed_by: "{{ item.signed_by | default(omit) }}"
+    state: "{{ item.state | default(omit) }}"
+    suites: "{{ item.suites | default(omit) }}"
+    targets: "{{ item.targets | default(omit) }}"
+    trusted: "{{ item.trusted | default(omit) }}"
+    types: "{{ item.types | default(omit) }}"
+    uris: "{{ item.uris | default(omit) }}"
+  with_items: "{{ galera_repo }}"
+  register: deb822_repos
 
-    - name: Add galera repo
-      apt_repository:
-        repo: "{{ galera_repo.repo }}"
-        filename: "{{ galera_repo.filename | default(omit) }}"
-        state: "{{ galera_repo.state }}"
-        update_cache: yes
-      register: add_galera_repo
-      when: galera_repo.repo is defined
+- name: Update apt repositories when config is changed
+  apt:
+    update_cache: yes
+  when: (apt_repo_removed is changed) or (deb822_repos is changed)
 
 - name: Preseed galera password(s)
   debconf:
