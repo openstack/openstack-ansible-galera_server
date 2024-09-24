@@ -42,14 +42,11 @@
     name: python3-debian
 
 - name: Manage apt repositories
-  vars:
-    _a: "{{ item.architectures }}"
-    _architecture_fixup: "{{ ((_a | d([])) is iterable and (_a | d([])) is not string) | ternary(_a, [_a]) | map('replace', 'x86_64', 'amd64') }}"
   ansible.builtin.deb822_repository:
     allow_downgrade_to_insecure: "{{ item.allow_downgrade_to_insecure | default(omit) }}"
     allow_insecure: "{{ item.allow_insecure | default(omit) }}"
     allow_weak: "{{ item.allow_weak | default(omit) }}"
-    architectures: "{{ (_architecture_fixup | length > 0) | ternary(_architecture_fixup, omit) }}"
+    architectures: "{{ item.architectures | default(omit) }}"
     by_hash: "{{ item.by_hash | default(omit) }}"
     check_date: "{{ item.check_date | default(omit) }}"
     check_valid_until: "{{ item.check_valid_until | default(omit) }}"

@@ -77,7 +77,7 @@ _galera_repo:
     uris: "{{ galera_repo_url }}"
     signed_by: "{{ lookup('file', 'gpg/C74CD1D8') }}"
     components: main
-    architectures: "{{ ansible_facts['architecture'] }}"
+    architectures: "{{ galera_architecture_mapping.get(ansible_facts['architecture']) }}"
     state: "{{ (galera_install_method == 'external_repo') | ternary('present', 'absent') }}"
 
 galera_wsrep_provider: "/usr/lib/galera/libgalera_smm.so"
