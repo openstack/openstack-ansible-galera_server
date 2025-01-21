@@ -22,8 +22,7 @@
       block:
         - name: Wait for cluster ready state
           command: |
-            mysql -h {{ ansible_host }} \
-                  -p"{{ galera_root_password }}" \
+            mariadb \
                   -e "show status like 'wsrep_incoming_addresses';" \
                   --silent \
                   --skip-column-names
@@ -39,8 +38,7 @@
             state: restarted
         - name: Wait for cluster ready state
           command: |
-            mysql -h {{ ansible_host }} \
-                  -p"{{ galera_root_password }}" \
+            mariadb \
                   -e "show status like 'wsrep_incoming_addresses';" \
                   --silent \
                   --skip-column-names
@@ -51,8 +49,7 @@
           until: mysql_instance_ready is success and mysql_instance_ready.stdout.split()[-1].split(',') | length == groups['galera_all'] | length
     - name: Check cluster incoming addresses
       command: |
-        mysql -h {{ ansible_host }} \
-              -p"{{ galera_root_password }}" \
+        mariadb \
               -e "show status like 'wsrep_incoming_addresses';" \
               --silent \
               --skip-column-names
@@ -62,8 +59,7 @@
         - skip_ansible_lint
     - name: Check cluster local state
       command: |
-        mysql -h {{ ansible_host }} \
-              -p"{{ galera_root_password }}" \
+        mariadb \
               -e "show status like 'wsrep_local_state_comment';" \
               --silent \
               --skip-column-names
@@ -73,8 +69,7 @@
         - skip_ansible_lint
     - name: Check cluster evs state
       command: |
-        mysql -h {{ ansible_host }} \
-              -p"{{ galera_root_password }}" \
+        mariadb \
               -e "show status like 'wsrep_evs_state';" \
               --silent \
               --skip-column-names
@@ -116,5 +111,3 @@
       when: ansible_host == '10.1.0.3'
       tags:
         - skip_ansible_lint
-  vars_files:
-    - common/test-vars.yml

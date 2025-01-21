@@ -13,11 +13,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Setup the host
-- import_playbook: common/test-setup-host.yml
-
-# Install Galera server
-- import_playbook: common/test-install-galera.yml
-
-# Run functional tests
-- import_playbook: test-galera-server-functional.yml
+- name: Install Galera server
+  hosts: galera_all
+  user: root
+  serial:
+    - 1
+    - 100%
+  roles:
+    - "{{ playbook_dir | dirname | basename }}"
+  vars:
+    galera_install_server: true
+    galera_install_client: false

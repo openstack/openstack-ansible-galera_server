@@ -1,0 +1,77 @@
+---
+dependency:
+  name: galaxy
+  options:
+    requirements-file: requirements.yml
+driver:
+  name: docker
+platforms:
+  - name: galera01
+    groups:
+      - galera_all
+    image: "${DOCKER_REGISTRY:-quay.io/gotmax23}/${DOCKER_IMAGE_TAG:-debian-systemd:bookworm}"
+    command: ${DOCKER_COMMAND:-""}
+    privileged: true
+    pre_build_image: true
+    docker_networks:
+      - name: 'galera'
+        ipam_config:
+          - subnet: '10.1.0.0/24'
+    networks:
+      - name: "galera"
+        ipv4_address: '10.1.0.2'
+  - name: galera02
+    groups:
+      - galera_all
+    image: "${DOCKER_REGISTRY:-quay.io/gotmax23}/${DOCKER_IMAGE_TAG:-debian-systemd:bookworm}"
+    command: ${DOCKER_COMMAND:-""}
+    privileged: true
+    pre_build_image: true
+    docker_networks:
+      - name: 'galera'
+        ipam_config:
+          - subnet: '10.1.0.0/24'
+    networks:
+      - name: "galera"
+        ipv4_address: '10.1.0.3'
+  - name: galera03
+    groups:
+      - galera_all
+    image: "${DOCKER_REGISTRY:-quay.io/gotmax23}/${DOCKER_IMAGE_TAG:-debian-systemd:bookworm}"
+    command: ${DOCKER_COMMAND:-""}
+    privileged: true
+    pre_build_image: true
+    docker_networks:
+      - name: 'galera'
+        ipam_config:
+          - subnet: '10.1.0.0/24'
+    networks:
+      - name: "galera"
+        ipv4_address: '10.1.0.4'
+provisioner:
+  name: ansible
+  inventory:
+    group_vars:
+      galera_all:
+        galera_my_cnf_overrides:
+          sst:
+            sst-initial-timeout: 600
+        galera_root_password: SomeSecurePassword
+    host_vars:
+      galera01:
+        galera_wsrep_address: 10.1.0.2
+      galera02:
+        galera_wsrep_address: 10.1.0.3
+      galera03:
+        galera_wsrep_address: 10.1.0.4
+  lint:
+    name: ansible-lint
+  playbooks:
+    prepare: prepare.yml
+    converge: ../../tests/test.yml
+    verify: ../../tests/test-galera-server-functional.yml
+  config_options:
+    defaults:
+      inject_facts_as_vars: false
+scenario:
+  name: default

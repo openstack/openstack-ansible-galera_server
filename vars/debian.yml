@@ -54,6 +54,7 @@ galera_server_mariadb_distro_packages:
   - mariadb-client
   - mariadb-backup
   - "{{ galera_mariadb_server_package }}"
+  - procps
   - rsync
   - socat
 

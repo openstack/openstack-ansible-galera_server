@@ -49,12 +49,13 @@ _galera_architecture_mapping:
   aarch64: aarch64
 
 galera_server_mariadb_distro_packages:
-  - which
   - "{{ galera_mariadb_server_package }}"
   - "{{ (galera_install_method == 'external_repo') | ternary('MariaDB-backup', 'mariadb-backup') }}"
   - "{{ (galera_install_method == 'external_repo') | ternary('MariaDB-shared', 'galera') }}"
+  - procps-ng
   - rsync
   - socat
+  - which
 
 # Conflicting packages with those from the MariaDB repository
 galera_mariadb_distro_packages_remove:

@@ -63,6 +63,7 @@
     - not galera_upgrade
   tags:
     - skip_ansible_lint
+    - molecule-idempotence-notest
 
 - name: Create the local directories
   file:
@@ -74,8 +75,10 @@
     recurse: "{{ item.recurse | default('false') }}"
   with_items:
     - { path: "{{ galera_data_dir }}", owner: "mysql", mode: "02755" }
-    - { path: "{{ galera_tmp_dir }}", owner: "mysql", mode: "02755" }
+    - { path: "{{ galera_tmp_dir }}", owner: "mysql", mode: "02755" }  # TMP needs to be re-created after clustering, so breaks idempotence test on all[1:]
     - { path: "/etc/mysql/conf.d" }
+  tags:
+    - molecule-idempotence-notest
 
 - name: Create and install SSL certificates
   include_role:
