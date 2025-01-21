@@ -1,0 +1,21 @@
+---
+collections:
+- name: openstack.config_template
+  source: https://opendev.org/openstack/ansible-config_template
+  type: git
+  version: 2.1.1
+- name: community.general
+  source: https://github.com/ansible-collections/community.general
+  type: git
+  version: 10.0.1
+- name: community.mysql
+  source: https://github.com/ansible-collections/community.mysql
+  type: git
+  version: 3.11.0
+roles:
+- name: apt_package_pinning
+  src: git+https://opendev.org/openstack/openstack-ansible-apt_package_pinning
+  version: master
+- name: systemd_service
+  src: git+https://opendev.org/openstack/ansible-role-systemd_service
+  version: master

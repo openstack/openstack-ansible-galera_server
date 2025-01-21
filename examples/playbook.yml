@@ -2,9 +2,23 @@
 - name: Install Galera server
   hosts: galera_all
   user: root
+  serial:
+    - 1
+    - 100%
   roles:
     - galera_server
   vars:
     galera_install_server: true
+    # NOTE: it is important to disable client installation on
+    #       server, unless `galera_root_user: root` (default: admin)
+    galera_install_client: false
+    galera_root_password: secrete
+
+- name: Install Galera client
+  hosts: localhost
+  roles:
+    - galera_server
+  vars:
+    galera_install_server: false
     galera_install_client: true
     galera_root_password: secrete
