@@ -14,12 +14,12 @@ platforms:
     privileged: true
     pre_build_image: true
     docker_networks:
-      - name: 'galera'
+      - name: "galera"
         ipam_config:
-          - subnet: '10.1.0.0/24'
+          - subnet: "10.1.0.0/24"
     networks:
       - name: "galera"
-        ipv4_address: '10.1.0.2'
+        ipv4_address: "10.1.0.2"
   - name: galera02
     groups:
       - galera_all
@@ -28,12 +28,12 @@ platforms:
     privileged: true
     pre_build_image: true
     docker_networks:
-      - name: 'galera'
+      - name: "galera"
         ipam_config:
-          - subnet: '10.1.0.0/24'
+          - subnet: "10.1.0.0/24"
     networks:
       - name: "galera"
-        ipv4_address: '10.1.0.3'
+        ipv4_address: "10.1.0.3"
   - name: galera03
     groups:
       - galera_all
@@ -42,12 +42,12 @@ platforms:
     privileged: true
     pre_build_image: true
     docker_networks:
-      - name: 'galera'
+      - name: "galera"
         ipam_config:
-          - subnet: '10.1.0.0/24'
+          - subnet: "10.1.0.0/24"
     networks:
       - name: "galera"
-        ipv4_address: '10.1.0.4'
+        ipv4_address: "10.1.0.4"
 provisioner:
   name: ansible
   inventory:

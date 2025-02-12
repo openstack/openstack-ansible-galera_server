@@ -51,7 +51,7 @@
   service:
     name: "{{ galera_mariadb_service_name }}"
     state: stopped
-    enabled: yes
+    enabled: true
   changed_when: true
   listen:
     - Restart all mysql
@@ -78,7 +78,7 @@
   service:
     name: "{{ galera_mariadb_service_name }}"
     state: "{{ (not hostvars[item]['galera_cluster_ready'] | bool or galera_force_bootstrap | bool) | ternary('started', 'restarted') }}"
-    enabled: yes
+    enabled: true
   environment:
     MYSQLD_STARTUP_TIMEOUT: 180
   register: galera_restart

@@ -19,7 +19,7 @@
       command: /usr/bin/mariadb-upgrade --check-if-upgrade-is-needed
       register: galera_upgrade_check
       failed_when: galera_upgrade_check.rc == 0
-      changed_when: False
+      changed_when: false
   rescue:
     - name: Run MySQL Upgrade
       command: /usr/bin/mariadb-upgrade
@@ -46,4 +46,4 @@
   until: galera_users is success
   retries: 3
   delay: 10
-  no_log: True
+  no_log: true

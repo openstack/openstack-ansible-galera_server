@@ -17,7 +17,7 @@
 cache_timeout: 600
 
 # Default private device setting
-_galera_disable_privatedevices: yes
+_galera_disable_privatedevices: true
 
 galera_server_required_distro_packages:
   - apt-transport-https
@@ -49,7 +49,7 @@ _galera_architecture_mapping:
 # the preseed task and the service startup control used when installing
 # mariadb-galera-server and galera.
 galera_server_mariadb_distro_packages:
-  - findutils  # "find" is used by wsrep_sst_mariabackup script
+  - findutils # "find" is used by wsrep_sst_mariabackup script
   - libmariadb-dev
   - mariadb-client
   - mariadb-backup

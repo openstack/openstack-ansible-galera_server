@@ -43,9 +43,9 @@
 - name: Stat /etc/my.cnf.d
   stat:
     path: /etc/my.cnf.d
-    get_attributes: no
-    get_checksum: no
-    get_mime: no
+    get_attributes: false
+    get_checksum: false
+    get_mime: false
   register: mycnfd_stat
 
 - name: Destroy my.cnf.d dir if is dir
@@ -70,7 +70,7 @@
   with_items:
     - path: "/etc/mysql"
       state: "directory"
-      mode: '0755'
+      mode: "0755"
     - path: "/etc/mysql/conf.d"
       state: "directory"
     - src: "/usr/lib64/galera"
@@ -90,7 +90,7 @@
   copy:
     src: "gpg/{{ item.key | basename }}"
     dest: "{{ item.key }}"
-    mode: '0644'
+    mode: "0644"
   with_items: "{{ galera_gpg_keys }}"
   when:
     - galera_install_method == 'external_repo'
@@ -101,8 +101,8 @@
     description: "{{ galera_repo.description }}"
     baseurl: "{{ galera_repo.baseurl }}"
     gpgkey: "{{ galera_repo.gpgkey | default(omit) }}"
-    gpgcheck: yes
-    enabled: yes
+    gpgcheck: true
+    enabled: true
     module_hotfixes: true
     priority: 25
     state: "{{ galera_repo.state | default(omit) }}"

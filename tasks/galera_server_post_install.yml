@@ -20,13 +20,13 @@
     systemd_tempd_prefix: openstack
     systemd_services:
       - service_name: "{{ galera_mariadb_service_name }}"
-        systemd_overrides_only: True
+        systemd_overrides_only: true
         systemd_overrides: "{{ galera_init_defaults | combine(galera_init_overrides, recursive=True) }}"
       - service_name: "mariadbcheck@"
         service_type: "oneshot"
         execstarts: "-/usr/local/bin/clustercheck"
-        enabled: False
-        load: False
+        enabled: false
+        load: false
         standard_output: "socket"
         after_targets: []
         sockets:
@@ -116,7 +116,7 @@
     mode: "{{ item.mode | default('0644') }}"
     config_overrides: "{{ item.config_overrides }}"
     config_type: "{{ item.config_type }}"
-    ignore_none_type: False
+    ignore_none_type: false
   when: item.condition | default(True)
   with_items:
     - src: my.cnf.j2

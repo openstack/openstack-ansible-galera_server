@@ -20,7 +20,7 @@
     mode: "{{ item.mode | default('0644') }}"
     config_overrides: "{{ item.config_overrides }}"
     config_type: "{{ item.config_type }}"
-    ignore_none_type: False
+    ignore_none_type: false
   when: item.condition | default(True)
   with_items:
     - src: encryption.cnf.j2
@@ -54,7 +54,7 @@
       delegate_to: "localhost"
       run_once: true
 
-    - name: Create encryption keys if the user does not specify them and put them on the deploy host  # noqa: no-changed-when risky-shell-pipe
+    - name: Create encryption keys if the user does not specify them and put them on the deploy host # noqa: no-changed-when risky-shell-pipe
       shell: "for i in {1..2}; do echo \"$i;$(openssl rand -hex 32)\"; done | tee {{ galera_db_encryption_tmp_dir }}/mysql_encryption_keys > /dev/null"
       delegate_to: "localhost"
       run_once: true
@@ -92,7 +92,7 @@
         owner: mysql
         group: mysql
         mode: "0600"
-        force: false  # only copy the file if it does not exist
+        force: false # only copy the file if it does not exist
       notify: Restart all mysql
 
     - name: Copy password to file to servers

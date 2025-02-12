@@ -70,7 +70,7 @@
 
 - name: Update apt repositories when config is changed
   apt:
-    update_cache: yes
+    update_cache: true
   when: (apt_repo_removed is changed) or (deb822_repos is changed)
 
 - name: Preseed galera password(s)
@@ -80,14 +80,14 @@
     value: "{{ item.value }}"
     vtype: "{{ item.vtype }}"
   with_items: "{{ galera_debconf_items }}"
-  no_log: yes
+  no_log: true
 
 - name: Install galera role remote packages (apt)
   apt:
     name: "{{ galera_packages_list }}"
     state: "{{ galera_package_state }}"
     policy_rc_d: 101
-    update_cache: yes
+    update_cache: true
     cache_valid_time: "{{ cache_timeout }}"
   register: install_remote_apt_packages
   until: install_remote_apt_packages is success

@@ -12,8 +12,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
-
 galera_init_defaults:
   Service:
     LimitNOFILE: "{{ galera_file_limits }}"
@@ -40,12 +38,12 @@ _galera_base_users:
     priv: "*.*:ALL,GRANT"
     state: present
   - name: "{{ galera_monitoring_user }}"
-    host: '%'
+    host: "%"
     password: "{{ galera_monitoring_user_password }}"
     priv: "*.*:USAGE"
     state: present
   - name: "{{ galera_monitoring_user }}"
-    host: 'localhost'
+    host: "localhost"
     password: "{{ galera_monitoring_user_password }}"
     priv: "*.*:USAGE"
     state: present

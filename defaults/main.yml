@@ -183,11 +183,11 @@ galera_init_overrides: {}
 
 # This is only applied if the ansible_facts['pkg_mgr'] is 'apt'
 galera_distro_package_pins:
-  - package: '*'
+  - package: "*"
     release: MariaDB
     priority: 999
-  - package: 'mariadb-*'
-    version: '1:{{ galera_major_version }}.{{ galera_minor_version }}*'
+  - package: "mariadb-*"
+    version: "1:{{ galera_major_version }}.{{ galera_minor_version }}*"
     priority: 1001
 
 # Galera Server SSL functionality.
@@ -197,7 +197,7 @@ galera_pki_dir: "{{ openstack_pki_dir | default('/etc/pki/galera-ca') }}"
 
 # Create a certificate authority if one does not already exist
 galera_pki_create_ca: "{{ openstack_pki_authorities is not defined | bool }}"
-galera_pki_regen_ca: ''
+galera_pki_regen_ca: ""
 
 galera_pki_authorities:
   - name: "MariaDBRoot"
@@ -241,7 +241,7 @@ galera_pki_intermediate_cert_path: >-
   {{
     galera_pki_dir ~ '/roots/' ~ galera_pki_intermediate_cert_name ~ '/certs/' ~ galera_pki_intermediate_cert_name ~ '.crt'
   }}
-galera_pki_regen_cert: ''
+galera_pki_regen_cert: ""
 galera_pki_certificates:
   - name: "galera_{{ ansible_facts['hostname'] }}"
     provider: ownca
@@ -288,7 +288,6 @@ galera_pki_install_certificates:
     owner: "root"
     group: "root"
     mode: "0644"
-
 
 # MariaDB 10.1+ ships with 'PrivateDevices=True' in the systemd unit file. This
 # provides some additional security, but it causes problems with systemd 219.
@@ -346,7 +345,7 @@ galera_mariadb_backups_user: galera_mariadb_backup
 galera_mariadb_backups_suffix: "{{ inventory_hostname }}"
 galera_mariadb_backups_cnf_file: "/etc/mysql/mariabackup.cnf"
 galera_mariadb_backups_nodes: ["{{ galera_cluster_members[0] }}"]
-galera_mariadb_backups_compress: False
+galera_mariadb_backups_compress: false
 galera_mariadb_backups_compressor: gzip
 
 galera_mariadb_encryption_enabled: false
