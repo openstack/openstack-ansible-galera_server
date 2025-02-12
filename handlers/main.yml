@@ -14,7 +14,7 @@
 # limitations under the License.
 
 - name: Check node status
-  command: >
+  ansible.builtin.command: >
     {{ galera_mariadb_client_binary }} --silent --skip-column-names --connect-timeout=10 -e 'SHOW STATUS LIKE "wsrep_local_state";'
   failed_when: false
   changed_when: false
@@ -24,7 +24,7 @@
     - cert installed
 
 - name: Check if node is in the cluster
-  command: >
+  ansible.builtin.command: >
     {{ galera_mariadb_client_binary }} --silent --skip-column-names --connect-timeout=10 -e 'SHOW STATUS LIKE "wsrep_incoming_addresses";'
   failed_when: false
   changed_when: false
@@ -34,21 +34,21 @@
     - cert installed
 
 - name: Set incoming addresses fact (primary)
-  set_fact:
+  ansible.builtin.set_fact:
     galera_incoming_addresses: "{{ (incoming_addresses.stdout.split()[-1] | default('')).split(',') }}"
   listen:
     - Restart all mysql
     - cert installed
 
 - name: Set node status fact
-  set_fact:
+  ansible.builtin.set_fact:
     galera_cluster_ready: "{{ (galera_wsrep_address_port in galera_incoming_addresses) or ((node_status.stdout.split()[-1] | default(false)) in ['2', '4']) }}"
   listen:
     - Restart all mysql
     - cert installed
 
 - name: Stop mysql
-  service:
+  ansible.builtin.service:
     name: "{{ galera_mariadb_service_name }}"
     state: stopped
     enabled: true
@@ -61,7 +61,7 @@
     - not galera_cluster_ready | bool or galera_force_bootstrap | bool
 
 - name: Start new cluster
-  command: /usr/local/bin/galera_new_cluster
+  ansible.builtin.command: /usr/local/bin/galera_new_cluster
   failed_when: not start_new_cluster.rc in [0, 3]
   changed_when: start_new_cluster.rc == 3
   register: start_new_cluster
@@ -75,7 +75,7 @@
     - cert installed
 
 - name: Restart mysql (All)
-  service:
+  ansible.builtin.service:
     name: "{{ galera_mariadb_service_name }}"
     state: "{{ (not hostvars[item]['galera_cluster_ready'] | bool or galera_force_bootstrap | bool) | ternary('started', 'restarted') }}"
     enabled: true
@@ -98,7 +98,7 @@
     - cert installed
 
 - name: Delete encryption keyfile after starting Galera
-  file:
+  ansible.builtin.file:
     path: "/tmp/.keyfile.key"
     state: absent
   when: galera_restart is changed

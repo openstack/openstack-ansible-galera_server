@@ -20,7 +20,7 @@
 # dependencies, otherwise for distro package installation types on shared
 # hosts it removes far too many packages.
 - name: Remove conflicting packages
-  shell: |
+  ansible.builtin.shell: |
     exit_code=0
     for pkg in {{ galera_mariadb_distro_packages_remove | join(' ') }}; do
       if rpm --query --quiet ${pkg}; then
@@ -41,7 +41,7 @@
 # that we can replace it with symlinks to the directories expected
 # to be used by the MariaDB packages instead.
 - name: Stat /etc/my.cnf.d
-  stat:
+  ansible.builtin.stat:
     path: /etc/my.cnf.d
     get_attributes: false
     get_checksum: false
@@ -49,7 +49,7 @@
   register: mycnfd_stat
 
 - name: Destroy my.cnf.d dir if is dir
-  file:
+  ansible.builtin.file:
     path: /etc/my.cnf.d
     state: absent
     force: true
@@ -61,7 +61,7 @@
 # the paths used by the MariaDB packages so ensure that any other
 # system expectations are still met.
 - name: Update the local file system CRUD
-  file:
+  ansible.builtin.file:
     src: "{{ item.src | default(omit) }}"
     path: "{{ item.path }}"
     state: "{{ item.state }}"
@@ -87,7 +87,7 @@
       force: true
 
 - name: If a keyfile is provided, copy the gpg keyfile to the key location
-  copy:
+  ansible.builtin.copy:
     src: "gpg/{{ item.key | basename }}"
     dest: "{{ item.key }}"
     mode: "0644"
@@ -96,7 +96,7 @@
     - galera_install_method == 'external_repo'
 
 - name: Add galera repo
-  yum_repository:
+  ansible.builtin.yum_repository:
     name: "{{ galera_repo.name }}"
     description: "{{ galera_repo.description }}"
     baseurl: "{{ galera_repo.baseurl }}"
@@ -112,7 +112,7 @@
   delay: 2
 
 - name: Install galera role remote packages
-  package:
+  ansible.builtin.package:
     name: "{{ galera_packages_list }}"
     state: "{{ galera_package_state }}"
   register: install_remote_packages

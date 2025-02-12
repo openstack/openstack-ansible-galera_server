@@ -1,12 +1,12 @@
 ---
 - name: Ensure group backups exists
-  group:
+  ansible.builtin.group:
     name: "{{ galera_mariadb_backups_group_name }}"
     state: present
     gid: "{{ galera_mariadb_backups_group_gid | default(omit) }}"
 
 - name: Create mariadb back up directory
-  file:
+  ansible.builtin.file:
     path: "{{ galera_mariadb_backups_path }}"
     state: "directory"
     owner: "mysql"
@@ -14,19 +14,19 @@
     mode: "0750"
 
 - name: Template out mariadb backup script
-  template:
+  ansible.builtin.template:
     src: "mariabackup_script.py.j2"
     dest: "{{ galera_mariadb_backups_path }}/mariabackup_script.py"
     mode: "0755"
 
 - name: Template out mariabackup cnf file
-  template:
+  ansible.builtin.template:
     src: "mariabackup.cnf.j2"
     dest: "{{ galera_mariadb_backups_cnf_file }}"
     mode: "0644"
 
 - name: Create service and timer for full backups
-  import_role:
+  ansible.builtin.import_role:
     name: systemd_service
   vars:
     systemd_service_enabled: true
@@ -55,7 +55,7 @@
             Unit: "mariabackup-full.service"
 
 - name: Create service and timer for incremental backups
-  import_role:
+  ansible.builtin.import_role:
     name: systemd_service
   vars:
     systemd_service_enabled: true

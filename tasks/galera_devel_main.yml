@@ -14,8 +14,8 @@
 # limitations under the License.
 
 - name: Prepare the package list
-  set_fact:
+  ansible.builtin.set_fact:
     galera_packages_list: "{{ galera_devel_distro_packages }}"
 
 - name: Including distro-specific installation tasks
-  include_tasks: "galera_install_{{ ansible_facts['pkg_mgr'] }}.yml"
+  ansible.builtin.include_tasks: "galera_install_{{ ansible_facts['pkg_mgr'] }}.yml"

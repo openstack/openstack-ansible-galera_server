@@ -14,7 +14,7 @@
 # limitations under the License.
 
 - name: Run the systemd service role
-  import_role:
+  ansible.builtin.import_role:
     name: systemd_service
   vars:
     systemd_tempd_prefix: openstack
@@ -46,7 +46,7 @@
 #                  and running them again will cause a conflict within
 #                  debian based deployments.
 - name: Create galera initial secure tool
-  template:
+  ansible.builtin.template:
     src: "galera_secure_node.j2"
     dest: "/usr/local/bin/galera_secure_node"
     mode: "0750"
@@ -66,7 +66,7 @@
     - molecule-idempotence-notest
 
 - name: Create the local directories
-  file:
+  ansible.builtin.file:
     path: "{{ item.path }}"
     state: "directory"
     owner: "{{ item.owner | default('root') }}"
@@ -75,13 +75,13 @@
     recurse: "{{ item.recurse | default('false') }}"
   with_items:
     - { path: "{{ galera_data_dir }}", owner: "mysql", mode: "02755" }
-    - { path: "{{ galera_tmp_dir }}", owner: "mysql", mode: "02755" }  # TMP needs to be re-created after clustering, so breaks idempotence test on all[1:]
+    - { path: "{{ galera_tmp_dir }}", owner: "mysql", mode: "02755" } # TMP needs to be re-created after clustering, so breaks idempotence test on all[1:]
     - { path: "/etc/mysql/conf.d" }
   tags:
     - molecule-idempotence-notest
 
 - name: Create and install SSL certificates
-  include_role:
+  ansible.builtin.include_role:
     name: pki
     tasks_from: "{{ galera_pki_create_ca | ternary('main.yml', 'main_certs.yml') }}"
   vars:
@@ -102,7 +102,7 @@
 # in {{ galera_etc_include_dir }} so make sure they are gone if necessary in
 # case they cause some conflicts with the ones we provide.
 - name: Remove existing mariadb configuration files
-  file:
+  ansible.builtin.file:
     state: absent
     path: "{{ galera_etc_include_dir }}/{{ item }}"
   with_items: "{{ mariadb_delete_etc_conf_files | default([]) }}"
@@ -142,7 +142,7 @@
     - Restart all mysql
 
 - name: Apply service defaults
-  template:
+  ansible.builtin.template:
     src: "mysql_defaults.j2"
     dest: "/etc/default/mariadb"
     mode: "0644"
@@ -150,25 +150,25 @@
     - Restart all mysql
 
 - name: Link mysql and mariadb config files
-  file:
+  ansible.builtin.file:
     src: "/etc/default/mariadb"
     dest: "/etc/default/mysql"
     state: "link"
     force: "yes"
 
 - name: Remove default mysql_safe_syslog
-  file:
+  ansible.builtin.file:
     path: "/etc/mysql/conf.d/mysqld_safe_syslog.cnf"
     state: absent
 
 - name: Create new cluster tool
-  template:
+  ansible.builtin.template:
     src: "galera_new_cluster.j2"
     dest: "/usr/local/bin/galera_new_cluster"
     mode: "0750"
 
 - name: Create clustercheck script
-  template:
+  ansible.builtin.template:
     src: "clustercheck.j2"
     dest: "/usr/local/bin/clustercheck"
     mode: "0755"

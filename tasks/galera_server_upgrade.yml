@@ -27,7 +27,7 @@
     - skip_ansible_lint
 
 - name: Check if major version of Galera is installed
-  fail:
+  ansible.builtin.fail:
     msg: >
       To install a new major version of mariadb-galera-server set
       '-e galera_upgrade=true'.
@@ -38,7 +38,7 @@
     - galera_server-upgrade
 
 - name: Including galera_server_upgrade_pre
-  include_tasks: galera_server_upgrade_pre.yml
+  ansible.builtin.include_tasks: galera_server_upgrade_pre.yml
   when:
     - galera_upgrade | bool
   args:

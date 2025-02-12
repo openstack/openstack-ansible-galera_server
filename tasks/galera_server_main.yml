@@ -14,14 +14,14 @@
 # limitations under the License.
 
 - name: Fail when the host is not in galera_cluster_members
-  fail:
+  ansible.builtin.fail:
     msg: "The host {{ inventory_hostname }} must be in galera_cluster_members."
   when: inventory_hostname not in galera_cluster_members
   tags:
     - always
 
 - name: Fail if the galera root password is not provided
-  fail:
+  ansible.builtin.fail:
     msg: |
       Please set the galera_root_password variable prior to applying the
       galera role.
@@ -30,7 +30,7 @@
     - always
 
 - name: Initialize local facts
-  ini_file:
+  community.general.ini_file:
     dest: "/etc/ansible/facts.d/openstack_ansible.fact"
     section: "galera"
     option: initialized
@@ -38,20 +38,20 @@
     mode: "0644"
 
 - name: Refresh local facts
-  setup:
+  ansible.builtin.setup:
     filter: ansible_local
     gather_subset: "!all"
   tags:
     - always
 
 - name: Set the galera existing cluster fact
-  set_fact:
+  ansible.builtin.set_fact:
     galera_deployed: "{{ ansible_local['openstack_ansible']['galera']['deployed'] | default(false) | bool }}"
   tags:
     - always
 
 - name: Cluster state notice
-  debug:
+  ansible.builtin.debug:
     msg: >
       The cluster state will be ignored. While the state checks are skipped,
       the galera restart handlers will be triggered to ensure everything is
@@ -65,7 +65,7 @@
     - always
 
 - name: Including galera_server_cluster_state
-  include_tasks: galera_server_cluster_state.yml
+  ansible.builtin.include_tasks: galera_server_cluster_state.yml
   when:
     - galera_deployed | bool
     - not galera_ignore_cluster_state | bool
@@ -73,7 +73,7 @@
     - always
 
 - name: Including galera_server_upgrade
-  include_tasks: galera_server_upgrade.yml
+  ansible.builtin.include_tasks: galera_server_upgrade.yml
   when: galera_deployed | bool
   args:
     apply:
@@ -83,7 +83,7 @@
     - always
 
 - name: Including galera_server_install
-  include_tasks: galera_server_install.yml
+  ansible.builtin.include_tasks: galera_server_install.yml
   args:
     apply:
       tags:
@@ -92,7 +92,7 @@
     - always
 
 - name: Including galera_server_post_install
-  include_tasks: galera_server_post_install.yml
+  ansible.builtin.include_tasks: galera_server_post_install.yml
   args:
     apply:
       tags:
@@ -101,10 +101,9 @@
     - always
 
 - name: Flush handlers
-  meta: flush_handlers
-
+  ansible.builtin.meta: flush_handlers
 - name: Including galera_server_setup
-  include_tasks: galera_server_setup.yml
+  ansible.builtin.include_tasks: galera_server_setup.yml
   when: inventory_hostname == galera_server_bootstrap_node
   args:
     apply:
@@ -114,7 +113,7 @@
     - always
 
 - name: Including galera_server_backups
-  include_tasks: galera_server_backups.yml
+  ansible.builtin.include_tasks: galera_server_backups.yml
   when:
     - galera_mariadb_backups_enabled | bool
     - inventory_hostname in galera_mariadb_backups_nodes

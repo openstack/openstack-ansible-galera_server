@@ -32,7 +32,7 @@
 - name: Use encryption with the file key management plugin
   block:
     - name: Create encryption directory
-      file:
+      ansible.builtin.file:
         path: "/etc/mysql/encryption"
         state: "directory"
         owner: "mysql"
@@ -40,14 +40,14 @@
         mode: "0755"
 
     - name: Create a fact for the name of the temporary directory
-      set_fact:
+      ansible.builtin.set_fact:
         galera_db_encryption_tmp_dir: "{{ lookup('env', 'OSA_CONFIG_DIR') | default(osa_config_dir, True) }}/mysql"
       delegate_to: "localhost"
       run_once: true
       when: galera_db_encryption_tmp_dir | length == 0
 
     - name: Create a temporary directory to store the keyfile
-      file:
+      ansible.builtin.file:
         path: "{{ galera_db_encryption_tmp_dir }}"
         state: directory
         mode: "0750"
@@ -55,21 +55,22 @@
       run_once: true
 
     - name: Create encryption keys if the user does not specify them and put them on the deploy host # noqa: no-changed-when risky-shell-pipe
-      shell: "for i in {1..2}; do echo \"$i;$(openssl rand -hex 32)\"; done | tee {{ galera_db_encryption_tmp_dir }}/mysql_encryption_keys > /dev/null"
+      ansible.builtin.shell: >-
+        for i in {1..2}; do echo \"$i;$(openssl rand -hex 32)\"; done | tee {{ galera_db_encryption_tmp_dir }}/mysql_encryption_keys > /dev/null
       delegate_to: "localhost"
       run_once: true
       when:
         - galera_db_encryption_keys is not defined
 
     - name: Create the encryption key file from the user provided galera_db_encryption_keys
-      shell: "echo '{{ galera_db_encryption_keys }}' > {{ galera_db_encryption_tmp_dir }}/mysql_encryption_keys" # noqa: no-changed-when
+      ansible.builtin.shell: "echo '{{ galera_db_encryption_keys }}' > {{ galera_db_encryption_tmp_dir }}/mysql_encryption_keys" # noqa: no-changed-when
       delegate_to: "localhost"
       run_once: true
       when:
         - galera_db_encryption_keys is defined
 
     - name: Create an encrypted keyfile using encryption key
-      command: # noqa: no-changed-when
+      ansible.builtin.command: # noqa: no-changed-when
         argv:
           - openssl
           - enc
@@ -86,7 +87,7 @@
       run_once: true
 
     - name: Copy encypted keyfile to servers
-      copy:
+      ansible.builtin.copy:
         src: "{{ galera_db_encryption_tmp_dir }}/mysql_encryption_keyfile.enc"
         dest: "/etc/mysql/encryption/keyfile.enc"
         owner: mysql
@@ -96,7 +97,7 @@
       notify: Restart all mysql
 
     - name: Copy password to file to servers
-      copy:
+      ansible.builtin.copy:
         content: "{{ galera_db_encryption_password }}"
         dest: "/etc/mysql/encryption/.keyfile.key"
         owner: mysql

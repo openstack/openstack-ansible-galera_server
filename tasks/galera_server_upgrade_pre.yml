@@ -18,7 +18,7 @@
 # cause the service stop task to fail. To cater for this
 # we only try to stop the service is it exists.
 - name: Check whether a mysql service exists yet # noqa command-instead-of-module risky-shell-pipe
-  shell: systemctl list-unit-files --state=enabled --type=service | grep "^{{ galera_mariadb_service_name }}.service .* enabled$"
+  ansible.builtin.shell: systemctl list-unit-files --state=enabled --type=service | grep "^{{ galera_mariadb_service_name }}.service .* enabled$"
   args:
     executable: /bin/bash
   changed_when: false
@@ -26,7 +26,7 @@
   register: _mysql_service_exists
 
 - name: Stop MariaDB
-  systemd:
+  ansible.builtin.systemd:
     name: "{{ galera_mariadb_service_name }}"
     state: stopped
   register: galera_restart_fall_back
@@ -37,7 +37,7 @@
     - _mysql_service_exists.rc == 0
 
 - name: UN-Install galera-server package
-  package:
+  ansible.builtin.package:
     name: "{{ item }}"
     state: absent
   with_items:

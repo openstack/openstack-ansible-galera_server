@@ -14,21 +14,20 @@
 # limitations under the License.
 
 - name: Prepare the package list
-  set_fact:
+  ansible.builtin.set_fact:
     galera_packages_list: "{{ galera_server_required_distro_packages + galera_server_mariadb_distro_packages }}"
 
 - name: Including distro-specific installation tasks
-  include_tasks: "galera_install_{{ ansible_facts['pkg_mgr'] }}.yml"
-
+  ansible.builtin.include_tasks: "galera_install_{{ ansible_facts['pkg_mgr'] }}.yml"
 - name: Including galera_server_encryption
-  include_tasks: galera_server_encryption.yml
+  ansible.builtin.include_tasks: galera_server_encryption.yml
   when:
     - galera_mariadb_encryption_enabled | bool
   tags:
     - galera_server-encryption
 
 - name: Record galera has been deployed
-  ini_file:
+  community.general.ini_file:
     dest: "/etc/ansible/facts.d/openstack_ansible.fact"
     section: galera
     option: deployed
@@ -36,5 +35,5 @@
     mode: "0644"
 
 - name: Set the galera existing cluster fact
-  set_fact:
+  ansible.builtin.set_fact:
     galera_deployed: true

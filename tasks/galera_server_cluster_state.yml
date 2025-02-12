@@ -14,14 +14,14 @@
 # limitations under the License.
 
 - name: Check node status
-  command: >
+  ansible.builtin.command: >
     {{ galera_mariadb_client_binary }} --silent --skip-column-names --connect-timeout=10 -e 'SHOW STATUS LIKE "wsrep_local_state";'
   failed_when: false
   changed_when: false
   register: _node_status
 
 - name: Fail if cluster is out of sync
-  fail:
+  ansible.builtin.fail:
     msg: >
       The cluster may be broken, the cluster state is not known to be good.
       Fix the cluster state before re-running the playbooks. To ignore the
@@ -32,14 +32,14 @@
     or (_node_status.stdout.split()[-1] | default(false)) not in ["2", "4"]
 
 - name: Check cluster name
-  command: >
+  ansible.builtin.command: >
     {{ galera_mariadb_client_binary }} --silent --skip-column-names --connect-timeout=10 -e 'SHOW VARIABLES LIKE "wsrep_cluster_name";'
   failed_when: false
   changed_when: false
   register: _cluster_name
 
 - name: Fail if galera_cluster_name doesnt match provided value
-  fail:
+  ansible.builtin.fail:
     msg: >
       The galera_cluster_name variable does not match what is set in mysql.
       Check your galera_cluster_name setting in your user_*.yml files in

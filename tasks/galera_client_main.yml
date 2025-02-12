@@ -14,19 +14,18 @@
 # limitations under the License.
 
 - name: Prepare the package list
-  set_fact:
+  ansible.builtin.set_fact:
     galera_packages_list: "{{ galera_client_distro_packages }}"
 
 - name: Including distro-specific installation tasks
-  include_tasks: "galera_install_{{ ansible_facts['pkg_mgr'] }}.yml"
+  ansible.builtin.include_tasks: "galera_install_{{ ansible_facts['pkg_mgr'] }}.yml"
   when:
     - galera_client_package_install | bool
 
 - name: Including galera_client_post_install
-  include_tasks: galera_client_post_install.yml
-
+  ansible.builtin.include_tasks: galera_client_post_install.yml
 - name: Create and install SSL certificates
-  include_role:
+  ansible.builtin.include_role:
     name: pki
     tasks_from: "main_certs.yml"
   vars:

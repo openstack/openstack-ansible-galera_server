@@ -14,7 +14,7 @@
 # limitations under the License.
 
 - name: Gather variables for each operating system
-  include_vars: "{{ lookup('first_found', params) }}"
+  ansible.builtin.include_vars: "{{ lookup('first_found', params) }}"
   vars:
     params:
       files:
@@ -29,7 +29,7 @@
     - always
 
 - name: Including galera_client_main
-  include_tasks: galera_client_main.yml
+  ansible.builtin.include_tasks: galera_client_main.yml
   when:
     - galera_install_client | bool
     - inventory_hostname not in galera_cluster_members or galera_root_user != 'root'
@@ -41,7 +41,7 @@
     - always
 
 - name: Including galera_devel_main
-  include_tasks: galera_devel_main.yml
+  ansible.builtin.include_tasks: galera_devel_main.yml
   when:
     - galera_install_devel | bool
   args:
@@ -52,7 +52,7 @@
     - always
 
 - name: Including galera_server_main
-  include_tasks: galera_server_main.yml
+  ansible.builtin.include_tasks: galera_server_main.yml
   when:
     - galera_install_server | bool
   args:

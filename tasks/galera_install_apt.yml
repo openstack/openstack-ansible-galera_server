@@ -21,7 +21,7 @@
     fail_msg: "The following repository definitions must be updated to deb822 format {{ _repo_check }}"
 
 - name: Remove conflicting distro packages
-  package:
+  ansible.builtin.package:
     name: "{{ galera_mariadb_distro_packages_remove | default([]) }}"
     state: absent
   when: galera_install_method == 'external_repo'
@@ -31,14 +31,14 @@
   vars:
     galera_apt_repo_cleanup:
       - MariaDB.list
-  file:
+  ansible.builtin.file:
     path: "/etc/apt/sources.list.d/{{ item }}"
     state: absent
   with_items: "{{ galera_apt_repo_cleanup }}"
   register: apt_repo_removed
 
 - name: Ensure python3-debian package is available
-  apt:
+  ansible.builtin.apt:
     name: python3-debian
 
 - name: Manage apt repositories
@@ -69,12 +69,12 @@
   register: deb822_repos
 
 - name: Update apt repositories when config is changed
-  apt:
+  ansible.builtin.apt:
     update_cache: true
   when: (apt_repo_removed is changed) or (deb822_repos is changed)
 
 - name: Preseed galera password(s)
-  debconf:
+  ansible.builtin.debconf:
     name: "{{ item.name }}"
     question: "{{ item.question }}"
     value: "{{ item.value }}"
@@ -83,7 +83,7 @@
   no_log: true
 
 - name: Install galera role remote packages (apt)
-  apt:
+  ansible.builtin.apt:
     name: "{{ galera_packages_list }}"
     state: "{{ galera_package_state }}"
     policy_rc_d: 101
