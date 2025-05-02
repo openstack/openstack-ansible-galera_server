@@ -45,7 +45,7 @@ galera_mariadb_server_package: "{{ (galera_install_method == 'external_repo') | 
 
 # The major version used to select the repo URL path
 galera_major_version: 11.4
-galera_minor_version: 4
+galera_minor_version: 5
 
 # Set the URL for the MariaDB repository
 galera_repo_host: "mirror.mariadb.org"

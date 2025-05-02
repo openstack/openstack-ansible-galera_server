@@ -48,6 +48,3 @@ wsrep_retry_autocommit = {{ galera_wsrep_retry_autocommit }}
 
 [mariabackup]
 parallel = {{ galera_mariabackup_threads }}
-# NOTE(noonedeadpunk): We ignore cert verification due to bug
-#                      https://jira.mariadb.org/browse/MDEV-35368
-skip-ssl-verify-server-cert
