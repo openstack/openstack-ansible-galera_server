@@ -254,16 +254,23 @@ galera_pki_intermediate_cert_path: >-
     galera_pki_dir ~ '/roots/' ~ galera_pki_intermediate_cert_name ~ '/certs/' ~ galera_pki_intermediate_cert_name ~ '.crt'
   }}
 galera_pki_regen_cert: ""
+galera_pki_backend: "{{ openstack_pki_backend | default('standalone') }}"
 galera_pki_certificates:
   - name: "galera_{{ ansible_facts['hostname'] }}"
-    provider: ownca
     cn: "{{ ansible_facts['hostname'] }}"
-    san: >-
-      {{
-        'DNS:' ~ ansible_facts['hostname'] ~ ',' ~ (
-          (galera_address | ansible.utils.ipaddr) is string) | ternary('IP', 'DNS') ~ ':' ~ galera_address ~
-          ',IP:' ~ management_address
-      }}
+    san:
+      ip: >-
+        {{
+          [management_address] +
+          ([galera_address] if (galera_address | ansible.utils.ipaddr) is string else [])
+        }}
+      dns: >-
+        {{
+          [ansible_facts['hostname']] +
+          ([galera_address] if (galera_address | ansible.utils.ipaddr) is not string else [])
+        }}
+    # standalone backend only
+    provider: ownca
     signed_by: "{{ galera_pki_intermediate_cert_name }}"
 
 galera_use_ssl: false
@@ -275,9 +282,9 @@ galera_require_secure_transport: false
 galera_tls_version: "TLSv1.2,TLSv1.3"
 
 ## These options should be specified in user_variables if necessary, otherwise self-signed certs are used.
-# galera_user_ssl_cert: /etc/openstack_deploy/self_signed_certs/galera.pem
-# galera_user_ssl_key: /etc/openstack_deploy/self_signed_certs/galera.key
-# galera_user_ssl_ca_cert: /etc/openstack_deploy/self_signed_certs/galera-ca.pem
+galera_user_ssl_cert: ""
+galera_user_ssl_key: ""
+galera_user_ssl_ca_cert: ""
 
 # This option is used for creating the CA and overriding the Galera address on the clients side.
 # Should be set to either internal VIP or VIP FQDN, depending on what is currently used in the env.
@@ -285,21 +292,22 @@ galera_address: "{{ ansible_host }}"
 
 # Installation details for SSL certificates
 galera_pki_install_certificates:
-  - src: "{{ galera_user_ssl_cert | default(galera_pki_certs_path ~ 'galera_' ~ ansible_facts['hostname'] ~ '-chain.crt') }}"
+  - name: "galera_{{ ansible_facts['hostname'] }}"
+    type: "certificate_chain"
     dest: "{{ galera_ssl_cert }}"
-    owner: "root"
-    group: "root"
-    mode: "0644"
-  - src: "{{ galera_user_ssl_key | default(galera_pki_keys_path ~ 'galera_' ~ ansible_facts['hostname'] ~ '.key.pem') }}"
+    # standalone backend only
+    src: "{{ galera_user_ssl_cert }}"
+  - name: "galera_{{ ansible_facts['hostname'] }}"
+    type: "private_key"
     dest: "{{ galera_ssl_key }}"
     owner: "mysql"
-    group: "root"
-    mode: "0600"
-  - src: "{{ galera_user_ssl_ca_cert | default(galera_pki_intermediate_cert_path) }}"
+    # standalone backend only
+    src: "{{ galera_user_ssl_key }}"
+  - name: "galera_{{ ansible_facts['hostname'] }}"
+    type: "ca_bundle"
     dest: "{{ galera_ssl_ca_cert }}"
-    owner: "root"
-    group: "root"
-    mode: "0644"
+    # standalone backend only
+    src: "{{ galera_user_ssl_ca_cert }}"
 
 # MariaDB 10.1+ ships with 'PrivateDevices=True' in the systemd unit file. This
 # provides some additional security, but it causes problems with systemd 219.
