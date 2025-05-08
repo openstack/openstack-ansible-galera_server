@@ -40,18 +40,21 @@ galera_server_proxy_protocol_networks: ""
 #  distro specific variable files found in vars/
 galera_debconf_items: []
 galera_mariadb_service_name: mariadb
-galera_mariadb_server_package: "{{ _galera_mariadb_server_package }}"
+galera_mariadb_server_package: "{{ (galera_install_method == 'external_repo') | ternary(_galera_mariadb_external_repo_package, 'mariadb-server') }}"
 
 # The major version used to select the repo URL path
 galera_major_version: 10.11
 galera_minor_version: 6
 
 # Set the URL for the MariaDB repository
-galera_repo_host: "downloads.mariadb.com"
+galera_repo_host: "archive.mariadb.org"
 galera_repo_url: "{{ _galera_repo_url }}"
 
 # Set the repo information for the MariaDB repository
 galera_repo: "{{ _galera_repo }}"
+
+# Mappings from Ansible reported architecture to distro release architecture
+galera_architecture_mapping: "{{ _galera_architecture_mapping }}"
 
 # Set the gpg keys needed to be imported
 # This should be a list of dicts, with each dict
@@ -181,6 +184,9 @@ galera_init_overrides: {}
 galera_distro_package_pins:
   - package: '*'
     release: MariaDB
+    priority: 999
+  - package: 'mariadb-*'
+    version: '1:{{ galera_major_version }}.{{ galera_minor_version }}*'
     priority: 1001
 
 # Galera Server SSL functionality.
