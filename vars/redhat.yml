@@ -69,7 +69,7 @@ galera_server_upgrade_packages_remove:
   - "{{ galera_mariadb_server_package }}"
 
 _galera_repo_url: >-
-  https://{{ galera_repo_host }}/yum/{{ galera_major_version }}/rhel/$releasever/{{
+  https://{{ galera_repo_host }}/yum/{{ galera_major_version }}.{{ galera_minor_version }}/rhel/$releasever/{{
     galera_architecture_mapping[ansible_facts['architecture']] }}
 
 _galera_repo:
