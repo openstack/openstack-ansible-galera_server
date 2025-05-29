@@ -33,6 +33,7 @@
       '-e galera_upgrade=true'.
   when:
     - mysqladmin_version.rc != 0
+    - galera_install_method != 'distro'
     - not galera_upgrade | bool
   tags:
     - galera_server-upgrade
