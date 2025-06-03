@@ -23,3 +23,11 @@
       - openstack-ansible-deploy-infra_lxc-jobs
       - openstack-ansible-deploy-infra_distro_lxc-jobs
       - openstack-ansible-upgrade-infra_lxc-jobs
+    check:
+      jobs:
+        - openstack-ansible-tox-molecule-centos-10-stream:
+            voting: false
+    gate:
+      jobs:
+        - openstack-ansible-tox-molecule-centos-10-stream:
+            voting: false
