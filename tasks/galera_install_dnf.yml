@@ -73,7 +73,7 @@
       mode: "0755"
     - path: "/etc/mysql/conf.d"
       state: "directory"
-    - src: "/usr/lib64/galera"
+    - src: "/usr/lib64/galera-4"
       path: "/usr/lib/galera"
       state: "link"
       force: true
