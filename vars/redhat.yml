@@ -62,6 +62,7 @@ galera_mariadb_distro_packages_remove:
   - mariadb-common
   - mariadb-config
   - mariadb-server
+  - mariadb-client-utils
 
 # The packages to uninstall during an upgrade from a previous version
 galera_server_upgrade_packages_remove:
