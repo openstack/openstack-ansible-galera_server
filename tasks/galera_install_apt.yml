@@ -65,7 +65,15 @@
     trusted: "{{ item.trusted | default(omit) }}"
     types: "{{ item.types | default(omit) }}"
     uris: "{{ item.uris | default(omit) }}"
-  with_items: "{{ galera_repo }}"
+  loop: "{{ galera_repo }}"
+  loop_control:
+    label: "{{ loop_label | to_json }}"
+  vars:
+    loop_label:
+      name: "{{ item.name }}"
+      uris: "{{ item.uris | default('') }}"
+      state: "{{ item.state | default('present') }}"
+      suites: "{{ item.suites | default('') }}"
   register: deb822_repos
 
 - name: Update apt repositories when config is changed
