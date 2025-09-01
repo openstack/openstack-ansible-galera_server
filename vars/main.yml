@@ -12,6 +12,10 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
+_galera_collation: "{{ [galera_default_charset, galera_default_collation] | join('_') }}"
+_galera_collation_set: "{{ galera_default_collation_set | combine({galera_default_charset: _galera_collation}) }}"
+
 galera_init_defaults:
   Service:
     LimitNOFILE: "{{ galera_file_limits }}"

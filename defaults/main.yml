@@ -127,6 +127,17 @@ galera_wait_timeout: "{{ openstack_db_connection_recycle_time | default('600') }
 # to timeout
 galera_startup_timeout: 1800
 
+## charset options
+galera_default_charset: utf8mb3
+galera_default_collation: general_ci
+# NOTE: Default collation set will be updated with defined above defaults
+galera_default_collation_set:
+  utf8mb3: utf8mb3_uca1400_ai_ci
+  utf8mb4: utf8mb4_uca1400_ai_ci
+  ucs2: ucs2_uca1400_ai_ci
+  utf16: utf16_uca1400_ai_ci
+  utf32: utf32_uca1400_ai_ci
+
 ## innodb options
 galera_innodb_buffer_pool_size: 4096M
 galera_innodb_log_file_size: 1024M
