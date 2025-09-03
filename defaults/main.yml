@@ -133,7 +133,7 @@ galera_innodb_log_file_size: 1024M
 galera_innodb_log_buffer_size: 128M
 
 ## wsrep configuration
-galera_wsrep_address: "{{ ansible_host }}"
+galera_wsrep_address: "{{ management_address | default(ansible_host) }}"
 galera_wsrep_address_port: "{{ galera_wsrep_address }}:3306"
 galera_wsrep_cluster_port: 4567
 galera_wsrep_cluster_address: >-
