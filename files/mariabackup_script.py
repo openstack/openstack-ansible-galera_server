@@ -11,6 +11,7 @@ import os
 MARIADB_BACKUP_BINARY = '/usr/bin/mariadb-backup'
 LOCK_FILE = '/var/run/mariabackup-galera/db_backup.pid'
 
+
 def get_opts():
     parser = ArgumentParser(
         usage="python3 mariabackup_script <destdir> [--full-backup][--increment] [--suffix=<suffix>] [--defaults-file=<defaults-file>]",
@@ -41,10 +42,8 @@ def get_opts():
     )
     parser.add_argument(
         "--compress",
+        action='store_true',
         dest="compress_flag",
-        default=False,
-        type=eval,
-        choices=[True, False],
         help="Flag to compress created backups",
     )
     parser.add_argument(
@@ -58,7 +57,7 @@ def get_opts():
         "-c",
         "--copies",
         dest="copies_flag",
-        default=False,
+        default=None,
         type=int,
         help="Specifying how much copies to rotate",
     )
@@ -72,14 +71,14 @@ def get_opts():
     parser.add_argument(
         "--warning",
         dest="warning_value",
-        default=False,
+        default=None,
         type=int,
         help="When to raise warning (for --check) in days",
     )
     parser.add_argument(
         "--critical",
         dest="critical_value",
-        default=False,
+        default=None,
         type=int,
         help="When to raise critical (for --check) in days",
     )
@@ -87,7 +86,7 @@ def get_opts():
         "-s",
         "--suffix",
         dest="suffix",
-        default=False,
+        default=None,
         type=str,
         help="Added to the filename of backups"
     )
