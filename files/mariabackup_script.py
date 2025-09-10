@@ -1,5 +1,4 @@
 #!/usr/bin/python3
-# {{ ansible_managed }}
 from subprocess import Popen, PIPE, check_output, run
 from argparse import ArgumentParser
 from shutil import rmtree
