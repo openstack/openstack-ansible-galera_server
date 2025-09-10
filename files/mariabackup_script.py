@@ -145,16 +145,28 @@ def create_full_backup(dest, curtime, full_backup_filename, extra_mariabackup_ar
                 '--extra-lsndir',
                 full_backup_base_path,
             ]
-            mariadb_backup_args = [MARIADB_BACKUP_BINARY] + extra_mariabackup_args+ mariabackup_default_args
-            mariabackup_run = Popen(mariadb_backup_args, stdout=PIPE, stderr=err)
 
+            mariadb_backup_args = [MARIADB_BACKUP_BINARY] + extra_mariabackup_args + mariabackup_default_args
             compressed_backup_path = os.path.join(full_backup_base_path, f"{full_backup_filename}{curtime}")
+
             with open(compressed_backup_path, "wb") as compressed_backup:
-                cmd_run([compressor], stdin=mariabackup_run.stdout, stdout=compressed_backup)
+                mariabackup_run = Popen(mariadb_backup_args, stdout=PIPE, stderr=err)
+                compressor_run = Popen(
+                    [compressor],
+                    stdin=mariabackup_run.stdout, stdout=compressed_backup, stderr=err
+                )
+
+                # Allow mariabackup_proc to receive a SIGPIPE if compressor_proc exits first.
+                if mariabackup_run.stdout:
+                    mariabackup_run.stdout.close()
+
+                compressor_run.communicate()
                 mariabackup_run.wait()
-                mariabackup_res = mariabackup_run.communicate()
-                if mariabackup_run.returncode:
-                    print(mariabackup_res[1])
+
+                if mariabackup_run.returncode != 0:
+                    print(f"Error: mariabackup process failed with exit code {mariabackup_run.returncode}. Check backup.log for details.")
+                if compressor_run.returncode != 0:
+                    print(f"Error: {compressor} process failed with exit code {compressor_run.returncode}. Check backup.log for details.")
         else:
             # Creating full backup
             mariabackup_default_args = [
@@ -222,15 +234,29 @@ def create_increment_backup(dest, curtime, increment_backup_filename, extra_mari
                 '--incremental-basedir', basedir,
                 '--extra-lsndir', increment_backup_base_path
             ]
+
             mariadb_backup_args = [MARIADB_BACKUP_BINARY] + extra_mariabackup_args + mariabackup_default_args
-            mariabackup_run = Popen(mariadb_backup_args, stdout=PIPE, stderr=err)
             compressed_backup_path = os.path.join(increment_backup_base_path, f"{increment_backup_filename}{curtime}")
+
             with open(compressed_backup_path, "wb") as compressed_backup:
-                cmd_run([compressor], stdin=mariabackup_run.stdout, stdout=compressed_backup)
+                mariabackup_run = Popen(mariadb_backup_args, stdout=PIPE, stderr=err)
+                compressor_run = Popen(
+                    [compressor],
+                    stdin=mariabackup_run.stdout, stdout=compressed_backup, stderr=err
+                )
+
+                # Allow mariabackup_proc to receive a SIGPIPE if compressor_proc exits first.
+                if mariabackup_run.stdout:
+                    mariabackup_run.stdout.close()
+
+                compressor_run.communicate()
                 mariabackup_run.wait()
-                mariabackup_res = mariabackup_run.communicate()
-                if mariabackup_run.returncode:
-                    print(mariabackup_res[1])
+
+                if mariabackup_run.returncode != 0:
+                    print(f"Error: mariabackup process failed with exit code {mariabackup_run.returncode}. Check increment.err for details.")
+                if compressor_run.returncode != 0:
+                    print(f"Error: {compressor} process failed with exit code {compressor_run.returncode}. Check increment.err for details.")
+
         else:
             # Creating incremental backup
             mariabackup_default_args = [
