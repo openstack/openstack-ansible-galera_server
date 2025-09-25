@@ -17,16 +17,17 @@ socket = "{{ galera_var_run_socket }}"
 socket = "{{ galera_var_run_socket }}"
 nice = 0
 
-
 [mysql]
-default-character-set = utf8
-
+default-character-set = {{ galera_default_charset }}
 
 [mysqld]
 user = mysql
-collation-server = utf8_general_ci
-init-connect = 'SET NAMES utf8'
-character-set-server = utf8
+collation-server = {{ _galera_collation }}
+init-connect = 'SET NAMES {{ galera_default_charset }} COLLATE {{ _galera_collation }}'
+character-set-server = {{ galera_default_charset }}
+{% if galera_major_version is version('11.5', '>=') and galera_install_method == 'external_repo' %}
+character-set-collations = {{ _galera_collation_set.items() | map('join', '=') | join(',') }}
+{% endif %}
 datadir = {{ galera_data_dir }}
 tmpdir = {{ galera_tmp_dir }}
 {% for ignored_db in galera_ignore_db_dirs %}
