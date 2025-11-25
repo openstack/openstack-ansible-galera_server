@@ -43,7 +43,7 @@ galera_var_run_socket: "/var/run/mysqld/mysqld.sock"
 # The package name for mariaDB is set as a variable
 # so that it can be used in debconf later in the
 # "galera_common" role.
-_galera_mariadb_external_repo_package: "mariadb-server=1:{{ galera_major_version }}.{{ galera_minor_version }}*"
+_galera_mariadb_server_package: "mariadb-server=1:{{ galera_major_version }}.{{ galera_minor_version }}*"
 
 _galera_architecture_mapping:
   x86_64: amd64

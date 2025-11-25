@@ -39,7 +39,7 @@ galera_etc_conf_file: "/etc/mysql/my.cnf"
 galera_etc_include_dir: "/etc/mysql/conf.d"
 galera_var_run_socket: "{{ galera_data_dir }}/mysql.sock"
 
-_galera_mariadb_external_repo_package: >-
+_galera_mariadb_server_package: >-
   MariaDB-server-{{ galera_major_version }}.{{ galera_minor_version }}-1.el{{ ansible_facts['distribution_major_version'] }}
 
 _galera_architecture_mapping:
