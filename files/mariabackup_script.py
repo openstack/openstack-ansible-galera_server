@@ -103,7 +103,7 @@ def get_opts():
 def check_backups(dest, warning, critical, full_backup_filename):
     try:
         full_backup_list = [
-            os.path.normpath(dest+'/'+f)
+            os.path.join(dest, f)
             for f in os.listdir(dest)
             if f.startswith(full_backup_filename)
         ]
@@ -134,8 +134,8 @@ def create_full_backup(dest, curtime, full_backup_filename, extra_mariabackup_ar
     check_lock_file()
     get_lock_file()
     try:
-        err = open(os.path.normpath(dest+"/backup.log"), "w")
-        full_backup_base_path = os.path.normpath(f"{dest}/{full_backup_filename}{curtime}")
+        err = open(os.path.join(dest, "backup.log"), "w")
+        full_backup_base_path = os.path.join(dest, f"{full_backup_filename}{curtime}")
         if compress:
             # Creating compressed full backup
             os.makedirs(full_backup_base_path, exist_ok=True)
@@ -148,8 +148,8 @@ def create_full_backup(dest, curtime, full_backup_filename, extra_mariabackup_ar
             mariadb_backup_args = [MARIADB_BACKUP_BINARY] + extra_mariabackup_args+ mariabackup_default_args
             mariabackup_run = Popen(mariadb_backup_args, stdout=PIPE, stderr=err)
 
-            compressed_backup_path = f"{full_backup_base_path}/{full_backup_filename}{curtime}"
-            with open(os.path.normpath(compressed_backup_path), "wb") as compressed_backup:
+            compressed_backup_path = os.path.join(full_backup_base_path, f"{full_backup_filename}{curtime}")
+            with open(compressed_backup_path, "wb") as compressed_backup:
                 cmd_run([compressor], stdin=mariabackup_run.stdout, stdout=compressed_backup)
                 mariabackup_run.wait()
                 mariabackup_res = mariabackup_run.communicate()
@@ -176,7 +176,7 @@ def create_full_backup(dest, curtime, full_backup_filename, extra_mariabackup_ar
                 full_backup_base_path
             ]
 
-            with open(os.path.normpath(dest+"/prepare.log"), "w") as err_p:
+            with open(os.path.join(dest, "prepare.log"), "w") as err_p:
                 cmd_run(
                     [MARIADB_BACKUP_BINARY] + extra_mariabackup_args + mariabackup_default_prep_args,
                     text=True, check=True,
@@ -201,7 +201,7 @@ def create_increment_backup(dest, curtime, increment_backup_filename, extra_mari
     try:
         basedir = max(
             [
-                os.path.normpath(dest+'/'+f)
+                os.path.join(dest, f)
                 for f in os.listdir(dest)
                 if f.startswith('mariabackup-')
             ], key=os.path.getmtime
@@ -211,8 +211,8 @@ def create_increment_backup(dest, curtime, increment_backup_filename, extra_mari
         os.unlink(LOCK_FILE)
         raise SystemExit(1)
     try:
-        err = open(os.path.normpath(dest+"/increment.err"), "w")
-        increment_backup_base_path = os.path.normpath(f"{dest}/{increment_backup_filename}{curtime}")
+        err = open(os.path.join(dest, "increment.err"), "w")
+        increment_backup_base_path = os.path.join(dest, f"{increment_backup_filename}{curtime}")
         if compress:
             # Creating compressed incremental backup
             os.makedirs(increment_backup_base_path, exist_ok=True)
@@ -224,8 +224,8 @@ def create_increment_backup(dest, curtime, increment_backup_filename, extra_mari
             ]
             mariadb_backup_args = [MARIADB_BACKUP_BINARY] + extra_mariabackup_args + mariabackup_default_args
             mariabackup_run = Popen(mariadb_backup_args, stdout=PIPE, stderr=err)
-            compressed_backup_path = f"{increment_backup_base_path}/{increment_backup_filename}{curtime}"
-            with open(os.path.normpath(compressed_backup_path), "wb") as compressed_backup:
+            compressed_backup_path = os.path.join(increment_backup_base_path, f"{increment_backup_filename}{curtime}")
+            with open(compressed_backup_path, "wb") as compressed_backup:
                 cmd_run([compressor], stdin=mariabackup_run.stdout, stdout=compressed_backup)
                 mariabackup_run.wait()
                 mariabackup_res = mariabackup_run.communicate()
@@ -259,8 +259,8 @@ def create_increment_backup(dest, curtime, increment_backup_filename, extra_mari
 def rotate_backups(dest, copies, full_backup_filename, increment_backup_filename):
     check_lock_file()
     get_lock_file()
-    full_list = [os.path.normpath(dest+'/'+f) for f in os.listdir(dest) if f.startswith(full_backup_filename)]
-    increment_list = [ os.path.normpath(dest+'/'+f) for f in os.listdir(dest) if f.startswith(increment_backup_filename)]
+    full_list = [os.path.join(dest, f) for f in os.listdir(dest) if f.startswith(full_backup_filename)]
+    increment_list = [os.path.join(dest, f) for f in os.listdir(dest) if f.startswith(increment_backup_filename)]
     # Rotate full backups
     if len(full_list) > copies:
         full_list.sort()
@@ -306,6 +306,8 @@ def main():
     if not opts.copies_flag and opts.fullbackup_flag:
         raise NameError("--copies flag is required for running full backup.")
 
+    normalized_destdir = os.path.normpath(opts.destdir)
+
     full_backup_filename = "mariabackup-full_"
     increment_backup_filename = "mariabackup-increment_"
     if opts.suffix:
@@ -320,11 +322,17 @@ def main():
     if opts.fullbackup_flag and opts.increment_flag:
         raise NameError("Only one flag can be specified per operation")
     elif opts.fullbackup_flag:
-        create_full_backup(opts.destdir, curtime, full_backup_filename, extra_mariabackup_args, opts.compress_flag, opts.compressor)
-        rotate_backups(opts.destdir, opts.copies_flag, full_backup_filename, increment_backup_filename)
+        create_full_backup(
+            normalized_destdir, curtime, full_backup_filename, extra_mariabackup_args,
+            opts.compress_flag, opts.compressor
+        )
+        rotate_backups(normalized_destdir, opts.copies_flag, full_backup_filename, increment_backup_filename)
         raise SystemExit()
     elif opts.increment_flag:
-        create_increment_backup(opts.destdir, curtime, increment_backup_filename, extra_mariabackup_args, opts.compress_flag, opts.compressor)
+        create_increment_backup(
+            normalized_destdir, curtime, increment_backup_filename, extra_mariabackup_args,
+            opts.compress_flag, opts.compressor
+        )
         raise SystemExit()
     elif opts.check_flag:
         pass
@@ -335,7 +343,7 @@ def main():
         check_backups(
             warning=opts.warning_value,
             critical=opts.critical_value,
-            dest=opts.destdir,
+            dest=normalized_destdir,
             full_backup_filename=full_backup_filename
         )
     else:
