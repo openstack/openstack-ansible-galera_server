@@ -40,7 +40,7 @@
           - /usr/bin/python3 {{ galera_mariadb_backups_path }}/mariabackup_script.py {{ galera_mariadb_backups_path }}
             --full-backup --copies={{ galera_mariadb_backups_full_copies }} --suffix={{ galera_mariadb_backups_suffix }}
             --defaults-file={{ galera_mariadb_backups_cnf_file }}
-            --compress={{ galera_mariadb_backups_compress }} --compressor={{ galera_mariadb_backups_compressor }}
+            {{ (galera_mariadb_backups_compress) | ternary('--compress --compressor=' ~ galera_mariadb_backups_compressor, '') }}
         environment:
           UMASK: "0640"
           UMASK_DIR: "0750"
