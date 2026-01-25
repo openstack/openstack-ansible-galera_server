@@ -26,17 +26,6 @@
     state: absent
   when: galera_install_method == 'external_repo'
 
-# NOTE(jrosser) remove this task for the 2025.2 release
-- name: Clean up legacy repository config not in deb822 format
-  vars:
-    galera_apt_repo_cleanup:
-      - MariaDB.list
-  ansible.builtin.file:
-    path: "/etc/apt/sources.list.d/{{ item }}"
-    state: absent
-  with_items: "{{ galera_apt_repo_cleanup }}"
-  register: apt_repo_removed
-
 - name: Ensure python3-debian package is available
   ansible.builtin.apt:
     name: python3-debian
@@ -79,7 +68,7 @@
 - name: Update apt repositories when config is changed
   ansible.builtin.apt:
     update_cache: true
-  when: (apt_repo_removed is changed) or (deb822_repos is changed)
+  when: deb822_repos is changed
 
 - name: Preseed galera password(s)
   ansible.builtin.debconf:
