@@ -49,9 +49,6 @@ trap cleanup EXIT INT TERM
 EXIT_CODE=0
 if ! systemctl status {{ galera_mariadb_service_name }}> /dev/null; then
   systemctl set-environment _WSREP_NEW_CLUSTER='--wsrep-new-cluster'
-  if grep -rniq -e suse -e opensuse /etc/os-release; then
-    bootstrap_opts
-  fi
   if systemctl start {{ galera_mariadb_service_name }}; then
     EXIT_CODE=3
   else
