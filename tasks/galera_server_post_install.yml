@@ -52,7 +52,7 @@
     mode: "0750"
   when:
     - ansible_facts['pkg_mgr'] != "apt"
-    - not galera_upgrade
+    - not galera_upgrade | bool
 
 - name: Run galera secure
   command: "/usr/local/bin/galera_secure_node"
@@ -60,7 +60,7 @@
     creates: "{{ galera_data_dir }}/osa_default_secured"
   when:
     - ansible_facts['pkg_mgr'] != "apt"
-    - not galera_upgrade
+    - not galera_upgrade | bool
   tags:
     - skip_ansible_lint
     - molecule-idempotence-notest
@@ -117,7 +117,7 @@
     config_overrides: "{{ item.config_overrides }}"
     config_type: "{{ item.config_type }}"
     ignore_none_type: false
-  when: item.condition | default(True)
+  when: item.condition | default(true)
   with_items:
     - src: my.cnf.j2
       dest: "{{ galera_etc_conf_file }}"

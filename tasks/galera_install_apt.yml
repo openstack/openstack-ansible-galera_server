@@ -13,6 +13,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+- name: Update APT pinning
+  ansible.builtin.include_role:
+    name: apt_package_pinning
+  vars:
+    apt_pinned_packages: "{{ galera_distro_package_pins }}"
+    apt_package_pinning_file_name: "galera_pin.pref"
+  when:
+    - galera_install_method == 'external_repo'
+    - galera_repo | length > 0
+
 - name: Validate repo config is deb822 format
   vars:
     _repo_check: "{{ galera_repo | selectattr('repo', 'defined') | map(attribute='repo') }}"
