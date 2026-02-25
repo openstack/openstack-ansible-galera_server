@@ -27,6 +27,11 @@ user = mysql
 collation-server = utf8_general_ci
 init-connect = 'SET NAMES utf8'
 character-set-server = utf8
+
+{% if [galera_major_version, galera_minor_version] | join('.') is version('11.1.1', '>') and galera_install_method == 'external_repo' %}
+transaction-isolation = {{ galera_transaction_isolation }}
+{% endif %}
+
 datadir = {{ galera_data_dir }}
 tmpdir = {{ galera_tmp_dir }}
 {% for ignored_db in galera_ignore_db_dirs %}

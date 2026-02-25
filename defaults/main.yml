@@ -126,6 +126,7 @@ galera_wait_timeout: "{{ openstack_db_connection_recycle_time | default('600') }
 # Increase this value if large SST transfers cause mysql startup to fail due
 # to timeout
 galera_startup_timeout: 1800
+galera_transaction_isolation: READ-COMMITTED
 
 ## innodb options
 galera_innodb_buffer_pool_size: 4096M
