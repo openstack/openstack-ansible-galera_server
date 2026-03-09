@@ -9,7 +9,7 @@ platforms:
   - name: galera01
     groups:
       - galera_all
-    image: "${DOCKER_REGISTRY:-quay.io/gotmax23}/${DOCKER_IMAGE_TAG:-debian-systemd:bookworm}"
+    image: "${DOCKER_REGISTRY:-quay.io/gotmax23}/${DOCKER_IMAGE_TAG:-debian-systemd:trixie}"
     command: ${DOCKER_COMMAND:-""}
     privileged: true
     pre_build_image: true
@@ -23,7 +23,7 @@ platforms:
   - name: galera02
     groups:
       - galera_all
-    image: "${DOCKER_REGISTRY:-quay.io/gotmax23}/${DOCKER_IMAGE_TAG:-debian-systemd:bookworm}"
+    image: "${DOCKER_REGISTRY:-quay.io/gotmax23}/${DOCKER_IMAGE_TAG:-debian-systemd:trixie}"
     command: ${DOCKER_COMMAND:-""}
     privileged: true
     pre_build_image: true
@@ -37,7 +37,7 @@ platforms:
   - name: galera03
     groups:
       - galera_all
-    image: "${DOCKER_REGISTRY:-quay.io/gotmax23}/${DOCKER_IMAGE_TAG:-debian-systemd:bookworm}"
+    image: "${DOCKER_REGISTRY:-quay.io/gotmax23}/${DOCKER_IMAGE_TAG:-debian-systemd:trixie}"
     command: ${DOCKER_COMMAND:-""}
     privileged: true
     pre_build_image: true

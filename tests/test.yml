@@ -20,7 +20,7 @@
     - 1
     - 100%
   roles:
-    - "{{ playbook_dir | dirname | basename }}"
+    - "galera_server"
   vars:
     galera_install_server: true
     galera_install_client: false
