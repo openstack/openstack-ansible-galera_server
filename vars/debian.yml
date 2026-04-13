@@ -16,9 +16,6 @@
 ## APT Cache Options
 cache_timeout: 600
 
-# Default private device setting
-_galera_disable_privatedevices: true
-
 galera_server_required_distro_packages:
   - apt-transport-https
   - debconf-utils
