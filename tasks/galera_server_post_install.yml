@@ -173,3 +173,10 @@
     src: "clustercheck.j2"
     dest: "/usr/local/bin/clustercheck"
     mode: "0755"
+
+# NOTE(noonedeadpunk): Ubuntu distro uses /var/lib/mariadb as datadir,
+#                      so we need to ensure database is initialized.
+- name: Ensure datadir is populated
+  ansible.builtin.command:
+    cmd: mariadb-install-db
+    creates: "{{ galera_data_dir }}/mysql"
