@@ -18,12 +18,6 @@ _galera_gpg_keys:
   # MariaDB Package Signing Key <package-signing-key@mariadb.org>
   - key: /etc/pki/rpm-gpg/RPM-GPG-KEY-MariaDB
 
-# Default private device setting
-# This provides some additional security, but it causes problems with creating
-# mount namespaces on CentOS 7 with systemd 219. Setting the following variable
-# to 'yes' will disable the PrivateDevices
-_galera_disable_privatedevices: true
-
 galera_server_required_distro_packages:
   - findutils # "find" is used by wsrep_sst_mariabackup script
   - gnupg2

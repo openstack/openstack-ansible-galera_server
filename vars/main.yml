@@ -27,7 +27,6 @@ galera_init_defaults:
     MemoryAccounting: false
     TasksAccounting: true
     TimeoutStartSec: "{{ galera_startup_timeout }}"
-    PrivateDevices: "{{ galera_disable_privatedevices | bool | ternary('false', 'true') }}"
     OOMScoreAdjust: "-1000"
 
 _galera_base_users:
