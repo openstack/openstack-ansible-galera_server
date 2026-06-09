@@ -180,3 +180,7 @@
   ansible.builtin.command:
     cmd: mariadb-install-db
     creates: "{{ galera_data_dir }}/mysql"
+  become: true
+  become_user: mysql
+  vars:
+    ansible_remote_tmp: /tmp
