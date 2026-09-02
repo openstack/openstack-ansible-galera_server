@@ -32,7 +32,7 @@
 
 # NOTE(noonedeadpunk): We don't need to verify hostname when connectig to socket
 - name: Create galera users
-  community.mysql.mysql_user:
+  ansible.mariadb.mariadb_user:
     name: "{{ item.name }}"
     host: "{{ item.host }}"
     password: "{{ item.password }}"

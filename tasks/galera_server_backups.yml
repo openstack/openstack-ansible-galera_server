@@ -88,7 +88,7 @@
   delegate_to: "{{ galera_db_setup_host }}"
   vars:
     ansible_python_interpreter: "{{ galera_db_setup_python_interpreter }}"
-  community.mysql.mysql_user:
+  ansible.mariadb.mariadb_user:
     name: "{{ galera_mariadb_backups_user }}"
     password: "{{ galera_mariadb_backups_password }}"
     host: "%"
