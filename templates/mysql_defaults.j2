@@ -1,4 +1,4 @@
-# {{ ansible_managed }}
+# {{ openstack_ansible_managed | default('OpenStack-Ansible Managed') }}
 
 {%- set all_calculated_max_connections = [] %}
 {%- for galera_node in galera_cluster_members %}

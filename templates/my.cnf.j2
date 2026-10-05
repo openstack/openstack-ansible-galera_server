@@ -6,7 +6,7 @@
 {%- endfor %}
 {%- set calculated_max_connections = all_calculated_max_connections|sort %}
 
-# {{ ansible_managed }}
+# {{ openstack_ansible_managed | default('OpenStack-Ansible Managed') }}
 
 [client]
 port = 3306
