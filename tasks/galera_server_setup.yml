@@ -30,7 +30,7 @@
       retries: 3
       delay: 10
 
-# NOTE(noonedeadpunk): We don't need to verify hostname when connectig to socket
+# NOTE(noonedeadpunk): We don't need to verify hostname when connecting to socket
 - name: Create galera users
   ansible.mariadb.mariadb_user:
     name: "{{ item.name }}"
